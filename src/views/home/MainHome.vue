@@ -6,11 +6,14 @@ import NavigationBar from '../../components/NavigationBar.vue'
   <main>
     <NavigationBar />
     <input type="text" name="name" placeholder="채팅방 이름" />
-    <button type="submit" @click="createWaitingRoomclickHandler">방 만들기</button>
+    <button type="submit" @click="createWaitingRoomclickHandler" class="btn btn-primary">
+      방 만들기
+    </button>
   </main>
 </template>
 <script>
 import axios from 'axios'
+
 export default {
   name: 'MainHome',
   methods: {
