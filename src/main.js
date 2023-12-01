@@ -10,7 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 library.add(faUserSecret)
 
-const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon).use(router).mount('#app')
+const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon).use(router)
 
+app.mount('#app')
 app.config.globalProperties.backURL = 'http://192.168.1.58:8080/codesparring'
 app.config.globalProperties.socketURL = 'ws://192.168.1.58:8080/codesparring/ws/session'
