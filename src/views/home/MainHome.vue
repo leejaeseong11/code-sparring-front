@@ -9,6 +9,8 @@ import NavigationBar from '../../components/NavigationBar.vue'
     <button type="submit" @click="createWaitingRoomclickHandler" class="btn btn-primary">
       방 만들기
     </button>
+    <br />
+    <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" />
   </main>
 </template>
 <script>
