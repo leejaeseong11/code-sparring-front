@@ -1,4 +1,4 @@
-root {
+body {
   --main1-color: #eaebfe;
   --main2-color: #b0b8ce;
   --main3-color: #505a74;
@@ -25,6 +25,8 @@ root {
 body {
   min-width: 480px;
   line-height: unset !important;
+
+  background-color: var(--main1-color) !important;
 }
 
 a {
@@ -42,11 +44,4 @@ input:focus {
 
 main {
   margin: 20px;
-}
-
-h1 {
-  font-size: 2em !important;
-  font-weight: bold !important;
-  margin-bottom: unset !important;
-  color: var(--main4-color) !important;
 }

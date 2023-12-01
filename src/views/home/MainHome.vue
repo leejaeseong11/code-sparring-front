@@ -12,6 +12,7 @@ import NavigationBar from '../../components/NavigationBar.vue'
     <br />
     <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" />
     <font-awesome-icon :icon="['fas', 'gamepad']" />
+    <h1>test</h1>
   </main>
 </template>
 <script>
