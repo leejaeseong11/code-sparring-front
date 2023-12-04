@@ -37,7 +37,7 @@
           <button class="btn">랭킹 모드</button>
         </div>
         <div id="main-navigation-right">
-          <button class="btn">문제 만들기</button>
+          <router-link to="quiz/add">문제 만들기</router-link>
           <button class="btn btn-primary" @click="createWaitingRoomclickHandler">방 만들기</button>
         </div>
       </div>
@@ -116,6 +116,6 @@ export default {
 </script>
 <style scoped>
 #room-page-buttons {
-  color: var(--main1-color);
+  color: var(--main3-color);
 }
 </style>
