@@ -11,6 +11,8 @@ import NavigationBar from '../../components/NavigationBar.vue'
     </button>
     <br />
     <font-awesome-icon :icon="['fas', 'user-secret']" size="2xl" />
+    <font-awesome-icon :icon="['fas', 'gamepad']" />
+    <h1>test</h1>
   </main>
 </template>
 <script>
@@ -43,58 +45,4 @@ export default {
   }
 }
 </script>
-<style>
-:root {
-  --main1-color: #f8f0e5;
-  --main2-color: #eadbc8;
-  --main3-color: #dac0a3;
-  --main4-color: #0f2c59;
-  --black-color: #000000;
-  --white-color: #ffffff;
-  --red-color: #ff0000;
-  --yellow-color: #fcae05;
-}
-
-@font-face {
-  font-family: 'DNFBitBitv2';
-  font-style: normal;
-  font-weight: 400;
-  src: url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf') format('opentype');
-}
-
-* {
-  margin: 0;
-  padding: 0;
-
-  font-family: DNFBitBitv2;
-}
-
-body {
-  min-width: 480px;
-  line-height: unset !important;
-}
-
-a {
-  text-decoration: none !important;
-  color: var(--black-color) !important;
-}
-
-a:link {
-  text-decoration: none;
-}
-
-input:focus {
-  outline: none;
-}
-
-main {
-  margin: 20px;
-}
-
-h1 {
-  font-size: 2em !important;
-  font-weight: bold !important;
-  margin-bottom: unset !important;
-  color: var(--main4-color) !important;
-}
-</style>
+<style scoped></style>
