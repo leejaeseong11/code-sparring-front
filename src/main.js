@@ -9,10 +9,22 @@ import './assets/main.css'
 // fontawesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-import { faGamepad } from '@fortawesome/free-solid-svg-icons'
-library.add(faUserSecret)
-library.add(faGamepad)
+import {
+  faCaretDown,
+  faCaretUp,
+  faMagnifyingGlass,
+  faUser,
+  faArrowsRotate,
+  faSquareCaretLeft,
+  faSquareCaretRight
+} from '@fortawesome/free-solid-svg-icons'
+library.add(faCaretDown)
+library.add(faCaretUp)
+library.add(faMagnifyingGlass)
+library.add(faUser)
+library.add(faArrowsRotate)
+library.add(faSquareCaretLeft)
+library.add(faSquareCaretRight)
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
