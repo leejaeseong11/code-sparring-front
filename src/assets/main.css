@@ -1,0 +1,48 @@
+body {
+  --main1-color: #eaebfe;
+  --main2-color: #b0b8ce;
+  --main3-color: #505a74;
+  --main4-color: #354c7c;
+  --main5-color: #022954;
+  --red-color: #7c354c;
+  --black-color: #000000;
+  --white-color: #ffffff;
+}
+
+@font-face {
+  font-family: 'DNFBitBitv2';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//cdn.df.nexon.com/img/common/font/DNFBitBitv2.otf') format('opentype');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+
+  font-family: DNFBitBitv2;
+}
+
+body {
+  min-width: 480px;
+  line-height: unset !important;
+
+  background-color: var(--main1-color) !important;
+}
+
+a {
+  text-decoration: none !important;
+  color: var(--black-color) !important;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+input:focus {
+  outline: none;
+}
+
+main {
+  margin: 20px;
+}
