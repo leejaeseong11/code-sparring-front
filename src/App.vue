@@ -1,12 +1,9 @@
 <template>
-  <MainHome />
+  <router-view></router-view>
 </template>
 <script>
-import MainHome from './views/home/MainHome.vue'
-
 export default {
-  name: 'App',
-  components: { MainHome }
+  name: 'App'
 }
 </script>
 <style></style>
