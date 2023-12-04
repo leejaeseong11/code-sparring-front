@@ -42,16 +42,16 @@ export default {
         let enterMessage = {
           type: 'ROOM_ENTER',
           roomNo: this.$router.currentRoute.value.params.roomNo,
-          sender: 'me',
-          message: ''
+          sender: 'me'
         }
+        this.socket.send(JSON.stringify(enterMessage))
+
         this.socket.onclose = () => {
           console.log('disconnet')
         }
         this.socket.onmessage = (e) => {
           console.log(e.data)
         }
-        this.socket.send(JSON.stringify(enterMessage))
         this.status = 'connected'
       }
     },
