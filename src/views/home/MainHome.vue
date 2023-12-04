@@ -114,4 +114,8 @@ export default {
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+#room-page-buttons {
+  color: var(--main1-color);
+}
+</style>
