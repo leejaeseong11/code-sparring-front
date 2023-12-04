@@ -1,10 +1,12 @@
 <template>
-  <header>
-    <nav>
-      <RouterLink to="/">Home</RouterLink>
-    </nav>
-  </header>
-  <RouterView />
+  <MainHome />
 </template>
+<script>
+import MainHome from './views/home/MainHome.vue'
 
+export default {
+  name: 'App',
+  components: { MainHome }
+}
+</script>
 <style></style>

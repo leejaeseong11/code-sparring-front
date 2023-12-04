@@ -7,8 +7,22 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-library.add(faUserSecret)
+import {
+  faCaretDown,
+  faCaretUp,
+  faMagnifyingGlass,
+  faUser,
+  faArrowsRotate,
+  faSquareCaretLeft,
+  faSquareCaretRight
+} from '@fortawesome/free-solid-svg-icons'
+library.add(faCaretDown)
+library.add(faCaretUp)
+library.add(faMagnifyingGlass)
+library.add(faUser)
+library.add(faArrowsRotate)
+library.add(faSquareCaretLeft)
+library.add(faSquareCaretRight)
 
 const app = createApp(App).component('font-awesome-icon', FontAwesomeIcon).use(router)
 
