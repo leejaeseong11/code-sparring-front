@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img src="../../../images/logo.gif" alt="logo" class="logo" />
+    <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
     <div class="headerBar">
       <button class="addQuizEx" @mouseenter="onHelp" @mouseleave="offHelp" id="helpBt">?</button
       >&nbsp;&nbsp;문제 추가하기
@@ -84,6 +84,10 @@ export default {
     }
   },
   methods: {
+    gotoMain() {
+      alert('변경된 내용이 저장되지 않습니다')
+      location.href='/'
+    },
     onHelp() {
       const popup = document.getElementById('popup')
       popup.style.display = 'block'
