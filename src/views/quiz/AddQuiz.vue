@@ -9,6 +9,10 @@
   <div id="popup" class="popup">
     <div class="popup-content"></div>
   </div>
+  <div v-if="this.popup" class="testcasePopup">
+    <div class="outTestcase" @click="offPopup">x</div>
+    testcase pop-up 창 입니다.
+  </div>
   <div class="addTitle">
     <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" />
   </div>
@@ -59,7 +63,7 @@
     </div>
   </div>
   <div class="btBox">
-    <button class="addTestcase">테스트케이스 추가</button>
+    <button class="addTestcase" @click="addTestcase">테스트케이스 추가</button>
     <div class="rightBt">
       <button class="cancleBt" @click="cancleBtClick" type="button">취소하기</button>
       <button class="submitBt" @click="submitBtClick" type="button">확인하기</button>
@@ -80,7 +84,9 @@ export default {
       consoleChk: false,
       returnType: '',
       returnInfo: '',
-      consoleCode: ''
+      consoleCode: '',
+      popup: false,
+      testcase: []
     }
   },
   methods: {
@@ -186,13 +192,17 @@ export default {
       this.inputCnt++
     },
     subInputBtClick() {
-      if (this.inputCnt <= 1) {
-        alert('입력값이 최소 1개는 존재해야 합니다')
-      } else {
+      if (this.inputCnt > 1) {
         const inputTable = document.getElementById('inputTable')
         inputTable.deleteRow(this.inputCnt - 1)
         this.inputCnt--
       }
+    },
+    addTestcase() {
+      this.popup=true
+    },
+    offPopup() {
+      this.popup=false
     },
     cancleBtClick() {
       alert('문제 추가를 취소합니다.')
@@ -530,5 +540,27 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.testcasePopup {
+  position: fixed;
+  top: 10%;
+  left: 12%;
+  padding: 20px;
+  width: 70%;
+  height: 70%;
+  background-color: var(--main1-color);
+  border: 5px solid;
+  border-radius: 20px;
+  border-color: var(--main5-color);
+  z-index: 1000;
+}
+
+.outTestcase{
+  margin-left: 5px;
+  height: 5%;
+  color: var(--red-color);
+  font-size: large;
+  cursor: pointer;
 }
 </style>
