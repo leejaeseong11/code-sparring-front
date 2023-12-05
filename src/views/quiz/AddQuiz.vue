@@ -23,7 +23,9 @@
         <button class="subInputBt" type="button" @click="subInputBtClick">-</button>
         <table class="inputTable" id="inputTable">
           <tr>
-            <td><input placeholder="입력값 형식을 입력하세요" id="input1" class="newRow" /></td>
+            <td>
+              <input placeholder="입력값 형식을 입력하세요" id="input1" />
+            </td>
             <td><input placeholder="입력값을 설명하세요" id="inputInfo1" /></td>
           </tr>
         </table>
@@ -32,7 +34,9 @@
         Output<br />
         <table class="outputTable">
           <tr>
-            <td><input placeholder="리턴 타입을 입력하세요" id="returnType" /></td>
+            <td>
+              <input placeholder="리턴 타입을 입력하세요" id="returnType" v-model="returnType" />
+            </td>
             <td><input placeholder="리턴값을 설명하세요" id="returnInfo" /></td>
           </tr>
         </table>
@@ -57,9 +61,11 @@
   <div class="btBox">
     <button class="addTestcase">테스트케이스 추가</button>
     <div class="rightBt">
-      <button class="cancleBt" @click="cancleBtClick">취소하기</button>
-      <button class="submitBt" @click="submitBtClick">확인하기</button>
-      <button v-if="consoleChk" class="submitBt" @click="addQuizBtClick">추가하기</button>
+      <button class="cancleBt" @click="cancleBtClick" type="button">취소하기</button>
+      <button class="submitBt" @click="submitBtClick" type="button">확인하기</button>
+      <button v-if="consoleChk" class="submitBt" @click="addQuizBtClick" type="submit">
+        추가하기
+      </button>
     </div>
   </div>
 </template>
@@ -69,7 +75,9 @@ export default {
   data() {
     return {
       inputCnt: 1,
-      consoleChk: false
+      consoleChk: false,
+      returnType: '',
+      consoleCode: ''
     }
   },
   methods: {
@@ -109,7 +117,7 @@ export default {
 
       const console = document.getElementById('console')
       console.innerHTML =
-        '\n [ 문제 추가 방법 ] \n\n "확인하기" 클릭 시, console에 출력될 형태를 확인할 수 있습니다. \n   또한 클릭 후 "추가하기" 버튼이 표시됩니다. \n "추가하기" 버튼을 누르면 문제 추가 완료! \n\n\n [ Console 창 예시 ]\n\n Public String answer(int a, String[] str) {\n \tString result=""; \n \treturn result;\n }'
+        '\n [ 문제 추가 방법 ] \n\n "확인하기" 클릭 시, console에 출력될 형태를 확인할 수 있습니다. \n   또한 클릭 후 "추가하기" 버튼이 표시됩니다. \n "추가하기" 버튼을 누르면 문제 추가 완료! \n\n\n [ Console 창 예시 ]\n\n  public  String  answer  ( int  a,  String[ ]  str )  {\n \t String  result = ""; \n\n \t return  result;\n  }'
     },
     offHelp() {
       const popup = document.getElementById('popup')
@@ -139,7 +147,7 @@ export default {
       returnInfo.placeholder = '리턴값을 설명하세요'
 
       const console = document.getElementById('console')
-      console.innerHTML = ''
+      console.innerHTML = this.consoleCode
     },
     updateFileName(e) {
       const input = e.target
@@ -184,8 +192,67 @@ export default {
       location.href = '/'
     },
     submitBtClick() {
-      alert('console 창 예시를 확인하세요')
+      let returnHtml = ''
+      const x = this.returnType
+      if(x=='') this.returnType='void'
+      if (x == 'String' || x == 'string') {
+        returnHtml = '""'
+        this.returnType = 'String'
+      } else if (
+        x == 'int' ||
+        x == 'Integer' ||
+        x == 'Int' ||
+        x == 'char' ||
+        x == 'Char' ||
+        x == 'Character' ||
+        x == 'byte' ||
+        x == 'Byte' ||
+        x == 'short' ||
+        x == 'Short'
+      ) {
+        if (this.returnType == 'Int') this.returnType = 'int'
+        if (this.returnType == 'Char') this.returnType = 'char'
+        returnHtml = '0'
+      } else if (x == 'double' || x == 'Double' || x == 'float' || x == 'Float') {
+        returnHtml = '0.0'
+      } else if (x == 'long' || x == 'Long') {
+        returnHtml = '0L'
+      } else if (x == 'boolean' || x == 'Boolean') {
+        returnHtml = 'true'
+      } else {
+        returnHtml = 'null'
+      }
+
+      const inputTable = document.getElementById('inputTable')
       this.consoleChk = true
+      alert('console 창 예시를 확인하세요')
+
+      const console = document.getElementById('console')
+      let html = '\n  public  ' + this.returnType + '  answer  ( '
+      let row = 0
+      while (row != this.inputCnt - 1) {
+        const cellObj = inputTable.rows[row].cells[0]
+        const inputObj = cellObj.querySelector('input')
+        html += inputObj.value + ',  '
+        row++
+      }
+      const cellObj = inputTable.rows[row].cells[0]
+      const inputObj = cellObj.querySelector('input')
+      if(x=='' || x=='void') {
+        html+=inputObj.value +' )  {\n\n  }'
+        this.returnType='void'
+      } else {
+        html +=
+        inputObj.value +
+        ' )  {\n \t ' +
+        this.returnType +
+        '  result = ' +
+        returnHtml +
+        '; \n\n \t return  result;\n  }'
+      }
+      
+      console.innerHTML = html
+      this.consoleCode = html
     },
     addQuizBtClick() {
       alert('문제가 추가되었습니다')
