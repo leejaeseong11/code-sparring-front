@@ -16,7 +16,30 @@
               <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
               <div>브론즈 1</div>
             </div>
-            <div id="rank-tier-help">?</div>
+            <div id="rank-tier-help" class="custom-tooltip">
+              ?<span class="custom-tooltiptext"
+                >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
+                각 티어별로 5개의 구간이 있습니다. <br />
+                (ex. 브론즈5 ~ 브론즈1)<br />
+                티어의 종류는 다음과 같습니다.<br />
+                <img
+                  class="my-rank-tier-icon"
+                  src="/images/rank/bronze.png"
+                  alt="my-tier" />브론즈<br />
+                <img
+                  class="my-rank-tier-icon"
+                  src="/images/rank/silver.png"
+                  alt="my-tier" />실버<br />
+                <img
+                  class="my-rank-tier-icon"
+                  src="/images/rank/gold.png"
+                  alt="my-tier" />골드<br />
+                <img
+                  class="my-rank-tier-icon"
+                  src="/images/rank/platinum.png"
+                  alt="my-tier" />플래티넘<br
+              /></span>
+            </div>
           </div>
           <div id="exp-container">
             <div id="my-level">Lv. 10</div>
@@ -148,12 +171,14 @@ export default {
           console.log(res)
           this.$router.push({ path: `/room/${res.data}` })
         })
-    }
+    },
+    rankTierHelpHoverHandler() {}
   }
 }
 </script>
 <style scoped>
 #main-layout {
+  width: 100vw;
   min-width: 1280px;
 
   display: flex;
@@ -247,6 +272,33 @@ export default {
   border: 1px solid var(--main2-color);
   border-radius: 50%;
 }
+
+.custom-tooltip {
+  position: relative;
+}
+
+.custom-tooltip .custom-tooltiptext {
+  width: 260px;
+  padding: 8px 12px;
+
+  visibility: hidden;
+
+  position: absolute;
+  z-index: 1;
+  top: -100px;
+  left: 140%;
+
+  text-align: left;
+
+  border-radius: 6px;
+  color: var(--white-color);
+  background-color: var(--black-color);
+}
+
+.custom-tooltip:hover .custom-tooltiptext {
+  visibility: visible;
+}
+
 #rank-tier-hlep {
   justify-self: flex-end;
 }
