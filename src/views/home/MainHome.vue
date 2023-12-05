@@ -11,9 +11,12 @@
               <button id="logout-button" class="btn btn-danger">로그아웃</button>
             </div>
           </div>
-          <div id="tier-container">
-            <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
-            <div>브론즈 1</div>
+          <div id="tier-containers">
+            <div id="tier-container">
+              <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+              <div>브론즈 1</div>
+            </div>
+            <div id="rank-tier-help">?</div>
           </div>
           <div id="exp-container">
             <div id="my-level">Lv. 10</div>
@@ -50,11 +53,16 @@
       <div id="room-layout" class="col-9">
         <div id="main-navigation">
           <div id="main-navigation-left">
-            <div>일반 모드</div>
+            <div id="normal-mode-title">일반 모드</div>
             <button class="btn btn-primary room-menu-button">랭킹 모드</button>
           </div>
           <div id="main-navigation-right">
-            <router-link to="quiz/add">문제 만들기</router-link>
+            <router-link
+              id="create-problem-button"
+              class="btn btn-danger room-menu-button"
+              to="quiz/add"
+              >문제 만들기</router-link
+            >
             <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
               방 만들기
             </button>
@@ -62,41 +70,44 @@
         </div>
         <div id="main-room-containers">
           <div id="room-navigation">
-            <div>전체 게임방</div>
+            <div id="all-room-title">전체 게임방</div>
             <div id="room-buttons">
-              <button class="btn">
+              <button id="room-number-sort" class="btn">
                 <div>방 번호</div>
-                <font-awesome-icon :icon="['fa', 'caret-down']" />
-                <font-awesome-icon :icon="['fa', 'caret-up']" />
+                <font-awesome-icon v-if="roomNumberOrder == 'desc'" :icon="['fa', 'caret-down']" />
+                <font-awesome-icon v-if="roomNumberOrder == 'asc'" :icon="['fa', 'caret-up']" />
               </button>
-              <div>
-                <input type="text" placeholder="방 번호 검색" />
-                <font-awesome-icon :icon="['fa', 'magnifying-glass']" />
+              <div id="room-number-search-container">
+                <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+                <font-awesome-icon
+                  id="room-number-search-icon"
+                  :icon="['fa', 'magnifying-glass']"
+                />
               </div>
               <button class="btn">
-                <font-awesome-icon :icon="['fa', 'arrows-rotate']" />
+                <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" />
               </button>
             </div>
           </div>
           <div id="room-list-container">
-            <div class="room-container">
-              <div class="room-no">No. 1000</div>
-              <div class="room-info">
-                <div class="room-title">아무나</div>
-                <div class="room-detail">
-                  <div class="room-status">WAITING</div>
-                  <div>
-                    <font-awesome-icon :icon="['fa', 'user']" />
-                    <div>3/4</div>
-                    <button class="btn">입장</button>
-                  </div>
-                </div>
-              </div>
+            <div class="row row-cols-2 room-containers">
+              <MainHomeRoom v-model:roomNumber="roomNumber" />
             </div>
-            <div id="room-page-buttons">
-              <font-awesome-icon :icon="['fa', 'square-caret-left']" />
-              <font-awesome-icon :icon="['fa', 'square-caret-right']" />
-            </div>
+            <nav aria-label="...">
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" tabindex="-1" aria-disabled="true">◀</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item" aria-current="page">
+                  <a class="page-link" href="#">2</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#">▶</a>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
@@ -105,10 +116,17 @@
 </template>
 <script>
 import axios from 'axios'
+import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 
 export default {
   name: 'MainHome',
-  components: {},
+  components: { MainHomeRoom },
+  data() {
+    return {
+      roomNumberOrder: 'desc',
+      roomNumber: 1000
+    }
+  },
   methods: {
     createWaitingRoomclickHandler() {
       let data = {
@@ -150,6 +168,7 @@ export default {
 }
 #main-logo {
   width: 150px;
+  margin-bottom: 12px;
 
   cursor: pointer;
 }
@@ -179,9 +198,25 @@ export default {
 }
 .btn-primary {
   background-color: var(--main4-color);
+  border: none;
+
+  &:hover {
+    border: none;
+    background-color: var(--main2-color);
+  }
 }
 .btn-danger {
   background-color: var(--red-color);
+  border: none;
+
+  &:hover {
+    background-color: var(--red2-color);
+    border: none;
+  }
+}
+#tier-containers {
+  display: flex;
+  align-items: flex-end;
 }
 #tier-container {
   padding: 4px 12px;
@@ -195,6 +230,25 @@ export default {
 
   border-radius: 10px;
   border: 3px solid var(--main5-color);
+}
+#rank-tier-help {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-left: 4px;
+
+  display: inline-block;
+
+  text-align: center;
+  font-size: 0.75rem;
+
+  cursor: pointer;
+
+  color: var(--main2-color);
+  border: 1px solid var(--main2-color);
+  border-radius: 50%;
+}
+#rank-tier-hlep {
+  justify-self: flex-end;
 }
 .my-rank-tier-icon {
   width: 36px;
@@ -280,7 +334,7 @@ li {
 }
 #main-navigation {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 #main-navigation-left,
@@ -290,8 +344,104 @@ li {
 
   font-size: 1.5rem;
 }
-
+#main-navigation-left > *,
+#main-navigation-right > * {
+  margin: 0 8px;
+}
+#create-problem-button {
+  color: var(--white-color) !important;
+}
 .room-menu-button {
+  font-size: 1.25rem;
+}
+#main-room-containers {
+  padding: 16px;
+  margin-top: 8px;
+
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
+}
+#room-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#all-room-title {
   font-size: 1.5rem;
+}
+#room-number-sort {
+  padding: 6px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+
+  color: var(--white-color);
+  background-color: var(--main3-color);
+  border: none;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: var(--main2-color);
+  }
+}
+#room-number-sort > div {
+  margin-right: 8px;
+}
+#room-buttons {
+  display: flex;
+  align-items: center;
+}
+#room-buttons > * {
+  margin: 0 8px;
+}
+#room-number-search-container {
+  display: flex;
+  align-items: center;
+}
+#room-number-search-input {
+  height: 2rem;
+
+  text-indent: 4px;
+
+  outline: none;
+  border: 1px solid var(--main3-color);
+}
+#room-number-search-icon {
+  padding: 4px;
+
+  font-size: 1.5rem;
+
+  cursor: pointer;
+
+  color: var(--white-color);
+  background-color: var(--main3-color);
+  border: none;
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#room-refresh-icon {
+  font-size: 3rem;
+
+  color: var(--main3-color);
+
+  &:hover {
+    color: var(--main2-color);
+  }
+}
+#room-list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#room-list-container > nav {
+  align-self: center;
+}
+.active > a {
+  color: var(--white-color) !important;
+  background-color: var(--main4-color);
+  border: none;
 }
 </style>
