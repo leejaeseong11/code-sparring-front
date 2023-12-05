@@ -17,9 +17,8 @@
       <div class="outTestcase" @click="offPopup">x</div>
 
       <div>
-        <button class="testcaseWarn" @click="warning">!</button>
+        <button class="testcaseWarn" @mouseenter="warning" @mouseleave="offWarning">!</button>
         <button class="testcaseHelp" @mouseenter="onTcHelp" @mouseleave="offTcHelp">?</button>
-          <div class="testcaseWord">&nbsp;&nbsp;테스트케이스 추가하기</div>
       </div>
     </div>
 
@@ -27,7 +26,8 @@
       <div class="popupTc-content"></div>
     </div>
 
-    <div class="testcaseBox">
+    <img v-if="this.testcaseWarning" src="../../../public/images/addTestcaseWarning.png" class="warningImg">
+    <div v-if="!this.testcaseWarning" class="testcaseBox">
       <div class="testcaseInput">
         <div style="height: 10%;">&nbsp;&nbsp;Input</div>
         <div v-for="index in 10" :key="index" class="inputDiv">
@@ -101,7 +101,7 @@
     </div>
   </div>
   <div class="btBox">
-    <button class="addTestcase" @click="addTestcase">테스트케이스 추가</button>
+    <button class="addTestcase" @click="addTestcase">테스트케이스 설정</button>
     <div class="rightBt">
       <button class="cancleBt" @click="cancleBtClick" type="button">취소하기</button>
       <button class="submitBt" @click="submitBtClick" type="button">확인하기</button>
@@ -125,7 +125,8 @@ export default {
       consoleCode: '',
       popup: false,
       inputValueList: [],
-      outputValueList: []
+      outputValueList: [],
+      testcaseWarning: false
     }
   },
   methods: {
@@ -357,7 +358,10 @@ export default {
       }
     },
     warning() {
-      alert('[input] 예시와 같이 선언 형식으로 작성\n[output] 예시와 같이 리턴 타입을 준수하여 작성\n테스트케이스는 10개로 고정')
+      this.testcaseWarning=true
+    },
+    offWarning() {
+      this.testcaseWarning=false
     }
   }
 }
@@ -661,11 +665,6 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   height: 5%;
 }
 
-.testcaseWord {
-  display: inline;
-  font-size: 20px;
-}
-
 .testcaseBox {
   width: 100%;
   height: 90%;
@@ -706,5 +705,12 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   border-radius: 5px;
   font-size: 16px;
   padding-left: 10px;
+}
+
+.warningImg {
+  width: 90%;
+  height: 80%;
+  padding-left: 47px;
+  padding-top: 30px;
 }
 </style>
