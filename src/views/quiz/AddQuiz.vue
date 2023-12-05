@@ -10,12 +10,12 @@
     <div class="popup-content"></div>
   </div>
   <div class="addTitle">
-    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" />
+    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" />
   </div>
   <div class="addQuizBox">
     <div class="quizInfo">
       <div class="addInfo">
-        <textarea class="infoInput" placeholder="문제를 설명하세요" id="info"></textarea>
+        <textarea class="infoInput" placeholder="문제를 설명하세요" id="info" v-model="info"></textarea>
       </div>
       <div class="addInput">
         Input&nbsp;&nbsp;
@@ -37,7 +37,7 @@
             <td>
               <input placeholder="리턴 타입을 입력하세요" id="returnType" v-model="returnType" />
             </td>
-            <td><input placeholder="리턴값을 설명하세요" id="returnInfo" /></td>
+            <td><input placeholder="리턴값을 설명하세요" id="returnInfo" v-model="returnInfo" /></td>
           </tr>
         </table>
       </div>
@@ -74,9 +74,12 @@ export default {
   name: 'addQuiz',
   data() {
     return {
+      title: '',
+      info: '',
       inputCnt: 1,
       consoleChk: false,
       returnType: '',
+      returnInfo: '',
       consoleCode: ''
     }
   },
