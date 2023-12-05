@@ -1,25 +1,61 @@
 <template>
   <header>
     <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
+
     <div class="headerBar">
       <button class="addQuizEx" @mouseenter="onHelp" @mouseleave="offHelp" id="helpBt">?</button
       >&nbsp;&nbsp;문제 추가하기
     </div>
   </header>
+
   <div id="popup" class="popup">
     <div class="popup-content"></div>
   </div>
+
   <div v-if="this.popup" class="testcasePopup">
-    <div class="outTestcase" @click="offPopup">x</div>
-    testcase pop-up 창 입니다.
+    <div class="popupBt">
+      <div class="outTestcase" @click="offPopup">x</div>
+
+      <div>
+        <button class="testcaseWarn" @click="warning">!</button>
+        <button class="testcaseHelp" @mouseenter="onTcHelp" @mouseleave="offTcHelp">?</button>
+          <div class="testcaseWord">&nbsp;&nbsp;테스트케이스 추가하기</div>
+      </div>
+    </div>
+
+    <div id="popupInTc" class="popupInTc">
+      <div class="popupTc-content"></div>
+    </div>
+
+    <div class="testcaseBox">
+      <div class="testcaseInput">
+        <div style="height: 10%;">&nbsp;&nbsp;Input</div>
+        <div v-for="index in 10" :key="index" class="inputDiv">
+          <input class="inputValue" placeholder="입력값을 입력하세요" v-model="inputValueList[index-1]">
+        </div>
+      </div>
+      <div class="testcaseOutput">
+        <div style="height: 10%;">&nbsp;Output</div>
+        <div v-for="index in 10" :key="index" class="outputDiv">
+          <input class="outputValue" placeholder="리턴값을 입력하세요" v-model="outputValueList[index-1]">
+        </div>
+      </div>
+      <!-- <button class="addTestcaseBt">+</button> -->
+    </div>
   </div>
+
   <div class="addTitle">
     <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" />
   </div>
   <div class="addQuizBox">
     <div class="quizInfo">
       <div class="addInfo">
-        <textarea class="infoInput" placeholder="문제를 설명하세요" id="info" v-model="info"></textarea>
+        <textarea
+          class="infoInput"
+          placeholder="문제를 설명하세요"
+          id="info"
+          v-model="info"
+        ></textarea>
       </div>
       <div class="addInput">
         Input&nbsp;&nbsp;
@@ -41,7 +77,9 @@
             <td>
               <input placeholder="리턴 타입을 입력하세요" id="returnType" v-model="returnType" />
             </td>
-            <td><input placeholder="리턴값을 설명하세요" id="returnInfo" v-model="returnInfo" /></td>
+            <td>
+              <input placeholder="리턴값을 설명하세요" id="returnInfo" v-model="returnInfo" />
+            </td>
           </tr>
         </table>
       </div>
@@ -86,13 +124,14 @@ export default {
       returnInfo: '',
       consoleCode: '',
       popup: false,
-      testcase: []
+      inputValueList: [],
+      outputValueList: []
     }
   },
   methods: {
     gotoMain() {
       alert('변경된 내용이 저장되지 않습니다')
-      location.href='/'
+      location.href = '/'
     },
     onHelp() {
       const popup = document.getElementById('popup')
@@ -199,10 +238,10 @@ export default {
       }
     },
     addTestcase() {
-      this.popup=true
+      this.popup = true
     },
     offPopup() {
-      this.popup=false
+      this.popup = false
     },
     cancleBtClick() {
       alert('문제 추가를 취소합니다.')
@@ -211,7 +250,7 @@ export default {
     submitBtClick() {
       let returnHtml = ''
       const x = this.returnType
-      if(x=='') this.returnType='void'
+      if (x == '') this.returnType = 'void'
       if (x == 'String' || x == 'string') {
         returnHtml = '""'
         this.returnType = 'String'
@@ -255,25 +294,70 @@ export default {
       }
       const cellObj = inputTable.rows[row].cells[0]
       const inputObj = cellObj.querySelector('input')
-      if(x=='' || x=='void') {
-        html+=inputObj.value +' )  {\n\n  }'
-        this.returnType='void'
+      if (x == '' || x == 'void') {
+        html += inputObj.value + ' )  {\n\n  }'
+        this.returnType = 'void'
       } else {
         html +=
-        inputObj.value +
-        ' )  {\n \t ' +
-        this.returnType +
-        '  result = ' +
-        returnHtml +
-        '; \n\n \t return  result;\n  }'
+          inputObj.value +
+          ' )  {\n \t ' +
+          this.returnType +
+          '  result = ' +
+          returnHtml +
+          '; \n\n \t return  result;\n  }'
       }
-      
+
       console.innerHTML = html
       this.consoleCode = html
     },
     addQuizBtClick() {
       alert('문제가 추가되었습니다')
       location.href = '/'
+    },
+    onTcHelp() {
+      const popup = document.getElementById('popupInTc')
+      popup.style.display = 'block'
+
+      const inputValue = document.getElementsByClassName('inputValue')
+      inputValue[0].placeholder='int a=1; String[] str={"apple", "banana", "orange"};'
+      inputValue[1].placeholder='int a=0; String[] str={"Happy", "Birthday"};'
+      inputValue[2].placeholder='int a=3; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[3].placeholder='int a=2; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[4].placeholder='int a=4; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[5].placeholder='int a=6; String[] str={"I", "me", "you", "we", "our", "us", "them", "they", "he", "she"};'
+      inputValue[6].placeholder='int a=1; String[] str={"Lion", "Tiger", "Rabbit"};'
+      inputValue[7].placeholder='int a=0; String[] str={"heart", "spade", "diamond", "clover"};'
+      inputValue[8].placeholder='int a=2; String[] str={"8u3418y", "3ur0n19", "1jnf9v"};'
+      inputValue[9].placeholder='int a=1; String[] str={"901120", "880208", "981213", "930430"};'
+
+      const outputValue = document.getElementsByClassName('outputValue')
+      outputValue[0].placeholder='"banana"'
+      outputValue[1].placeholder='"Happy"'
+      outputValue[2].placeholder='"dd"'
+      outputValue[3].placeholder='"cc"'
+      outputValue[4].placeholder='"ee"'
+      outputValue[5].placeholder='"them"'
+      outputValue[6].placeholder='"Tiger"'
+      outputValue[7].placeholder='"heart"'
+      outputValue[8].placeholder='"1jnf9v"'
+      outputValue[9].placeholder='"880208"'
+    },
+    offTcHelp() {
+      const popup = document.getElementById('popupInTc')
+      popup.style.display = 'none'
+
+      const inputValue = document.getElementsByClassName('inputValue')
+      for(let i=0; i<inputValue.length; i++) {
+        inputValue[i].placeholder='입력값을 입력하세요'
+      }
+
+      const outputValue = document.getElementsByClassName('outputValue')
+      for(let i=0; i<outputValue.length; i++) {
+        outputValue[i].placeholder='리턴값을 입력하세요'
+      }
+    },
+    warning() {
+      alert('[input] 예시와 같이 선언 형식으로 작성\n[output] 예시와 같이 리턴 타입을 준수하여 작성\n테스트케이스는 10개로 고정')
     }
   }
 }
@@ -337,7 +421,9 @@ textarea:focus {
   padding-top: 45px;
 }
 
-.addQuizEx {
+.addQuizEx,
+.testcaseWarn,
+.testcaseHelp {
   width: 30px;
   height: 30px;
   background-color: var(--main2-color);
@@ -423,7 +509,8 @@ textarea:focus {
 }
 
 .addInputBt,
-.subInputBt {
+.subInputBt,
+.addTestcaseBt {
   width: 22px;
   height: 22px;
   font-size: 20px;
@@ -520,18 +607,17 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   display: none;
 }
 
-.popup {
+.popup, .popupInTc {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 90%;
-  margin-top: 100px;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.popup-content {
+.popup-content, .popupTc-content {
   /* background-color: #fff;  */
   width: 500px;
   padding: 20px;
@@ -550,17 +636,75 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   width: 70%;
   height: 70%;
   background-color: var(--main1-color);
-  border: 5px solid;
-  border-radius: 20px;
+  border: 7px solid;
+  border-radius: 25px;
   border-color: var(--main5-color);
   z-index: 1000;
 }
 
-.outTestcase{
+.outTestcase {
   margin-left: 5px;
-  height: 5%;
-  color: var(--red-color);
-  font-size: large;
+  color: var(--main5-color);
+  font-size: x-large;
   cursor: pointer;
+  top: -7px;
+}
+
+.testcaseWarn {
+  background-color: var(--red-color);
+  margin-right: 5px;
+}
+
+.popupBt {
+  display: flex;
+  justify-content: space-between;
+  height: 5%;
+}
+
+.testcaseWord {
+  display: inline;
+  font-size: 20px;
+}
+
+.testcaseBox {
+  width: 100%;
+  height: 90%;
+  top: 5%;
+  font-size: x-large;
+  display: flex;
+  justify-content: space-between;
+  overflow: scroll;
+}
+
+.addTestcaseBt {
+  top: 2px;
+  right: 5px;
+  width: 25px;
+  height: 25px;
+}
+
+.testcaseInput {
+  width:60%;
+  margin-left: 5px;
+}
+
+.testcaseOutput {
+  width: 35%;
+  margin-right: 15px;
+}
+
+.inputDiv, .outputDiv {
+  width: 100%;
+  height: 9%;
+  text-align: center;
+}
+
+.inputValue, .outputValue {
+  width: 95%;
+  height: 80%;
+  border: 3px solid;
+  border-radius: 5px;
+  font-size: 16px;
+  padding-left: 10px;
 }
 </style>
