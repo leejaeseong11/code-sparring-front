@@ -19,12 +19,8 @@
       </div>
       <div class="addInput">
         Input&nbsp;&nbsp;
-        <button class="addInputBt" type="button" @click="addInputBtClick">
-          +
-        </button>&nbsp;
-        <button class="subInputBt" type="button" @click="subInputBtClick">
-          -
-        </button>
+        <button class="addInputBt" type="button" @click="addInputBtClick">+</button>&nbsp;
+        <button class="subInputBt" type="button" @click="subInputBtClick">-</button>
         <table class="inputTable" id="inputTable">
           <tr>
             <td><input placeholder="입력값 형식을 입력하세요" id="input1" class="newRow" /></td>
@@ -62,8 +58,8 @@
     <button class="addTestcase">테스트케이스 추가</button>
     <div class="rightBt">
       <button class="cancleBt" @click="cancleBtClick">취소하기</button>
-      <button v-if="!consoleChk" class="submitBt" @click="submitBtClick">확인하기</button>
-      <button v-if="consoleChk" class="submitBt" @click="submitBtClick">추가하기</button>
+      <button class="submitBt" @click="submitBtClick">확인하기</button>
+      <button v-if="consoleChk" class="submitBt" @click="addQuizBtClick">추가하기</button>
     </div>
   </div>
 </template>
@@ -88,21 +84,21 @@ export default {
       info.placeholder =
         '\n 숫자 a와 배열 str이 주어진다. \n 이때 str의 a번째 인덱스에 해당하는 값을 리턴하라.'
 
-      if(this.inputCnt<=1) {
+      if (this.inputCnt <= 1) {
         const input1 = document.getElementById('input1')
-      input1.placeholder = 'int a'
-      const inputInfo1 = document.getElementById('inputInfo1')
-      inputInfo1.placeholder = '인덱스로 이용될 숫자 a이다.'
+        input1.placeholder = 'int a'
+        const inputInfo1 = document.getElementById('inputInfo1')
+        inputInfo1.placeholder = '인덱스로 이용될 숫자 a이다.'
 
-      const inputTable = document.getElementById('inputTable')
-      const newRow = inputTable.insertRow()
-      newRow.style.height = '36px'
-      newRow.style.margin = '0'
-      newRow.style.color = 'var(--main5-color)'
-      newRow.style.cursor = 'default'
-      newRow.style.position = 'relative'
-      newRow.innerHTML =
-        '<td style="width: 50%; height: 30px; border: 3px solid var(--main5-color); border-radius: 3px;"><input value="String[] str", style="width: 98%; height: 30px; padding-left: 5px; border: none; background-color: var(--main1-color); font-size: 15px; color: var(--main2-color);" /></td><td style="width: 50%; height: 30px; border: 3px solid var(--main5-color); border-radius: 3px;"><input value="주어지는 배열이다.", style="width: 98%; height: 30px; padding-left: 5px; border: none; background-color: var(--main1-color); font-size: 15px; color: var(--main2-color);" /></td>'
+        const inputTable = document.getElementById('inputTable')
+        const newRow = inputTable.insertRow()
+        newRow.style.height = '36px'
+        newRow.style.margin = '0'
+        newRow.style.color = 'var(--main5-color)'
+        newRow.style.cursor = 'default'
+        newRow.style.position = 'relative'
+        newRow.innerHTML =
+          '<td style="width: 50%; height: 30px; border: 3px solid var(--main5-color); border-radius: 3px;"><input value="String[] str", style="width: 98%; height: 30px; padding-left: 5px; border: none; background-color: var(--main1-color); font-size: 15px; color: var(--main2-color);" /></td><td style="width: 50%; height: 30px; border: 3px solid var(--main5-color); border-radius: 3px;"><input value="주어지는 배열이다.", style="width: 98%; height: 30px; padding-left: 5px; border: none; background-color: var(--main1-color); font-size: 15px; color: var(--main2-color);" /></td>'
       }
 
       const returnType = document.getElementById('returnType')
@@ -113,7 +109,7 @@ export default {
 
       const console = document.getElementById('console')
       console.innerHTML =
-        '\n [ 문제 추가 방법 ] \n\n "확인하기" 클릭 시, console에 출력될 형태를 확인할 수 있습니다. \n   또한 클릭 후 "추가하기"로 버튼이 변경됩니다. \n "추가하기" 버튼을 누르면 문제 추가 완료! \n\n\n [ Console 창 예시 ]\n\n Public String answer(int a, String[] str) {\n \tString result=""; \n \treturn result;\n }'
+        '\n [ 문제 추가 방법 ] \n\n "확인하기" 클릭 시, console에 출력될 형태를 확인할 수 있습니다. \n   또한 클릭 후 "추가하기" 버튼이 표시됩니다. \n "추가하기" 버튼을 누르면 문제 추가 완료! \n\n\n [ Console 창 예시 ]\n\n Public String answer(int a, String[] str) {\n \tString result=""; \n \treturn result;\n }'
     },
     offHelp() {
       const popup = document.getElementById('popup')
@@ -168,33 +164,32 @@ export default {
       const style = document.createElement('style')
       style.innerHTML = `
         ::placeholder {
-          color: var(--main2-color); // placeholder 색을 변경하려는 부분입니다.
+          color: var(--main2-color);
         }
       `
       document.getElementsByTagName('head')[0].appendChild(style)
       this.inputCnt++
     },
-    subInputBtClick(){
-      if(this.inputCnt<=1) {
+    subInputBtClick() {
+      if (this.inputCnt <= 1) {
         alert('입력값이 최소 1개는 존재해야 합니다')
       } else {
         const inputTable = document.getElementById('inputTable')
-        inputTable.deleteRow(this.inputCnt-1)
+        inputTable.deleteRow(this.inputCnt - 1)
         this.inputCnt--
       }
     },
     cancleBtClick() {
       alert('문제 추가를 취소합니다.')
-      location.href='/'
+      location.href = '/'
     },
     submitBtClick() {
-      if(!this.consoleChk) {
-        alert('console 창 예시를 확인하세요')
-        this.consoleChk=true
-      } else {
-        alert('문제가 추가되었습니다')
-        location.href='/'
-      }
+      alert('console 창 예시를 확인하세요')
+      this.consoleChk = true
+    },
+    addQuizBtClick() {
+      alert('문제가 추가되었습니다')
+      location.href = '/'
     }
   }
 }
@@ -343,7 +338,8 @@ textarea:focus {
   width: 100%;
 }
 
-.addInputBt, .subInputBt {
+.addInputBt,
+.subInputBt {
   width: 22px;
   height: 22px;
   font-size: 20px;
