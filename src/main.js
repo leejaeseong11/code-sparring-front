@@ -2,8 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-// import 'bootstrap'
-// import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './assets/main.css'
 
 // fontawesome
@@ -15,16 +15,14 @@ import {
   faMagnifyingGlass,
   faUser,
   faArrowsRotate,
-  faSquareCaretLeft,
-  faSquareCaretRight
+  faLock
 } from '@fortawesome/free-solid-svg-icons'
 library.add(faCaretDown)
 library.add(faCaretUp)
 library.add(faMagnifyingGlass)
 library.add(faUser)
 library.add(faArrowsRotate)
-library.add(faSquareCaretLeft)
-library.add(faSquareCaretRight)
+library.add(faLock)
 
 const app = createApp(App)
 app.use(router)

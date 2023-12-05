@@ -5,6 +5,7 @@ body {
   --main4-color: #354c7c;
   --main5-color: #022954;
   --red-color: #7c354c;
+  --red2-color: #b24c6d;
   --black-color: #000000;
   --white-color: #ffffff;
 }
@@ -41,8 +42,4 @@ a:link {
 
 input:focus {
   outline: none;
-}
-
-main {
-  margin: 20px;
 }
