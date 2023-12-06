@@ -368,31 +368,39 @@ export default {
   margin-top: 24px;
   padding: 20px;
 
-  font-size: 2rem;
+  font-size: 1.8rem;
 
   cursor: pointer;
-  transition: transform 0.5s;
+  transition: transform 0.5s linear infinite;
 
   background-color: var(--red-color);
   color: var(--main1-color);
 
   &:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
+    background-color: var(--red-hover-color);
   }
-
-  &:hover #rank-title-icon {
-    color: red;
+}
+#rank-matching-button:hover #rank-title-icon {
+  animation-name: rotate;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
     transform: rotate(360deg);
   }
 }
+
 #rank-title-icon {
   width: 2rem;
-
-  &:hover {
-    transform: rotate(360deg);
-  }
+  cursor: pointer;
+  transition: transform 0.5s;
 }
-
 #rank-container {
   padding: 8px;
   margin-top: 30px;
