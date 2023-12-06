@@ -29,6 +29,7 @@ body {
 }
 
 body {
+  margin: 12px;
   min-width: 480px;
   line-height: unset !important;
 
