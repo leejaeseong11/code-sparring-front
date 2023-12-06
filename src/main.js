@@ -18,7 +18,8 @@ import {
   faLock,
   faCrown,
   faHouse,
-  faRankingStar
+  faRankingStar,
+  faPowerOff
 } from '@fortawesome/free-solid-svg-icons'
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -27,7 +28,9 @@ library.add(faUser)
 library.add(faArrowsRotate)
 library.add(faLock)
 library.add(faCrown)
+library.add(faHouse)
 library.add(faRankingStar)
+library.add(faPowerOff)
 
 const app = createApp(App)
 app.use(router)

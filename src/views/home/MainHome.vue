@@ -26,11 +26,9 @@
                 </div>
               </div>
             </div>
-            <div id="main-profile-buttons">
-              <button id="mypage-button" class="btn btn-primary">마이 페이지</button>
-              <button id="logout-button" class="btn btn-danger">로그아웃</button>
-            </div>
+            <div id="main-profile-buttons"></div>
           </div>
+
           <!-- <div id="tier-containers">
             <div id="tier-container">
               <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
@@ -62,36 +60,49 @@
             </div>
           </div> -->
         </div>
+        <button
+          id="rank-matching-button"
+          class="btn btn-danger room-menu-button"
+          style="
+            margin-top: 24px;
+            padding: 20px;
+            font-size: 2rem;
+            background-color: var(--red-color);
+            color: var(--main1-color);
+          "
+        >
+          랭 크
+          <img id="rank-title-icon" src="/images/swords.png" alt="" />
+          매 칭
+        </button>
         <div id="rank-container">
           <div id="rank-title">
-            <a href="https://twitter.com/djirdehh" target="_blank" class="twitter-section">
-              <i class="fa fa-twitter-square" aria-hidden="true"></i>
-            </a>
-            <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> 랭킹
+            순 위
+            <!-- <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> -->
           </div>
           <ol id="rank-list">
             <li>
-              <div class="rank-number">1위</div>
+              <div class="rank-number" style="color: #ffcd69">1위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname">닉네임</div>
             </li>
             <li>
-              <div class="rank-number">2위</div>
+              <div class="rank-number" style="color: #ff7d97">2위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname">닉네임</div>
             </li>
             <li>
-              <div class="rank-number">3위</div>
+              <div class="rank-number" style="color: #33d6f5">3위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname">닉네임</div>
             </li>
             <li>
-              <div class="rank-number">4위</div>
+              <div class="rank-number" style="color: var(--main1-color)">4위</div>
               <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
               <div class="rank-nickname">닉네임</div>
             </li>
             <li>
-              <div class="rank-number">5위</div>
+              <div class="rank-number" style="color: var(--main1-color)">5위</div>
               <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
               <div class="rank-nickname">아주아주긴닉네임이지요너무길어서안보일지경이에요</div>
             </li>
@@ -101,24 +112,30 @@
       <div id="room-layout" class="col-9">
         <div id="main-navigation">
           <div id="main-navigation-left">
-            <div id="normal-mode-title">일반 모드</div>
-            <button class="btn btn-primary room-menu-button">랭킹 모드</button>
-          </div>
-          <div id="main-navigation-right">
-            <router-link
-              id="create-problem-button"
-              class="btn btn-danger room-menu-button"
-              to="quiz/add"
-              >문제 만들기</router-link
-            >
             <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
               방 만들기
             </button>
+            <router-link
+              id="create-problem-button"
+              class="btn btn-primary room-menu-button"
+              to="quiz/add"
+              >문제 만들기</router-link
+            >
+          </div>
+          <div id="main-navigation-right">
+            <button id="mypage-button" class="btn">마이페이지</button>
+            <button id="logout-button" class="btn btn-danger">종료</button>
           </div>
         </div>
         <div id="main-room-containers">
           <div id="room-navigation">
-            <div id="all-room-title">전체 게임방</div>
+            <div id="all-room-title">
+              전체 게임방
+              <button class="btn">
+                <!-- <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" /> -->
+                <img src="/images/refresh.png" style="width: 40px" alt="" />
+              </button>
+            </div>
             <div id="room-buttons">
               <!-- <button id="room-number-sort" class="btn">
                 <div>방 번호</div>
@@ -132,9 +149,6 @@
                   :icon="['fa', 'magnifying-glass']"
                 />
               </div>
-              <button class="btn">
-                <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" />
-              </button>
             </div>
           </div>
           <div id="room-list-container">
@@ -155,11 +169,6 @@
                 <li class="page-item">
                   <a class="page-link" href="#" tabindex="-1" aria-disabled="true">◀</a>
                 </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item" aria-current="page">
-                  <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
                 <li class="page-item">
                   <a class="page-link" href="#">▶</a>
                 </li>
@@ -390,7 +399,7 @@ export default {
 }
 #rank-container {
   padding: 8px;
-  margin-top: 60px;
+  margin-top: 30px;
 
   display: flex;
   flex-direction: column;
@@ -404,7 +413,7 @@ export default {
   /* opacity: 80%; */
   /* background-color: #feeaeb; */
   border: 5px inset var(--main1-color);
-  border-style: dotted solid solid solid;
+  border-style: dotted solid;
   border-radius: 10px;
 }
 
@@ -419,17 +428,22 @@ html {
   min-height: 100%;
   padding: 6em 3em;
 }
+
 #rank-title {
   width: 40%;
   padding: 8px;
 
-  font-size: 1.25rem;
+  font-size: 2rem;
   align-self: center;
+
+  color: var(--main1-color);
 
   /* border: 3px solid var(--main5-color);
   border-radius: 10px; */
 }
 #rank-title-icon {
+  width: 72px;
+  font-size: 4rem;
   color: #f7c52f;
 }
 #rank-list > li {
@@ -465,6 +479,8 @@ li {
   padding-top: 32px;
 }
 #main-navigation {
+  margin-bottom: 24px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -476,9 +492,18 @@ li {
 
   font-size: 1.5rem;
 }
+#mypage-button {
+  background-color: var(--main3-color);
+  color: var(--main1-color);
+
+  &:hover {
+    background-color: var(--main3-hover-color);
+    color: var(--main1-color);
+  }
+}
 #main-navigation-left > *,
 #main-navigation-right > * {
-  margin: 0 8px;
+  margin: 0 4px;
 }
 #create-problem-button {
   color: var(--main1-color) !important;
@@ -579,5 +604,13 @@ input[type='number']::-webkit-inner-spin-button {
   color: var(--main1-color) !important;
   background-color: var(--main4-color);
   border: none;
+}
+.page-link {
+  width: 100px;
+  margin: 0 20px;
+  color: var(--main5-color) !important;
+}
+#rank-matching-button {
+  cursor: pointer !important;
 }
 </style>

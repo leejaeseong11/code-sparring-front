@@ -2,12 +2,12 @@
   <div class="card ms-3 mb-3 room-container">
     <div class="row">
       <div class="col-2 ps-0 pe-0">
-        <div class="room-no">No. <br />{{ roomNumber }}</div>
+        <div class="room-no">{{ roomNumber }}</div>
       </div>
       <div class="col-10 ps-0 pe-0">
         <div class="pb-2 room-info-container">
           <div class="col">
-            <h5 class="ps-3 pb-2 card-title">
+            <h5 class="ps-3 pb-3 pt-2 card-title">
               아무나들어와도되지만이방의제목은매우길기때문에잘릴수있습니다
             </h5>
           </div>
@@ -17,6 +17,7 @@
             <div class="pe-3 room-enter">
               <font-awesome-icon :icon="['fa', 'user']" />
               <div class="room-member-number">3/4</div>
+              <button class="btn btn-primary see-quiz-button"><div>문제보기</div></button>
               <button class="btn btn-primary enter-button"><div>입장</div></button>
             </div>
           </div>
@@ -48,6 +49,8 @@ export default {
   justify-content: center;
   flex-wrap: nowrap;
 
+  font-size: 1.5rem;
+
   border-right: 3px solid var(--main3-color);
 }
 .room-info-container {
@@ -72,8 +75,9 @@ export default {
 .room-member-number {
   margin: 0 8px 0 4px;
 }
-.enter-button {
-  width: 55px;
+.see-quiz-button {
+  width: 92px;
+  margin-right: 8px;
 
   border: none;
   background-color: var(--main4-color);
@@ -81,6 +85,17 @@ export default {
   &:hover {
     border: none;
     background-color: var(--main4-hover-color);
+  }
+}
+.enter-button {
+  width: 55px;
+
+  border: none;
+  background-color: var(--red-color);
+
+  &:hover {
+    border: none;
+    background-color: var(--red-hover-color);
   }
 }
 </style>
