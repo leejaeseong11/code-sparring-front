@@ -12,7 +12,8 @@
             </h5>
           </div>
           <div class="room-info">
-            <div class="ps-3">WAITING</div>
+            <div v-if="roomStatus == 1" class="ps-3" style="color: var(--red-color)">WAITING</div>
+            <div v-if="roomStatus == 0" class="ps-3" style="color: var(--red-color)">PLAYING</div>
             <div class="pe-3 room-enter">
               <font-awesome-icon :icon="['fa', 'user']" />
               <div class="room-member-number">3/4</div>
@@ -35,7 +36,9 @@ export default {
   width: 48%;
 
   color: var(--main5-color);
-  border: 1px solid var(--main3-color);
+  border: 6px solid var(--main5-color);
+
+  /* opacity: 30%; */
 }
 .room-no {
   height: 100%;
@@ -45,7 +48,7 @@ export default {
   justify-content: center;
   flex-wrap: nowrap;
 
-  border-right: 1px solid var(--main3-color);
+  border-right: 3px solid var(--main3-color);
 }
 .room-info-container {
   padding: 8px 0;
@@ -67,7 +70,7 @@ export default {
   align-items: center;
 }
 .room-member-number {
-  margin-right: 8px;
+  margin: 0 8px 0 4px;
 }
 .enter-button {
   width: 55px;
@@ -77,7 +80,7 @@ export default {
 
   &:hover {
     border: none;
-    background-color: var(--main3-color);
+    background-color: var(--main4-hover-color);
   }
 }
 </style>

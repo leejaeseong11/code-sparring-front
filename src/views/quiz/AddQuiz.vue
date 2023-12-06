@@ -18,7 +18,14 @@
 
       <div>
         <button class="testcaseWarn" @click="warning">!</button>
-        <button class="testcaseHelp" id="testcaseHelp" @mouseover="onTcHelp" @mouseleave="offTcHelp">?</button>
+        <button
+          class="testcaseHelp"
+          id="testcaseHelp"
+          @mouseover="onTcHelp"
+          @mouseleave="offTcHelp"
+        >
+          ?
+        </button>
       </div>
     </div>
 
@@ -354,8 +361,8 @@ export default {
       if (this.testcaseWarning) {
         return
       }
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.57)'
+      const back = document.getElementById('backOff')
+      back.style.backgroundColor = 'rgba(0, 0, 0, 0.57)'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
@@ -386,8 +393,8 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.7)'
+      const back = document.getElementById('backOff')
+      back.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
@@ -408,20 +415,20 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='default'
-      bt2.style.cursor='default'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'default'
+      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='pointer'
-      bt2.style.cursor='pointer'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'pointer'
+      bt2.style.cursor = 'pointer'
     }
   }
 }
@@ -747,7 +754,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseWarn:hover {
-  background-color: var(--red-hover-color); 
+  background-color: var(--red-hover-color);
 }
 
 .popupBt {

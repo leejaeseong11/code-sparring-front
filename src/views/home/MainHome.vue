@@ -1,21 +1,41 @@
 <template>
   <main class="container-fluid">
     <div id="main-layout" class="row">
-      <div id="main-side-layout" class="col-3">
+      <div id="main-side-layout" class="col-2">
         <img id="main-logo" src="/images/logo.gif" alt="logo" />
         <div id="main-profile-containers">
           <div id="my-profile-container">
             <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
+            <div id="profile-tier-container">
+              <div id="profile-nickname">닉네임</div>
+              <!-- <div id="profile-tier">브론즈</div> -->
+              <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+            </div>
+            <div id="exp-container">
+              <div id="my-level">Lv. 10</div>
+              <div class="progress col-sm-9">
+                <div
+                  class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
+                  role="progressbar"
+                  aria-valuenow="10"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style="width: 10%"
+                >
+                  <span id="my-exp">10 / 100</span>
+                </div>
+              </div>
+            </div>
             <div id="main-profile-buttons">
               <button id="mypage-button" class="btn btn-primary">마이 페이지</button>
               <button id="logout-button" class="btn btn-danger">로그아웃</button>
             </div>
           </div>
-          <div id="tier-containers">
+          <!-- <div id="tier-containers">
             <div id="tier-container">
               <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
-              <div>브론즈 1</div>
-            </div>
+              <div>브론즈 35p</div>
+            </div> 
             <div id="rank-tier-help" class="custom-tooltip">
               ?<span class="custom-tooltiptext"
                 >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
@@ -40,25 +60,15 @@
                   alt="my-tier" />플래티넘<br
               /></span>
             </div>
-          </div>
-          <div id="exp-container">
-            <div id="my-level">Lv. 10</div>
-            <div class="progress col-sm-9">
-              <div
-                class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
-                role="progressbar"
-                aria-valuenow="10"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 10%"
-              >
-                <span id="my-exp">10 / 100</span>
-              </div>
-            </div>
-          </div>
+          </div> -->
         </div>
         <div id="rank-container">
-          <div id="rank-title">랭킹 목록</div>
+          <div id="rank-title">
+            <a href="https://twitter.com/djirdehh" target="_blank" class="twitter-section">
+              <i class="fa fa-twitter-square" aria-hidden="true"></i>
+            </a>
+            <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> 랭킹
+          </div>
           <ol id="rank-list">
             <li>
               <div class="rank-number">1위</div>
@@ -67,7 +77,22 @@
             </li>
             <li>
               <div class="rank-number">2위</div>
+              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number">3위</div>
+              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number">4위</div>
               <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number">5위</div>
+              <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
               <div class="rank-nickname">아주아주긴닉네임이지요너무길어서안보일지경이에요</div>
             </li>
           </ol>
@@ -95,11 +120,11 @@
           <div id="room-navigation">
             <div id="all-room-title">전체 게임방</div>
             <div id="room-buttons">
-              <button id="room-number-sort" class="btn">
+              <!-- <button id="room-number-sort" class="btn">
                 <div>방 번호</div>
                 <font-awesome-icon v-if="roomNumberOrder == 'desc'" :icon="['fa', 'caret-down']" />
                 <font-awesome-icon v-if="roomNumberOrder == 'asc'" :icon="['fa', 'caret-up']" />
-              </button>
+              </button> -->
               <div id="room-number-search-container">
                 <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
                 <font-awesome-icon
@@ -114,9 +139,16 @@
           </div>
           <div id="room-list-container">
             <div class="row row-cols-2 room-containers">
-              <MainHomeRoom v-model:roomNumber="roomNumber" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
             </div>
             <nav aria-label="...">
               <ul class="pagination">
@@ -149,7 +181,8 @@ export default {
   data() {
     return {
       roomNumberOrder: 'desc',
-      roomNumber: 1000
+      roomNumber: 1000,
+      roomStatus: 1
     }
   },
   methods: {
@@ -196,6 +229,7 @@ export default {
 }
 #main-logo {
   width: 150px;
+  padding-top: 10px;
   margin-bottom: 12px;
 
   cursor: pointer;
@@ -212,8 +246,8 @@ export default {
   flex-direction: column;
   align-items: center;
 
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
+  /* border: 3px solid var(--main5-color);
+  border-radius: 10px; */
 }
 #main-profile-buttons > button {
   margin: 8px;
@@ -224,23 +258,36 @@ export default {
 
   border-radius: 50%;
 }
+#profile-tier-container {
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+}
+#profile-nickname {
+  margin-right: 4px;
+
+  font-size: 1.25rem;
+}
 .btn-primary {
+  color: var(--main1-color);
   background-color: var(--main4-color);
   border: none;
 
   &:hover {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
     border: none;
-    /* background-color: var(--main2-color); */
-    background-color: #5d6f96;
   }
 }
 .btn-danger {
+  color: var(--main1-color);
   background-color: var(--red-color);
   border: none;
 
   &:hover {
-    background-color: var(--red2-color);
     border: none;
+    background-color: var(--red-hover-color);
   }
 }
 #tier-containers {
@@ -315,17 +362,15 @@ export default {
   align-items: center;
 }
 #my-level {
-  margin-top: 8px;
-  padding: 2px;
+  padding-right: 4px;
 
   display: flex;
   align-items: center;
-
-  aspect-ratio: 1 / 1;
+  /* aspect-ratio: 1 / 1; */
   white-space: nowrap;
 
-  border-radius: 50%;
-  border: 3px solid var(--main5-color);
+  /* border-radius: 50%;
+  border: 3px solid var(--main5-color); */
 }
 #exp-container > .progress {
   margin-left: 4px;
@@ -344,7 +389,8 @@ export default {
   color: var(--main5-color);
 }
 #rank-container {
-  margin-top: 12px;
+  padding: 8px;
+  margin-top: 60px;
 
   display: flex;
   flex-direction: column;
@@ -352,15 +398,43 @@ export default {
   overflow: hidden;
   text-align: center;
 
+  color: var(--white-color);
+  /* background-color: #295402; */
+  background-color: var(--main5-color);
+  /* opacity: 80%; */
+  /* background-color: #feeaeb; */
+  border: 5px inset var(--main1-color);
+  border-style: dotted solid solid solid;
   border-radius: 10px;
-  border: 3px solid var(--main5-color);
+}
+
+html {
+  background-color: salmon;
+  background-image: linear-gradient(hsla(0, 0%, 0%, 0.3), hsla(0, 0%, 100%, 0.1)),
+    linear-gradient(left, hsla(0, 0%, 0%, 0.025) 50%, transparent 50%);
+  background-size:
+    100% 100%,
+    1.5em 1.5em;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 6em 3em;
 }
 #rank-title {
+  width: 40%;
   padding: 8px;
 
   font-size: 1.25rem;
+  align-self: center;
+
+  /* border: 3px solid var(--main5-color);
+  border-radius: 10px; */
+}
+#rank-title-icon {
+  color: #f7c52f;
 }
 #rank-list > li {
+  padding: 12px;
+
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -384,6 +458,8 @@ li {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  color: var(--main1-color);
 }
 #room-layout {
   padding-top: 32px;
@@ -405,19 +481,20 @@ li {
   margin: 0 8px;
 }
 #create-problem-button {
-  color: var(--white-color) !important;
+  color: var(--main1-color) !important;
 }
 .room-menu-button {
   font-size: 1.25rem;
 }
 #main-room-containers {
   padding: 16px;
-  margin-top: 8px;
+  margin-top: 16px;
 
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
+  border-top: 3px solid var(--main5-color);
 }
 #room-navigation {
+  margin-bottom: 16px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -431,13 +508,13 @@ li {
   display: flex;
   align-items: center;
 
-  color: var(--white-color);
+  color: var(--main1-color);
   background-color: var(--main3-color);
   border: none;
   border-radius: 10px;
 
   &:hover {
-    background-color: var(--main2-color);
+    background-color: var(--main3-hover-color);
   }
 }
 #room-number-sort > div {
@@ -453,6 +530,9 @@ li {
 #room-number-search-container {
   display: flex;
   align-items: center;
+
+  border: 1px solid var(--main3-color);
+  border-radius: 10px;
 }
 #room-number-search-input {
   height: 2rem;
@@ -460,7 +540,7 @@ li {
   text-indent: 4px;
 
   outline: none;
-  border: 1px solid var(--main3-color);
+  /* border: 1px solid var(--main3-color); */
 }
 #room-number-search-icon {
   padding: 4px;
@@ -469,7 +549,7 @@ li {
 
   cursor: pointer;
 
-  color: var(--white-color);
+  color: var(--main1-color);
   background-color: var(--main3-color);
   border: none;
 }
@@ -479,12 +559,12 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 #room-refresh-icon {
-  font-size: 3rem;
+  font-size: 2rem;
 
-  color: var(--main3-color);
+  color: var(--main5-color);
 
   &:hover {
-    color: var(--main2-color);
+    color: var(--main5-hover-color);
   }
 }
 #room-list-container {
@@ -496,7 +576,7 @@ input[type='number']::-webkit-inner-spin-button {
   align-self: center;
 }
 .active > a {
-  color: var(--white-color) !important;
+  color: var(--main1-color) !important;
   background-color: var(--main4-color);
   border: none;
 }
