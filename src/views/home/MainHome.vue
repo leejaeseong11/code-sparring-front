@@ -98,7 +98,7 @@
           </ol>
         </div>
       </div>
-      <div id="room-layout" class="col-9">
+      <div id="room-layout" class="col">
         <div id="main-navigation">
           <div id="main-navigation-left">
             <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
@@ -223,6 +223,7 @@ export default {
 }
 #main-side-layout {
   min-width: 260px;
+  padding-left: 0;
 
   display: flex;
   flex-direction: column;
@@ -238,6 +239,8 @@ export default {
   align-items: center;
 }
 #my-profile-container {
+  margin-top: 24px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -365,7 +368,7 @@ export default {
   }
 }
 #rank-matching-button {
-  margin-top: 24px;
+  margin-top: 34px;
   padding: 20px;
 
   font-size: 1.8rem;
@@ -377,7 +380,6 @@ export default {
   color: var(--main1-color);
 
   &:hover {
-    transform: scale(1.25);
     background-color: var(--red-hover-color);
   }
 }
@@ -395,15 +397,13 @@ export default {
     transform: rotate(360deg);
   }
 }
-
 #rank-title-icon {
   width: 2rem;
-  cursor: pointer;
-  transition: transform 0.5s;
 }
+/* todo tomorrow */
 #rank-container {
   padding: 8px;
-  margin-top: 30px;
+  margin-top: 34px;
 
   display: flex;
   flex-direction: column;
@@ -601,8 +601,7 @@ input[type='number']::-webkit-inner-spin-button {
   cursor: pointer;
   transition: transform 0.5s;
   &:hover {
-    color: red;
-    transform: rotate(180deg);
+    transform: scale(1.5) rotate(180deg);
   }
 }
 </style>
