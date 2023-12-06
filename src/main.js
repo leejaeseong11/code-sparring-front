@@ -15,7 +15,9 @@ import {
   faMagnifyingGlass,
   faUser,
   faArrowsRotate,
-  faLock
+  faLock,
+  faCrown,
+  faHouse
 } from '@fortawesome/free-solid-svg-icons'
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -23,6 +25,8 @@ library.add(faMagnifyingGlass)
 library.add(faUser)
 library.add(faArrowsRotate)
 library.add(faLock)
+library.add(faCrown)
+library.add(faHouse)
 
 const app = createApp(App)
 app.use(router)

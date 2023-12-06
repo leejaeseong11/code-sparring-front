@@ -1,5 +1,5 @@
 <template>
-  <main class="container">
+  <main class="container-fluid">
     <div id="main-layout" class="row">
       <div id="main-side-layout" class="col-3">
         <img id="main-logo" src="/images/logo.gif" alt="logo" />
@@ -115,6 +115,8 @@
           <div id="room-list-container">
             <div class="row row-cols-2 room-containers">
               <MainHomeRoom v-model:roomNumber="roomNumber" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" />
             </div>
             <nav aria-label="...">
               <ul class="pagination">
@@ -178,7 +180,6 @@ export default {
 </script>
 <style scoped>
 #main-layout {
-  width: 100vw;
   min-width: 1280px;
 
   display: flex;
@@ -186,6 +187,8 @@ export default {
 
   overflow: auto;
   white-space: nowrap;
+
+  color: var(--main5-color);
 }
 #main-side-layout {
   display: flex;
@@ -227,7 +230,8 @@ export default {
 
   &:hover {
     border: none;
-    background-color: var(--main2-color);
+    /* background-color: var(--main2-color); */
+    background-color: #5d6f96;
   }
 }
 .btn-danger {

@@ -33,6 +33,8 @@ export default {
 <style scoped>
 .room-container {
   width: 48%;
+
+  color: var(--main5-color);
   border: 1px solid var(--main3-color);
 }
 .room-no {
@@ -69,5 +71,13 @@ export default {
 }
 .enter-button {
   width: 55px;
+
+  border: none;
+  background-color: var(--main4-color);
+
+  &:hover {
+    border: none;
+    background-color: var(--main3-color);
+  }
 }
 </style>
