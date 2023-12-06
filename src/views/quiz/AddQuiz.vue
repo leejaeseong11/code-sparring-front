@@ -3,7 +3,7 @@
     <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
 
     <div class="headerBar">
-      <button class="addQuizEx" @mouseenter="onHelp" @mouseleave="offHelp" id="helpBt">?</button
+      <button class="addQuizEx" @mouseover="onHelp" @mouseleave="offHelp" id="helpBt">?</button
       >&nbsp;&nbsp;문제 추가하기
     </div>
   </header>
@@ -12,13 +12,13 @@
     <div class="popup-content"></div>
   </div>
 
-  <div v-if="this.popup" class="testcasePopup">
+  <div v-if="this.popup" class="testcasePopup" @click="offWarning" id="testcasePopup">
     <div class="popupBt">
-      <div class="outTestcase" @click="offPopup">x</div>
+      <div class="outTestcase" @click="offPopup" id="outTestcase">x</div>
 
       <div>
-        <button class="testcaseWarn" @mouseenter="warning" @mouseleave="offWarning">!</button>
-        <button class="testcaseHelp" @mouseenter="onTcHelp" @mouseleave="offTcHelp">?</button>
+        <button class="testcaseWarn" @click="warning">!</button>
+        <button class="testcaseHelp" id="testcaseHelp" @mouseover="onTcHelp" @mouseleave="offTcHelp">?</button>
       </div>
     </div>
 
@@ -26,21 +26,46 @@
       <div class="popupTc-content"></div>
     </div>
 
-    <img v-if="this.testcaseWarning" src="../../../public/images/addTestcaseWarning.png" class="warningImg">
-    <div v-if="!this.testcaseWarning" class="testcaseBox">
+    <div class="testcaseBox">
       <div class="testcaseInput">
-        <div style="height: 10%;">&nbsp;&nbsp;Input</div>
+        <div style="height: 10%">&nbsp;&nbsp;Input</div>
         <div v-for="index in 10" :key="index" class="inputDiv">
-          <input class="inputValue" placeholder="입력값을 입력하세요" v-model="inputValueList[index-1]">
+          <input
+            class="inputValue"
+            placeholder="입력값을 입력하세요"
+            v-model="inputValueList[index - 1]"
+          />
         </div>
       </div>
       <div class="testcaseOutput">
-        <div style="height: 10%;">&nbsp;Output</div>
+        <div style="height: 10%">&nbsp;Output</div>
         <div v-for="index in 10" :key="index" class="outputDiv">
-          <input class="outputValue" placeholder="리턴값을 입력하세요" v-model="outputValueList[index-1]">
+          <input
+            class="outputValue"
+            placeholder="리턴값을 입력하세요"
+            v-model="outputValueList[index - 1]"
+          />
         </div>
       </div>
-      <!-- <button class="addTestcaseBt">+</button> -->
+      <div v-if="this.testcaseWarning" class="testcaseWarning">
+        <div style="background-color: #7c354c; height: 45px; line-height: 45px; color: #eaebfe">
+          주의사항
+        </div>
+        <br />
+        [Input] 아래 예시와 같이 선언 형식으로 작성하세요.<br />
+        <span style="color: #7c354c; background-color: #eaebfe"
+          >int a=1; String[] str={"abc", "de", "f"}; &nbsp;🙆<br />
+          int a=1, String [] str={abc, de, f} &nbsp;🙅 </span
+        ><br /><br />
+
+        [Output] 예시와 같이 리턴 타입을 준수하여 작성하세요.<br />
+        <span style="color: #7c354c; background-color: #eaebfe"
+          >ex. 리턴 타입이 String인 경우, "de"<br /><br
+        /></span>
+
+        테스트케이스 10개 미만은 문제 제출이 불가합니다.<br />또한 테스트케이스에 문제가 있을 경우
+        오류가 발생할 수 있으니 주의하세요.
+      </div>
     </div>
   </div>
 
@@ -96,6 +121,7 @@
         class="console"
         placeholder="/* Console 창 예시 */"
         id="console"
+        @click="lock"
         readonly
       ></textarea>
     </div>
@@ -110,6 +136,7 @@
       </button>
     </div>
   </div>
+  <div v-if="popup" class="backOff" id="backOff"></div>
 </template>
 <script>
 export default {
@@ -202,6 +229,9 @@ export default {
       const console = document.getElementById('console')
       console.innerHTML = this.consoleCode
     },
+    lock(e) {
+      // e.target.blur()
+    },
     updateFileName(e) {
       const input = e.target
       const fileNameDiv = document.querySelector('.fileName')
@@ -232,20 +262,25 @@ export default {
       this.inputCnt++
     },
     subInputBtClick() {
-      if (this.inputCnt > 1) {
+      if (this.inputCnt > 0) {
         const inputTable = document.getElementById('inputTable')
         inputTable.deleteRow(this.inputCnt - 1)
         this.inputCnt--
       }
     },
     addTestcase() {
+      document.body.style.overflow = 'hidden'
       this.popup = true
     },
     offPopup() {
+      if (this.testcaseWarning) {
+        return
+      }
+      document.body.style.overflow = 'scroll'
       this.popup = false
     },
     cancleBtClick() {
-      alert('문제 추가를 취소합니다.')
+      alert('문제 추가를 취소합니다')
       location.href = '/'
     },
     submitBtClick() {
@@ -316,52 +351,77 @@ export default {
       location.href = '/'
     },
     onTcHelp() {
+      if (this.testcaseWarning) {
+        return
+      }
+      const back=document.getElementById('backOff')
+      back.style.backgroundColor='rgba(0, 0, 0, 0.57)'
+
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
 
       const inputValue = document.getElementsByClassName('inputValue')
-      inputValue[0].placeholder='int a=1; String[] str={"apple", "banana", "orange"};'
-      inputValue[1].placeholder='int a=0; String[] str={"Happy", "Birthday"};'
-      inputValue[2].placeholder='int a=3; String[] str={"aa", "bb", "cc", "dd", "ee"};'
-      inputValue[3].placeholder='int a=2; String[] str={"aa", "bb", "cc", "dd", "ee"};'
-      inputValue[4].placeholder='int a=4; String[] str={"aa", "bb", "cc", "dd", "ee"};'
-      inputValue[5].placeholder='int a=6; String[] str={"I", "me", "you", "we", "our", "us", "them", "they", "he", "she"};'
-      inputValue[6].placeholder='int a=1; String[] str={"Lion", "Tiger", "Rabbit"};'
-      inputValue[7].placeholder='int a=0; String[] str={"heart", "spade", "diamond", "clover"};'
-      inputValue[8].placeholder='int a=2; String[] str={"8u3418y", "3ur0n19", "1jnf9v"};'
-      inputValue[9].placeholder='int a=1; String[] str={"901120", "880208", "981213", "930430"};'
+      inputValue[0].placeholder = 'int a=1; String[] str={"apple", "banana", "orange"};'
+      inputValue[1].placeholder = 'int a=0; String[] str={"Happy", "Birthday"};'
+      inputValue[2].placeholder = 'int a=3; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[3].placeholder = 'int a=2; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[4].placeholder = 'int a=4; String[] str={"aa", "bb", "cc", "dd", "ee"};'
+      inputValue[5].placeholder =
+        'int a=6; String[] str={"I", "me", "you", "we", "our", "us", "them", "they", "he", "she"};'
+      inputValue[6].placeholder = 'int a=1; String[] str={"Lion", "Tiger", "Rabbit"};'
+      inputValue[7].placeholder = 'int a=0; String[] str={"heart", "spade", "diamond", "clover"};'
+      inputValue[8].placeholder = 'int a=2; String[] str={"8u3418y", "3ur0n19", "1jnf9v"};'
+      inputValue[9].placeholder = 'int a=1; String[] str={"901120", "880208", "981213", "930430"};'
 
       const outputValue = document.getElementsByClassName('outputValue')
-      outputValue[0].placeholder='"banana"'
-      outputValue[1].placeholder='"Happy"'
-      outputValue[2].placeholder='"dd"'
-      outputValue[3].placeholder='"cc"'
-      outputValue[4].placeholder='"ee"'
-      outputValue[5].placeholder='"them"'
-      outputValue[6].placeholder='"Tiger"'
-      outputValue[7].placeholder='"heart"'
-      outputValue[8].placeholder='"1jnf9v"'
-      outputValue[9].placeholder='"880208"'
+      outputValue[0].placeholder = '"banana"'
+      outputValue[1].placeholder = '"Happy"'
+      outputValue[2].placeholder = '"dd"'
+      outputValue[3].placeholder = '"cc"'
+      outputValue[4].placeholder = '"ee"'
+      outputValue[5].placeholder = '"them"'
+      outputValue[6].placeholder = '"Tiger"'
+      outputValue[7].placeholder = '"heart"'
+      outputValue[8].placeholder = '"1jnf9v"'
+      outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
+      const back=document.getElementById('backOff')
+      back.style.backgroundColor='rgba(0, 0, 0, 0.7)'
+
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
 
       const inputValue = document.getElementsByClassName('inputValue')
-      for(let i=0; i<inputValue.length; i++) {
-        inputValue[i].placeholder='입력값을 입력하세요'
+      for (let i = 0; i < inputValue.length; i++) {
+        inputValue[i].placeholder = '입력값을 입력하세요'
       }
 
       const outputValue = document.getElementsByClassName('outputValue')
-      for(let i=0; i<outputValue.length; i++) {
-        outputValue[i].placeholder='리턴값을 입력하세요'
+      for (let i = 0; i < outputValue.length; i++) {
+        outputValue[i].placeholder = '리턴값을 입력하세요'
       }
     },
     warning() {
-      this.testcaseWarning=true
+      if (this.testcaseWarning) {
+        this.testcaseWarning = false
+        return
+      }
+      this.testcaseWarning = true
+      const bt1=document.getElementById('outTestcase')
+      const bt2=document.getElementById('testcaseHelp')
+      bt1.style.cursor='default'
+      bt2.style.cursor='default'
     },
-    offWarning() {
-      this.testcaseWarning=false
+    offWarning(e) {
+      if (e.target.className == 'testcaseWarn') {
+        return
+      }
+      this.testcaseWarning = false
+      const bt1=document.getElementById('outTestcase')
+      const bt2=document.getElementById('testcaseHelp')
+      bt1.style.cursor='pointer'
+      bt2.style.cursor='pointer'
     }
   }
 }
@@ -526,6 +586,11 @@ textarea:focus {
   border-color: var(--red-color);
 }
 
+.subInputBt:hover {
+  background-color: var(--red-hover-color);
+  border-color: var(--red-hover-color);
+}
+
 .inputTable,
 .outputTable {
   width: 100%;
@@ -570,8 +635,18 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   font-size: large;
 }
 
+.fileUpload:hover {
+  background-color: var(--main3-hover-color);
+  border-color: var(--main3-hover-color);
+}
+
 .addTestcase {
   margin-left: 15px;
+}
+
+.addTestcase:hover {
+  background-color: var(--main3-hover-color);
+  border-color: var(--main3-hover-color);
 }
 
 .btBox {
@@ -590,9 +665,19 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   margin-right: 15px;
 }
 
+.submitBt:hover {
+  background-color: var(--main4-hover-color);
+  border-color: var(--main4-hover-color);
+}
+
 .cancleBt {
   background-color: var(--red-color);
   border-color: var(--red-color);
+}
+
+.cancleBt:hover {
+  background-color: var(--red-hover-color);
+  border-color: var(--red-hover-color);
 }
 
 .fileUpload {
@@ -611,17 +696,19 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   display: none;
 }
 
-.popup, .popupInTc {
+.popup,
+.popupInTc {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
-.popup-content, .popupTc-content {
+.popup-content,
+.popupTc-content {
   /* background-color: #fff;  */
   width: 500px;
   padding: 20px;
@@ -637,8 +724,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   top: 10%;
   left: 12%;
   padding: 20px;
-  width: 70%;
-  height: 70%;
+  width: 75%;
+  height: 80%;
   background-color: var(--main1-color);
   border: 7px solid;
   border-radius: 25px;
@@ -659,6 +746,10 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   margin-right: 5px;
 }
 
+.testcaseWarn:hover {
+  background-color: var(--red-hover-color); 
+}
+
 .popupBt {
   display: flex;
   justify-content: space-between;
@@ -668,7 +759,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcaseBox {
   width: 100%;
   height: 90%;
-  top: 5%;
+  top: 3%;
   font-size: x-large;
   display: flex;
   justify-content: space-between;
@@ -683,7 +774,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseInput {
-  width:60%;
+  width: 60%;
   margin-left: 5px;
 }
 
@@ -692,13 +783,15 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   margin-right: 15px;
 }
 
-.inputDiv, .outputDiv {
+.inputDiv,
+.outputDiv {
   width: 100%;
   height: 9%;
   text-align: center;
 }
 
-.inputValue, .outputValue {
+.inputValue,
+.outputValue {
   width: 95%;
   height: 80%;
   border: 3px solid;
@@ -707,10 +800,32 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   padding-left: 10px;
 }
 
-.warningImg {
-  width: 90%;
-  height: 80%;
-  padding-left: 47px;
-  padding-top: 30px;
+.testcaseWarning {
+  width: 84%;
+  top: 5%;
+  left: 8%;
+  height: 78%;
+  text-align: center;
+  font-size: 22px;
+  background-color: #eaebfe;
+  border: 3px solid #7c354c;
+  border-radius: 30px;
+  overflow: hidden;
+  color: #022954;
+  position: absolute;
+}
+
+.backOff {
+  width: 120%;
+  height: 200%;
+  display: fixed;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  top: 0%;
+}
+
+.addInputBt:hover {
+  background-color: var(--main4-hover-color);
+  border-color: var(--main4-hover-color);
 }
 </style>
