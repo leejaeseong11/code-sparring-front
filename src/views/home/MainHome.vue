@@ -1,21 +1,39 @@
 <template>
-  <main class="container">
+  <main class="container-fluid">
     <div id="main-layout" class="row">
-      <div id="main-side-layout" class="col-3">
+      <div id="main-side-layout" class="col-2">
         <img id="main-logo" src="/images/logo.gif" alt="logo" />
         <div id="main-profile-containers">
           <div id="my-profile-container">
             <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
-            <div id="main-profile-buttons">
-              <button id="mypage-button" class="btn btn-primary">마이 페이지</button>
-              <button id="logout-button" class="btn btn-danger">로그아웃</button>
+            <div id="profile-tier-container">
+              <div id="profile-nickname">닉네임</div>
+              <!-- <div id="profile-tier">브론즈</div> -->
+              <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
             </div>
+            <div id="exp-container">
+              <div id="my-level">Lv. 10</div>
+              <div class="progress col-sm-9">
+                <div
+                  class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
+                  role="progressbar"
+                  aria-valuenow="10"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style="width: 10%"
+                >
+                  <span id="my-exp">10 / 100</span>
+                </div>
+              </div>
+            </div>
+            <div id="main-profile-buttons"></div>
           </div>
-          <div id="tier-containers">
+
+          <!-- <div id="tier-containers">
             <div id="tier-container">
               <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
-              <div>브론즈 1</div>
-            </div>
+              <div>브론즈 35p</div>
+            </div> 
             <div id="rank-tier-help" class="custom-tooltip">
               ?<span class="custom-tooltiptext"
                 >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
@@ -40,34 +58,52 @@
                   alt="my-tier" />플래티넘<br
               /></span>
             </div>
-          </div>
-          <div id="exp-container">
-            <div id="my-level">Lv. 10</div>
-            <div class="progress col-sm-9">
-              <div
-                class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
-                role="progressbar"
-                aria-valuenow="10"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 10%"
-              >
-                <span id="my-exp">10 / 100</span>
-              </div>
-            </div>
-          </div>
+          </div> -->
         </div>
+        <button
+          id="rank-matching-button"
+          class="btn btn-danger room-menu-button"
+          style="
+            margin-top: 24px;
+            padding: 20px;
+            font-size: 2rem;
+            background-color: var(--red-color);
+            color: var(--main1-color);
+          "
+        >
+          랭 크
+          <img id="rank-title-icon" src="/images/swords.png" alt="" />
+          매 칭
+        </button>
         <div id="rank-container">
-          <div id="rank-title">랭킹 목록</div>
+          <div id="rank-title">
+            순 위
+            <!-- <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> -->
+          </div>
           <ol id="rank-list">
             <li>
-              <div class="rank-number">1위</div>
+              <div class="rank-number" style="color: #ffcd69">1위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname">닉네임</div>
             </li>
             <li>
-              <div class="rank-number">2위</div>
+              <div class="rank-number" style="color: #ff7d97">2위</div>
+              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number" style="color: #33d6f5">3위</div>
+              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number" style="color: var(--main1-color)">4위</div>
               <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
+              <div class="rank-nickname">닉네임</div>
+            </li>
+            <li>
+              <div class="rank-number" style="color: var(--main1-color)">5위</div>
+              <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
               <div class="rank-nickname">아주아주긴닉네임이지요너무길어서안보일지경이에요</div>
             </li>
           </ol>
@@ -76,30 +112,36 @@
       <div id="room-layout" class="col-9">
         <div id="main-navigation">
           <div id="main-navigation-left">
-            <div id="normal-mode-title">일반 모드</div>
-            <button class="btn btn-primary room-menu-button">랭킹 모드</button>
-          </div>
-          <div id="main-navigation-right">
-            <router-link
-              id="create-problem-button"
-              class="btn btn-danger room-menu-button"
-              to="quiz/add"
-              >문제 만들기</router-link
-            >
             <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
               방 만들기
             </button>
+            <router-link
+              id="create-problem-button"
+              class="btn btn-primary room-menu-button"
+              to="quiz/add"
+              >문제 만들기</router-link
+            >
+          </div>
+          <div id="main-navigation-right">
+            <button id="mypage-button" class="btn">마이페이지</button>
+            <button id="logout-button" class="btn btn-danger">종료</button>
           </div>
         </div>
         <div id="main-room-containers">
           <div id="room-navigation">
-            <div id="all-room-title">전체 게임방</div>
+            <div id="all-room-title">
+              전체 게임방
+              <button class="btn">
+                <!-- <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" /> -->
+                <img src="/images/refresh.png" style="width: 40px" alt="" />
+              </button>
+            </div>
             <div id="room-buttons">
-              <button id="room-number-sort" class="btn">
+              <!-- <button id="room-number-sort" class="btn">
                 <div>방 번호</div>
                 <font-awesome-icon v-if="roomNumberOrder == 'desc'" :icon="['fa', 'caret-down']" />
                 <font-awesome-icon v-if="roomNumberOrder == 'asc'" :icon="['fa', 'caret-up']" />
-              </button>
+              </button> -->
               <div id="room-number-search-container">
                 <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
                 <font-awesome-icon
@@ -107,25 +149,26 @@
                   :icon="['fa', 'magnifying-glass']"
                 />
               </div>
-              <button class="btn">
-                <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" />
-              </button>
             </div>
           </div>
           <div id="room-list-container">
             <div class="row row-cols-2 room-containers">
-              <MainHomeRoom v-model:roomNumber="roomNumber" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
             </div>
             <nav aria-label="...">
               <ul class="pagination">
                 <li class="page-item">
                   <a class="page-link" href="#" tabindex="-1" aria-disabled="true">◀</a>
                 </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item" aria-current="page">
-                  <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
                 <li class="page-item">
                   <a class="page-link" href="#">▶</a>
                 </li>
@@ -147,7 +190,8 @@ export default {
   data() {
     return {
       roomNumberOrder: 'desc',
-      roomNumber: 1000
+      roomNumber: 1000,
+      roomStatus: 1
     }
   },
   methods: {
@@ -178,7 +222,6 @@ export default {
 </script>
 <style scoped>
 #main-layout {
-  width: 100vw;
   min-width: 1280px;
 
   display: flex;
@@ -186,6 +229,8 @@ export default {
 
   overflow: auto;
   white-space: nowrap;
+
+  color: var(--main5-color);
 }
 #main-side-layout {
   display: flex;
@@ -193,6 +238,7 @@ export default {
 }
 #main-logo {
   width: 150px;
+  padding-top: 10px;
   margin-bottom: 12px;
 
   cursor: pointer;
@@ -209,8 +255,8 @@ export default {
   flex-direction: column;
   align-items: center;
 
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
+  /* border: 3px solid var(--main5-color);
+  border-radius: 10px; */
 }
 #main-profile-buttons > button {
   margin: 8px;
@@ -221,22 +267,36 @@ export default {
 
   border-radius: 50%;
 }
+#profile-tier-container {
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+}
+#profile-nickname {
+  margin-right: 4px;
+
+  font-size: 1.25rem;
+}
 .btn-primary {
+  color: var(--main1-color);
   background-color: var(--main4-color);
   border: none;
 
   &:hover {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
     border: none;
-    background-color: var(--main2-color);
   }
 }
 .btn-danger {
+  color: var(--main1-color);
   background-color: var(--red-color);
   border: none;
 
   &:hover {
-    background-color: var(--red2-color);
     border: none;
+    background-color: var(--red-hover-color);
   }
 }
 #tier-containers {
@@ -311,17 +371,15 @@ export default {
   align-items: center;
 }
 #my-level {
-  margin-top: 8px;
-  padding: 2px;
+  padding-right: 4px;
 
   display: flex;
   align-items: center;
-
-  aspect-ratio: 1 / 1;
+  /* aspect-ratio: 1 / 1; */
   white-space: nowrap;
 
-  border-radius: 50%;
-  border: 3px solid var(--main5-color);
+  /* border-radius: 50%;
+  border: 3px solid var(--main5-color); */
 }
 #exp-container > .progress {
   margin-left: 4px;
@@ -340,7 +398,8 @@ export default {
   color: var(--main5-color);
 }
 #rank-container {
-  margin-top: 12px;
+  padding: 8px;
+  margin-top: 30px;
 
   display: flex;
   flex-direction: column;
@@ -348,15 +407,48 @@ export default {
   overflow: hidden;
   text-align: center;
 
+  color: var(--white-color);
+  /* background-color: #295402; */
+  background-color: var(--main5-color);
+  /* opacity: 80%; */
+  /* background-color: #feeaeb; */
+  border: 5px inset var(--main1-color);
+  border-style: dotted solid;
   border-radius: 10px;
-  border: 3px solid var(--main5-color);
 }
+
+html {
+  background-color: salmon;
+  background-image: linear-gradient(hsla(0, 0%, 0%, 0.3), hsla(0, 0%, 100%, 0.1)),
+    linear-gradient(left, hsla(0, 0%, 0%, 0.025) 50%, transparent 50%);
+  background-size:
+    100% 100%,
+    1.5em 1.5em;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 6em 3em;
+}
+
 #rank-title {
+  width: 40%;
   padding: 8px;
 
-  font-size: 1.25rem;
+  font-size: 2rem;
+  align-self: center;
+
+  color: var(--main1-color);
+
+  /* border: 3px solid var(--main5-color);
+  border-radius: 10px; */
+}
+#rank-title-icon {
+  width: 72px;
+  font-size: 4rem;
+  color: #f7c52f;
 }
 #rank-list > li {
+  padding: 12px;
+
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -380,11 +472,15 @@ li {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
+  color: var(--main1-color);
 }
 #room-layout {
   padding-top: 32px;
 }
 #main-navigation {
+  margin-bottom: 24px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -396,24 +492,34 @@ li {
 
   font-size: 1.5rem;
 }
+#mypage-button {
+  background-color: var(--main3-color);
+  color: var(--main1-color);
+
+  &:hover {
+    background-color: var(--main3-hover-color);
+    color: var(--main1-color);
+  }
+}
 #main-navigation-left > *,
 #main-navigation-right > * {
-  margin: 0 8px;
+  margin: 0 4px;
 }
 #create-problem-button {
-  color: var(--white-color) !important;
+  color: var(--main1-color) !important;
 }
 .room-menu-button {
   font-size: 1.25rem;
 }
 #main-room-containers {
   padding: 16px;
-  margin-top: 8px;
+  margin-top: 16px;
 
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
+  border-top: 3px solid var(--main5-color);
 }
 #room-navigation {
+  margin-bottom: 16px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -427,13 +533,13 @@ li {
   display: flex;
   align-items: center;
 
-  color: var(--white-color);
+  color: var(--main1-color);
   background-color: var(--main3-color);
   border: none;
   border-radius: 10px;
 
   &:hover {
-    background-color: var(--main2-color);
+    background-color: var(--main3-hover-color);
   }
 }
 #room-number-sort > div {
@@ -449,6 +555,9 @@ li {
 #room-number-search-container {
   display: flex;
   align-items: center;
+
+  border: 1px solid var(--main3-color);
+  border-radius: 10px;
 }
 #room-number-search-input {
   height: 2rem;
@@ -456,7 +565,7 @@ li {
   text-indent: 4px;
 
   outline: none;
-  border: 1px solid var(--main3-color);
+  /* border: 1px solid var(--main3-color); */
 }
 #room-number-search-icon {
   padding: 4px;
@@ -465,7 +574,7 @@ li {
 
   cursor: pointer;
 
-  color: var(--white-color);
+  color: var(--main1-color);
   background-color: var(--main3-color);
   border: none;
 }
@@ -475,12 +584,12 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 #room-refresh-icon {
-  font-size: 3rem;
+  font-size: 2rem;
 
-  color: var(--main3-color);
+  color: var(--main5-color);
 
   &:hover {
-    color: var(--main2-color);
+    color: var(--main5-hover-color);
   }
 }
 #room-list-container {
@@ -492,8 +601,16 @@ input[type='number']::-webkit-inner-spin-button {
   align-self: center;
 }
 .active > a {
-  color: var(--white-color) !important;
+  color: var(--main1-color) !important;
   background-color: var(--main4-color);
   border: none;
+}
+.page-link {
+  width: 100px;
+  margin: 0 20px;
+  color: var(--main5-color) !important;
+}
+#rank-matching-button {
+  cursor: pointer !important;
 }
 </style>
