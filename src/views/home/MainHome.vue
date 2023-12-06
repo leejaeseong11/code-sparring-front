@@ -7,13 +7,43 @@
           <div id="my-profile-container">
             <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
             <div id="profile-tier-container">
+              <div id="tier-container">
+                <div id="rank-tier-help" class="custom-tooltip">
+                  ?<span class="custom-tooltiptext"
+                    >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
+                    각 티어별로 5개의 구간이 있습니다. <br />
+                    (ex. 브론즈5 ~ 브론즈1)<br />
+                    티어의 종류는 다음과 같습니다.<br />
+                    <img
+                      class="rank-tier-icon"
+                      src="/images/rank/bronze.png"
+                      alt="my-tier" />브론즈<br />
+                    <img
+                      class="rank-tier-icon"
+                      src="/images/rank/silver.png"
+                      alt="my-tier" />실버<br />
+                    <img
+                      class="rank-tier-icon"
+                      src="/images/rank/gold.png"
+                      alt="my-tier" />골드<br />
+                    <img
+                      class="rank-tier-icon"
+                      src="/images/rank/platinum.png"
+                      alt="my-tier" />플래티넘<br
+                  /></span>
+                </div>
+                <img
+                  id="my-rank-tier"
+                  class="rank-tier-icon"
+                  src="/images/rank/bronze.png"
+                  alt="my-tier"
+                />
+              </div>
               <div id="profile-nickname">닉네임</div>
-              <!-- <div id="profile-tier">브론즈</div> -->
-              <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
             </div>
             <div id="exp-container">
               <div id="my-level">Lv. 10</div>
-              <div class="progress col-sm-9">
+              <div class="progress col-sm-8">
                 <div
                   class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
                   role="progressbar"
@@ -28,51 +58,10 @@
             </div>
             <div id="main-profile-buttons"></div>
           </div>
-
-          <!-- <div id="tier-containers">
-            <div id="tier-container">
-              <img class="my-rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
-              <div>브론즈 35p</div>
-            </div> 
-            <div id="rank-tier-help" class="custom-tooltip">
-              ?<span class="custom-tooltiptext"
-                >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
-                각 티어별로 5개의 구간이 있습니다. <br />
-                (ex. 브론즈5 ~ 브론즈1)<br />
-                티어의 종류는 다음과 같습니다.<br />
-                <img
-                  class="my-rank-tier-icon"
-                  src="/images/rank/bronze.png"
-                  alt="my-tier" />브론즈<br />
-                <img
-                  class="my-rank-tier-icon"
-                  src="/images/rank/silver.png"
-                  alt="my-tier" />실버<br />
-                <img
-                  class="my-rank-tier-icon"
-                  src="/images/rank/gold.png"
-                  alt="my-tier" />골드<br />
-                <img
-                  class="my-rank-tier-icon"
-                  src="/images/rank/platinum.png"
-                  alt="my-tier" />플래티넘<br
-              /></span>
-            </div>
-          </div> -->
         </div>
-        <button
-          id="rank-matching-button"
-          class="btn btn-danger room-menu-button"
-          style="
-            margin-top: 24px;
-            padding: 20px;
-            font-size: 2rem;
-            background-color: var(--red-color);
-            color: var(--main1-color);
-          "
-        >
+        <button id="rank-matching-button" class="btn btn-danger room-menu-button">
           랭 크
-          <img id="rank-title-icon" src="/images/swords.png" alt="" />
+          <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
           매 칭
         </button>
         <div id="rank-container">
@@ -131,7 +120,7 @@
           <div id="room-navigation">
             <div id="all-room-title">
               전체 게임방
-              <button class="btn">
+              <button class="btn" id="room-refresh-button">
                 <!-- <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" /> -->
                 <img src="/images/refresh.png" style="width: 40px" alt="" />
               </button>
@@ -233,13 +222,13 @@ export default {
   color: var(--main5-color);
 }
 #main-side-layout {
+  min-width: 260px;
+
   display: flex;
   flex-direction: column;
 }
 #main-logo {
   width: 150px;
-  padding-top: 10px;
-  margin-bottom: 12px;
 
   cursor: pointer;
 }
@@ -249,34 +238,110 @@ export default {
   align-items: center;
 }
 #my-profile-container {
-  min-width: 240px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  /* border: 3px solid var(--main5-color);
-  border-radius: 10px; */
-}
-#main-profile-buttons > button {
-  margin: 8px;
 }
 #profile-image {
   width: 50%;
-  margin: 8px;
+  margin: 12px;
 
   border-radius: 50%;
 }
 #profile-tier-container {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 
   display: flex;
   align-items: center;
 }
+#tier-container {
+  display: flex;
+  align-items: flex-end;
+}
+#rank-tier-help {
+  width: 1rem;
+  height: 1rem;
+
+  display: inline-block;
+
+  text-align: center;
+  font-size: 0.625rem;
+
+  cursor: pointer;
+
+  color: var(--main2-color);
+  border: 1px solid var(--main2-color);
+  border-radius: 50%;
+}
+.custom-tooltip {
+  position: relative;
+}
+.custom-tooltip .custom-tooltiptext {
+  width: 260px;
+  padding: 8px 12px;
+
+  visibility: hidden;
+
+  position: absolute;
+  z-index: 1;
+  top: -100px;
+  left: 140%;
+
+  text-align: left;
+
+  border-radius: 6px;
+  color: var(--white-color);
+  background-color: var(--black-color);
+}
+
+.custom-tooltip:hover .custom-tooltiptext {
+  visibility: visible;
+}
+.rank-tier-icon {
+  width: 36px;
+  margin-right: 8px;
+}
+#my-rank-tier {
+  width: 36px;
+  margin: 0 4px 0 -4px;
+}
 #profile-nickname {
-  margin-right: 4px;
+  margin-left: 4px;
 
   font-size: 1.25rem;
+}
+#rank-tier-hlep {
+  justify-self: flex-end;
+}
+
+#exp-container {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+}
+#my-level {
+  padding-right: 4px;
+
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+#exp-container > .progress {
+  margin-left: 4px;
+  min-width: 172px;
+  height: 28px;
+
+  position: relative;
+
+  background-color: var(--main2-color);
+}
+#my-exp {
+  position: absolute;
+  right: 0;
+  left: 0;
+
+  color: var(--main5-color);
 }
 .btn-primary {
   color: var(--main1-color);
@@ -299,104 +364,35 @@ export default {
     background-color: var(--red-hover-color);
   }
 }
-#tier-containers {
-  display: flex;
-  align-items: flex-end;
-}
-#tier-container {
-  padding: 4px 12px;
-  margin-top: 8px;
+#rank-matching-button {
+  margin-top: 24px;
+  padding: 20px;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  white-space: nowrap;
-
-  border-radius: 10px;
-  border: 3px solid var(--main5-color);
-}
-#rank-tier-help {
-  width: 1.2rem;
-  height: 1.2rem;
-  margin-left: 4px;
-
-  display: inline-block;
-
-  text-align: center;
-  font-size: 0.75rem;
+  font-size: 2rem;
 
   cursor: pointer;
+  transition: transform 0.5s;
 
-  color: var(--main2-color);
-  border: 1px solid var(--main2-color);
-  border-radius: 50%;
+  background-color: var(--red-color);
+  color: var(--main1-color);
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &:hover #rank-title-icon {
+    color: red;
+    transform: rotate(360deg);
+  }
+}
+#rank-title-icon {
+  width: 2rem;
+
+  &:hover {
+    transform: rotate(360deg);
+  }
 }
 
-.custom-tooltip {
-  position: relative;
-}
-
-.custom-tooltip .custom-tooltiptext {
-  width: 260px;
-  padding: 8px 12px;
-
-  visibility: hidden;
-
-  position: absolute;
-  z-index: 1;
-  top: -100px;
-  left: 140%;
-
-  text-align: left;
-
-  border-radius: 6px;
-  color: var(--white-color);
-  background-color: var(--black-color);
-}
-
-.custom-tooltip:hover .custom-tooltiptext {
-  visibility: visible;
-}
-
-#rank-tier-hlep {
-  justify-self: flex-end;
-}
-.my-rank-tier-icon {
-  width: 36px;
-  margin-right: 8px;
-}
-#exp-container {
-  display: flex;
-  align-items: center;
-}
-#my-level {
-  padding-right: 4px;
-
-  display: flex;
-  align-items: center;
-  /* aspect-ratio: 1 / 1; */
-  white-space: nowrap;
-
-  /* border-radius: 50%;
-  border: 3px solid var(--main5-color); */
-}
-#exp-container > .progress {
-  margin-left: 4px;
-  min-width: 200px;
-  height: 28px;
-
-  position: relative;
-
-  background-color: var(--main2-color);
-}
-#my-exp {
-  position: absolute;
-  right: 0;
-  left: 0;
-
-  color: var(--main5-color);
-}
 #rank-container {
   padding: 8px;
   margin-top: 30px;
@@ -417,20 +413,7 @@ export default {
   border-radius: 10px;
 }
 
-html {
-  background-color: salmon;
-  background-image: linear-gradient(hsla(0, 0%, 0%, 0.3), hsla(0, 0%, 100%, 0.1)),
-    linear-gradient(left, hsla(0, 0%, 0%, 0.025) 50%, transparent 50%);
-  background-size:
-    100% 100%,
-    1.5em 1.5em;
-  box-sizing: border-box;
-  min-height: 100%;
-  padding: 6em 3em;
-}
-
 #rank-title {
-  width: 40%;
   padding: 8px;
 
   font-size: 2rem;
@@ -441,11 +424,7 @@ html {
   /* border: 3px solid var(--main5-color);
   border-radius: 10px; */
 }
-#rank-title-icon {
-  width: 72px;
-  font-size: 4rem;
-  color: #f7c52f;
-}
+
 #rank-list > li {
   padding: 12px;
 
@@ -610,7 +589,12 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0 20px;
   color: var(--main5-color) !important;
 }
-#rank-matching-button {
-  cursor: pointer !important;
+#room-refresh-button {
+  cursor: pointer;
+  transition: transform 0.5s;
+  &:hover {
+    color: red;
+    transform: rotate(180deg);
+  }
 }
 </style>
