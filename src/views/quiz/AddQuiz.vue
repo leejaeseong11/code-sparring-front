@@ -63,7 +63,7 @@
           >ex. 리턴 타입이 String인 경우, "de"<br /><br
         /></span>
 
-        테스트케이스 10개 미만은 문제 제출이 불가합니다.<br />또한 테스트케이스에 문제가 있을 경우
+        테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에 문제가 있을 경우
         오류가 발생할 수 있으니 주의하세요.
       </div>
     </div>
@@ -750,6 +750,12 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   font-size: x-large;
   cursor: pointer;
   top: -7px;
+  transition: transform 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+.outTestcase:hover {
+  /* transform: rotate(360deg); */
 }
 
 .testcaseWarn {
