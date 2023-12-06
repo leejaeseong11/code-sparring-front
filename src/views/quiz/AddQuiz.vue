@@ -2,23 +2,36 @@
   <header>
     <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
 
+    <div id="popup" class="popup">
+      <div class="popup-content"></div>
+    </div>
+
     <div class="headerBar">
       <button class="addQuizEx" @mouseover="onHelp" @mouseleave="offHelp" id="helpBt">?</button
       >&nbsp;&nbsp;문제 추가하기
     </div>
   </header>
 
-  <div id="popup" class="popup">
-    <div class="popup-content"></div>
-  </div>
-
   <div v-if="this.popup" class="testcasePopup" @click="offWarning" id="testcasePopup">
     <div class="popupBt">
-      <div class="outTestcase" @click="offPopup" id="outTestcase">x</div>
+      <div id="outTestcase">
+        <img
+          src="../../../public/images/addTestcaseOut.png"
+          @click="offPopup"
+          class="outTestcase"
+        />
+      </div>
 
       <div>
-        <button class="testcaseWarn" @click="warning">!</button>
-        <button class="testcaseHelp" id="testcaseHelp" @mouseover="onTcHelp" @mouseleave="offTcHelp">?</button>
+        <button class="testcaseWarn" @mouseover="warning" @mouseleave="warning">!</button>
+        <button
+          class="testcaseHelp"
+          id="testcaseHelp"
+          @mouseover="onTcHelp"
+          @mouseleave="offTcHelp"
+        >
+          ?
+        </button>
       </div>
     </div>
 
@@ -48,7 +61,14 @@
         </div>
       </div>
       <div v-if="this.testcaseWarning" class="testcaseWarning">
-        <div style="background-color: var(--red-color); height: 45px; line-height: 45px; color: var(--main1-color); ">
+        <div
+          style="
+            background-color: var(--red-color);
+            height: 45px;
+            line-height: 45px;
+            color: var(--main1-color);
+          "
+        >
           주의사항
         </div>
         <br />
@@ -63,8 +83,8 @@
           >ex. 리턴 타입이 String인 경우, "de"<br /><br
         /></span>
 
-        테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에 문제가 있을 경우
-        오류가 발생할 수 있으니 주의하세요.
+        테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에
+        문제가 있을 경우 오류가 발생할 수 있으니 주의하세요.
       </div>
     </div>
   </div>
@@ -136,7 +156,7 @@
       </button>
     </div>
   </div>
-  <div v-if="popup" class="backOff"></div>
+  <div v-if="popup" class="backOff" @click="clickBackOff"></div>
 </template>
 <script>
 export default {
@@ -229,9 +249,6 @@ export default {
       const console = document.getElementById('console')
       console.innerHTML = this.consoleCode
     },
-    lock(e) {
-      // e.target.blur()
-    },
     updateFileName(e) {
       const input = e.target
       const fileNameDiv = document.querySelector('.fileName')
@@ -276,6 +293,10 @@ export default {
       if (this.testcaseWarning) {
         return
       }
+      document.body.style.overflow = 'scroll'
+      this.popup = false
+    },
+    clickBackOff() {
       document.body.style.overflow = 'scroll'
       this.popup = false
     },
@@ -355,8 +376,8 @@ export default {
         return
       }
 
-      const tcpopup=document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor='#A3A4B1'
+      const tcpopup = document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor = '#A3A4B1'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
@@ -387,8 +408,8 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const tcpopup=document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor='var(--main1-color)'
+      const tcpopup = document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor = 'var(--main1-color)'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
@@ -409,20 +430,20 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='default'
-      bt2.style.cursor='default'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'default'
+      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='pointer'
-      bt2.style.cursor='pointer'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'pointer'
+      bt2.style.cursor = 'pointer'
     }
   }
 }
@@ -503,14 +524,20 @@ textarea:focus {
 }
 
 .addTitle {
-  width: 100%;
+  width: 98%;
+  left: 1%;
+  border: 15px solid;
+  border-radius: 15px;
+  height: 100%;
+  margin-top: 5px;
 }
 
 .titleInput {
   border: none;
   color: #eaebfe;
   width: 95%;
-  margin-left: 20px;
+  /* margin-left: 20px; */
+  height: 90%;
   font-size: large;
 }
 
@@ -706,8 +733,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .popup {
-  top: 100px;
-  height: 100%;
+  /* top: 100px; */
+  height: 1000%;
   background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -749,13 +776,12 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   color: var(--main5-color);
   font-size: x-large;
   cursor: pointer;
-  top: -7px;
-  transition: transform 0.3s ease-in-out;
-  transform-origin: center;
-}
-
-.outTestcase:hover {
-  /* transform: rotate(360deg); */
+  top: 0px;
+  transition: transform 0.5s;
+  &:hover {
+    color: red;
+    transform: rotate(180deg);
+  }
 }
 
 .testcaseWarn {
@@ -764,7 +790,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseWarn:hover {
-  background-color: var(--red-hover-color); 
+  background-color: var(--red-hover-color);
 }
 
 .popupBt {
@@ -833,12 +859,14 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .backOff {
-  width: 120%;
+  width: 200%;
   height: 200%;
   display: fixed;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
   top: 0%;
+  left: 0%;
+  cursor: pointer;
 }
 
 .addInputBt:hover {
