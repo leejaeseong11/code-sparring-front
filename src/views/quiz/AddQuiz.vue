@@ -48,18 +48,18 @@
         </div>
       </div>
       <div v-if="this.testcaseWarning" class="testcaseWarning">
-        <div style="background-color: #7c354c; height: 45px; line-height: 45px; color: #eaebfe">
+        <div style="background-color: var(--red-color); height: 45px; line-height: 45px; color: var(--main1-color); ">
           주의사항
         </div>
         <br />
         [Input] 아래 예시와 같이 선언 형식으로 작성하세요.<br />
-        <span style="color: #7c354c; background-color: #eaebfe"
+        <span style="color: var(--red-color); background-color: var(--main1-color)"
           >int a=1; String[] str={"abc", "de", "f"}; &nbsp;🙆<br />
           int a=1, String [] str={abc, de, f} &nbsp;🙅 </span
         ><br /><br />
 
         [Output] 예시와 같이 리턴 타입을 준수하여 작성하세요.<br />
-        <span style="color: #7c354c; background-color: #eaebfe"
+        <span style="color: var(--red-color); background-color: var(--main1-color)"
           >ex. 리턴 타입이 String인 경우, "de"<br /><br
         /></span>
 
@@ -136,7 +136,7 @@
       </button>
     </div>
   </div>
-  <div v-if="popup" class="backOff" id="backOff"></div>
+  <div v-if="popup" class="backOff"></div>
 </template>
 <script>
 export default {
@@ -354,8 +354,9 @@ export default {
       if (this.testcaseWarning) {
         return
       }
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.57)'
+
+      const tcpopup=document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor='#A3A4B1'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
@@ -386,8 +387,8 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.7)'
+      const tcpopup=document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor='var(--main1-color)'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
@@ -700,11 +701,21 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .popupInTc {
   display: none;
   position: fixed;
-  top: 0;
   left: 0;
   width: 100%;
+}
+
+.popup {
+  top: 100px;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.popupInTc {
+  top: 150px;
+  width: 71%;
+  left: 14%;
+  height: 68%;
 }
 
 .popup-content,
