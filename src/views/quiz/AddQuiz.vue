@@ -90,7 +90,13 @@
   </div>
 
   <div class="addTitle">
-    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" @keyup="titleText" />
+    <input
+      class="titleInput"
+      placeholder="문제 타이틀을 입력하세요"
+      id="title"
+      v-model="title"
+      @keyup="titleText"
+    />
   </div>
   <div class="addQuizBox">
     <div class="quizInfo">
@@ -161,6 +167,7 @@
   <div v-if="popup" class="backOff" @click="clickBackOff"></div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   name: 'addQuiz',
   data() {
@@ -262,7 +269,7 @@ export default {
       }
     },
     addInputBtClick() {
-      if(this.inputCnt ==5 ) {
+      if (this.inputCnt == 5) {
         alert('테스트케이스 입력값 종류는 최대 5개입니다')
         return
       }
@@ -307,38 +314,38 @@ export default {
       this.popup = false
     },
     titleText() {
-      const title=document.getElementById('title')
-      const maxLength=5
-      const currentLength=title.value.length
+      const title = document.getElementById('title')
+      const maxLength = 5
+      const currentLength = title.value.length
 
-      if(currentLength==maxLength+1) {
-        title.value=title.value.slice(0, maxLength)
-        this.title=title.value
-      } else if(currentLength>maxLength+1) {
+      if (currentLength == maxLength + 1) {
+        title.value = title.value.slice(0, maxLength)
+        this.title = title.value
+      } else if (currentLength > maxLength + 1) {
         alert('제목의 글자 수는 50자 이하입니다')
-        title.value=title.value.slice(0, maxLength)
-        this.title=title.value
+        title.value = title.value.slice(0, maxLength)
+        this.title = title.value
       }
     },
     updateByteInfo() {
-    const info = document.getElementById('info')
-    const byteInfo = document.getElementById('byteInfo')
-    const maxLength = 10000
+      const info = document.getElementById('info')
+      const byteInfo = document.getElementById('byteInfo')
+      const maxLength = 10000
 
-    const currentLength = info.value.length
-    byteInfo.innerHTML = currentLength + ' / ' + maxLength + ' 자'
+      const currentLength = info.value.length
+      byteInfo.innerHTML = currentLength + ' / ' + maxLength + ' 자'
 
-    if (currentLength > maxLength) {
-      byteInfo.style.color = 'var(--red-hover-color)'
-      info.value=info.value.slice(0, maxLength)
-      byteInfo.innerHTML =maxLength + ' / ' + maxLength + ' 자'
-      this.infoInput=info.value
-    } else if (currentLength == maxLength) {
-      byteInfo.style.color = 'var(--main3-color)'
-    } else {
-      byteInfo.style.color = 'rgba(124, 124, 153, 0.3)'
-    }
-  },
+      if (currentLength > maxLength) {
+        byteInfo.style.color = 'var(--red-hover-color)'
+        info.value = info.value.slice(0, maxLength)
+        byteInfo.innerHTML = maxLength + ' / ' + maxLength + ' 자'
+        this.infoInput = info.value
+      } else if (currentLength == maxLength) {
+        byteInfo.style.color = 'var(--main3-color)'
+      } else {
+        byteInfo.style.color = 'rgba(124, 124, 153, 0.3)'
+      }
+    },
     cancleBtClick() {
       alert('문제 추가를 취소합니다')
       location.href = '/'
@@ -407,8 +414,54 @@ export default {
       this.consoleCode = html
     },
     addQuizBtClick() {
-      alert('문제가 추가되었습니다')
-      location.href = '/'
+      let data = {
+        quizTitle: '방금올린걸수정해볼게요',
+        quizContent: '수정테스트랍니당',
+        quizInput: '인풋이랍니당',
+        quizOutput: '아웃풋이다/!?ㅋ',
+        outputType: 'Double',
+        memberNo: 1,
+        testcaseDTOList: [
+          {
+            testcaseOutput: '1임!',
+            testcaseInputDTOList: [
+              {
+                inputVar: 'String[] s1',
+                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
+              },
+              {
+                inputVar: 'Double',
+                testcaseInput: 3.889
+              }
+            ]
+          },
+          {
+            testcaseOutput: '2번째아!',
+            testcaseInputDTOList: [
+              {
+                inputVar: 'String[] s1',
+                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
+              },
+              {
+                inputVar: 'Double',
+                testcaseInput: 3.889
+              }
+            ]
+          }
+        ]
+      }
+
+      axios
+        .post('http://192.168.1.67:8080/codesparring/quiz', JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          alert('?')
+          alert(res)
+          location.href = '/'
+        })
     },
     onTcHelp() {
       if (this.testcaseWarning) {
