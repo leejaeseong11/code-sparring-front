@@ -10,6 +10,10 @@ body {
   --main5-hover-color: #345376;
   --red-color: #7c354c;
   --red-hover-color: #965d6f;
+  --yellow-rank-color: #ffcd69;
+  --red-rank-color: #ff7d97;
+  --blue-rank-color: #33d6f5;
+
   --black-color: #000000;
   --white-color: #ffffff;
 }

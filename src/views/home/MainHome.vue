@@ -37,7 +37,7 @@
                   alt="my-tier"
                 />
               </div>
-              <div id="profile-nickname">닉네임이길어지면어떨까요</div>
+              <div id="profile-nickname">닉네임</div>
             </div>
             <div id="exp-container">
               <div id="my-level">Lv. 10</div>
@@ -66,17 +66,17 @@
           <div id="rank-title">순 위</div>
           <ol id="rank-list">
             <li>
-              <div class="rank-number" style="color: #ffcd69">1위</div>
+              <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
-              <div class="rank-number" style="color: #ff7d97">2위</div>
+              <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
-              <div class="rank-number" style="color: #33d6f5">3위</div>
+              <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
               <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
@@ -98,19 +98,19 @@
       <div id="room-layout" class="col">
         <div id="main-navigation">
           <div id="main-navigation-left">
-            <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
+            <button class="btn btn-primary main-menu-button" @click="createWaitingRoomclickHandler">
               방 만들기
             </button>
             <router-link
               id="create-problem-button"
-              class="btn btn-primary room-menu-button"
+              class="btn btn-primary main-menu-button"
               to="quiz/add"
               >문제 만들기</router-link
             >
           </div>
           <div id="main-navigation-right">
-            <button id="mypage-button" class="btn">마이페이지</button>
-            <button id="logout-button" class="btn btn-danger">종료</button>
+            <button id="mypage-button" class="btn main-menu-button">마이페이지</button>
+            <button id="logout-button" class="btn btn-danger main-menu-button">종료</button>
           </div>
         </div>
         <div id="main-room-containers">
@@ -118,23 +118,12 @@
             <div id="all-room-title">
               전체 게임방
               <button class="btn" id="room-refresh-button">
-                <!-- <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" /> -->
                 <img src="/images/refresh.png" style="width: 40px" alt="" />
               </button>
             </div>
-            <div id="room-buttons">
-              <!-- <button id="room-number-sort" class="btn">
-                <div>방 번호</div>
-                <font-awesome-icon v-if="roomNumberOrder == 'desc'" :icon="['fa', 'caret-down']" />
-                <font-awesome-icon v-if="roomNumberOrder == 'asc'" :icon="['fa', 'caret-up']" />
-              </button> -->
-              <div id="room-number-search-container">
-                <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
-                <font-awesome-icon
-                  id="room-number-search-icon"
-                  :icon="['fa', 'magnifying-glass']"
-                />
-              </div>
+            <div id="room-number-search-container">
+              <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+              <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
             </div>
           </div>
           <div id="room-list-container">
@@ -150,16 +139,10 @@
               <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
               <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
             </div>
-            <nav aria-label="...">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" tabindex="-1" aria-disabled="true">◀</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="#">▶</a>
-                </li>
-              </ul>
-            </nav>
+          </div>
+          <div id="pagenation-button-container">
+            <button class="btn pagenation-button">◀</button>
+            <button class="btn pagenation-button">▶</button>
           </div>
         </div>
       </div>
@@ -402,7 +385,6 @@ export default {
 #rank-title-icon {
   width: 2rem;
 }
-/* todo tomorrow */
 #rank-container {
   padding: 8px;
   margin-top: 34px;
@@ -414,10 +396,7 @@ export default {
   text-align: center;
 
   color: var(--white-color);
-  /* background-color: #295402; */
   background-color: var(--main5-color);
-  /* opacity: 80%; */
-  /* background-color: #feeaeb; */
   border: 5px inset var(--main1-color);
   border-style: dotted solid;
   border-radius: 10px;
@@ -430,9 +409,6 @@ export default {
   align-self: center;
 
   color: var(--main1-color);
-
-  /* border: 3px solid var(--main5-color);
-  border-radius: 10px; */
 }
 
 #rank-list > li {
@@ -443,7 +419,7 @@ export default {
   align-items: flex-start;
 }
 #rank-list > li > * {
-  margin: 4px 4px;
+  margin: 4px;
 }
 .rank-number {
   width: 24px;
@@ -497,7 +473,7 @@ li {
 #create-problem-button {
   color: var(--main1-color) !important;
 }
-.room-menu-button {
+.main-menu-button {
   font-size: 1.25rem;
 }
 #main-room-containers {
@@ -516,55 +492,33 @@ li {
 #all-room-title {
   font-size: 1.5rem;
 }
-#room-number-sort {
-  padding: 6px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-
-  color: var(--main1-color);
-  background-color: var(--main3-color);
-  border: none;
-  border-radius: 10px;
-
-  &:hover {
-    background-color: var(--main3-hover-color);
-  }
-}
-#room-number-sort > div {
-  margin-right: 8px;
-}
-#room-buttons {
-  display: flex;
-  align-items: center;
-}
-#room-buttons > * {
-  margin: 0 8px;
-}
 #room-number-search-container {
+  margin-right: 8px;
+
   display: flex;
   align-items: center;
 
+  background-color: var(--white-color);
   border: 1px solid var(--main3-color);
-  border-radius: 10px;
+  border-radius: 20px;
 }
 #room-number-search-input {
   height: 2rem;
 
-  text-indent: 4px;
+  text-indent: 14px;
 
-  outline: none;
-  /* border: 1px solid var(--main3-color); */
+  border: none;
+  border-radius: 20px;
 }
 #room-number-search-icon {
-  padding: 4px;
+  padding: 8px 12px 8px 0;
 
   font-size: 1.5rem;
 
   cursor: pointer;
 
-  color: var(--main1-color);
-  background-color: var(--main3-color);
+  color: var(--black-color);
+  opacity: 50%;
   border: none;
 }
 input[type='number']::-webkit-outer-spin-button,
@@ -572,38 +526,38 @@ input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-#room-refresh-icon {
-  font-size: 2rem;
-
-  color: var(--main5-color);
-
+#room-refresh-button {
+  cursor: pointer;
+  transition: transform 0.5s;
   &:hover {
-    color: var(--main5-hover-color);
+    transform: scale(1.5) rotate(180deg);
   }
 }
 #room-list-container {
   display: flex;
   flex-direction: column;
 }
-
 #room-list-container > nav {
   align-self: center;
 }
-.active > a {
-  color: var(--main1-color) !important;
-  background-color: var(--main4-color);
-  border: none;
+#pagenation-button-container {
+  display: flex;
+  justify-content: center;
 }
-.page-link {
-  width: 100px;
-  margin: 0 20px;
-  color: var(--main5-color) !important;
-}
-#room-refresh-button {
-  cursor: pointer;
-  transition: transform 0.5s;
+.pagenation-button {
+  width: 120px;
+  margin: 0 12px;
+
+  font-size: 1.125rem;
+
+  background-color: var(--white-color);
+  border: 3px solid var(--main5-color);
+  transition: 0.25s;
+
   &:hover {
-    transform: scale(1.5) rotate(180deg);
+    background-color: var(--main2-color);
+    border: 3px solid var(--main5-color);
+    transform: scale(1.25);
   }
 }
 </style>
