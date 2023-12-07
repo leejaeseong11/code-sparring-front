@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container">
+  <main>
     <div class="header">
       <div class="header-text">관리자페이지</div>
     </div>
@@ -97,7 +97,7 @@ export default {
   border: 5px solid var(--main5-color);
   width: 98%;
   margin-left: 1%;
-  margin-top: 10px;
+  margin-top: 20px;
   border-radius: 18px;
 }
 
