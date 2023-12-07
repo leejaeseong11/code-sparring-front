@@ -5,18 +5,20 @@
     <form class="signup" v-on:submit.prevent="signupFormSubmitHandler">
         <div class="content">
             <section>
+                <div class="divImg">
+                </div>
                 <div class="info" id="info-profileImg">
                     <div id="profile-input">
+                        <img :src="'images/icon/' + (memberProfileImg) + '.png'" :alt="'Icon ' + (memberProfileImg)" class="profile-icon"/>
                         <button @click="openProfilePopup">변경</button>
-                        <ProfileImgPopup v-if="isProfilePopupOpen" :pImg="memberProfileImg"
-                        @close="closeProfilePopup"/>
+                        <ProfileImgPopup v-if="isProfilePopupOpen" 
+                        @selected="handleSelectedProfileImage" @close="closeProfilePopup"/>        
                     </div>
-                    <div class="error-msg"></div>
                 </div>
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="id" id="i" required v-model="c.id" placeholder="아이디 입력 (6~20자)"
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (6~20자)"
                             @input="validateId" @focus="clearAllErrMsg" />
                         <button id="id-check" @click="btIdDupchkClickHandler">중복 확인</button>
                     </div>
@@ -27,7 +29,7 @@
                 </div>
 
                 <div class="info" id="info-pwd">
-                    <input class="box" type="password" name="pwd" id="p" required v-model="c.pwd" ref="p"
+                    <input class="box" type="password" name="pwd" id="p" v-model="c.pwd" ref="p"
                         placeholder="비밀번호 입력 (문자, 숫자, 특수문자 포함 8~20자)" @input="checkPwdValidHandler"
                         @focus="clearAllErrMsg" />
                     <div class="error-msg"
@@ -37,7 +39,7 @@
                 </div>
 
                 <div class="info" id="info-pwdRe">
-                    <input class="box" type="password" id="pwdRe" required v-model="pwdRe" @input="checkPwdReHandler"
+                    <input class="box" type="password" id="pwdRe" v-model="pwdRe" @input="checkPwdReHandler"
                         placeholder="비밀번호 재입력" @focus="clearAllErrMsg" />
                     <div class="error-msg"
                         :class="{ 'invalid': errMsg.pwdRe.invalid, 'fail': errMsg.pwdRe.fail, 'success': errMsg.pwdRe.success }">
@@ -48,7 +50,7 @@
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="nick" id="n" required v-model="c.nick"
+                        <input class="box" type="text" name="nick" id="n" v-model="c.nick"
                             placeholder="닉네임 입력 (추후변경가능)" @input="validateNick" @focus="clearAllErrMsg" />
                         <button id="nick-check" @click="btNickDupchkClickHandler">중복 확인</button>
                     </div>
@@ -58,7 +60,7 @@
                     </div>
                 </div>
                 <div class="info" id="info-introduction">
-                    <textarea class="box" type="text" name="intro" id="intro" required v-model="intro"
+                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro"
                         placeholder="소개(자신에 대해 알려주세요)" @focus="clearAllErrMsg"></textarea>
                 </div>
             </section>
@@ -148,6 +150,10 @@ export default {
         closeProfilePopup() {
             this.isProfilePopupOpen = false;
         },
+        handleSelectedProfileImage(index) {
+            this.memberProfileImg = index;
+            this.closeProfilePopup();
+        },
         gotoMain() {
             location.href = '/'
         },
@@ -177,8 +183,9 @@ export default {
         btIdDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupId`
             console.log(1)
-            axios.post(url, `memberId=${this.c.id}`)
-            console.log(2)
+            axios
+                .post(url, `memberId=${this.c.id}`)
+            // console.log(2)
                 .then(response => {
                     const isDuplicate = response.data;
                     if (isDuplicate) {
@@ -331,14 +338,13 @@ button:focus-visible {
 
 button:hover {
     outline: 0px solid;
-    background-color: var(--main5-color);
+    background-color: var(--main4-hover-color);
 }
 
 button:disabled {
-    background-color: #d3d3d3;
-    color: #f0f0f0;
+    background-color: var(--main1-color);
+    color: var(--main2-color);
 }
-
 
 .info {
     margin-bottom: 22px;
@@ -374,7 +380,7 @@ button:disabled {
 }
 
 .info .error-msg.success {
-    color: green;
+    color:green;
 }
 
 
@@ -525,7 +531,7 @@ button#submit {
 
 .exist a:hover {
     text-decoration: none;
-    color: var(--main5-color) !important;
+    color: var(--main4-hover-color) !important;
 }
 
 /* 프로필 이미지*/
@@ -614,5 +620,9 @@ section {
         width: 85vw;
         min-width: 380px;
     }
+}
+
+.divImg>img{
+    width: 100px;
 }
 </style>
