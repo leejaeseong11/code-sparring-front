@@ -194,7 +194,7 @@ export default {
   display: flex;
   justify-content: space-around;
 
-  overflow: auto;
+  overflow: visible;
   white-space: nowrap;
 
   color: var(--main5-color);
@@ -321,12 +321,18 @@ export default {
 
   color: var(--main5-color);
 }
+
 .btn-primary {
   color: var(--main1-color);
   background-color: var(--main4-color);
   border: none;
 
   &:hover {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
+    border: none;
+  }
+  &:active {
     color: var(--main1-color);
     background-color: var(--main4-hover-color);
     border: none;
@@ -341,6 +347,10 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+  &:active {
+    color: var(--main1-color);
+    background-color: var(--red-hover-color);
+  }
 }
 #rank-matching-button {
   margin-top: 24px;
@@ -349,29 +359,24 @@ export default {
   font-size: 1.75rem;
 
   cursor: pointer;
-  transition: transform 0.1s linear infinite;
+  transition: transform 0.5s;
 
   background-color: var(--red-color);
   color: var(--main1-color);
 
   &:hover {
     background-color: var(--red-hover-color);
+    transform: scale(1.2);
   }
 }
+#rank-title-icon {
+  transition: transform 0.5s;
+}
+
 #rank-matching-button:hover #rank-title-icon {
-  animation-name: rotate;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+  transform: rotate(180deg);
 }
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+
 #rank-title-icon {
   width: 2rem;
 }
@@ -448,12 +453,16 @@ li {
   font-size: 1.5rem;
 }
 #mypage-button {
+  border: none;
   background-color: var(--main3-color);
   color: var(--main1-color);
 
   &:hover {
     background-color: var(--main3-hover-color);
     color: var(--main1-color);
+  }
+  &:active {
+    border: none;
   }
 }
 #main-navigation-left > *,
@@ -519,8 +528,14 @@ input[type='number']::-webkit-inner-spin-button {
 #room-refresh-button {
   cursor: pointer;
   transition: transform 0.5s;
+
+  border: none;
+
   &:hover {
-    transform: scale(1.5) rotate(180deg);
+    transform: rotate(180deg);
+  }
+  &:active {
+    border: none;
   }
 }
 #room-list-container {
@@ -547,7 +562,6 @@ input[type='number']::-webkit-inner-spin-button {
   &:hover {
     background-color: var(--main2-color);
     border: 3px solid var(--main5-color);
-    transform: scale(1.25);
   }
 }
 </style>

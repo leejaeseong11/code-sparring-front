@@ -89,6 +89,10 @@ export default {
     border: none;
     background-color: var(--main4-hover-color);
   }
+  &:active {
+    border: none;
+    background-color: var(--main4-hover-color);
+  }
 }
 .enter-button {
   width: 55px;
@@ -97,6 +101,10 @@ export default {
   background-color: var(--red-color);
 
   &:hover {
+    border: none;
+    background-color: var(--red-hover-color);
+  }
+  &:active {
     border: none;
     background-color: var(--red-hover-color);
   }
