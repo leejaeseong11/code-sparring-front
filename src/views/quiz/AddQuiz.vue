@@ -16,7 +16,7 @@
     <div class="popupBt">
       <div id="outTestcase">
         <img
-          src="../../../public/images/addTestcaseOut.png"
+          src="../../../public/images/quiz/addTestcaseOut.png"
           @click="offPopup"
           class="outTestcase"
         />
