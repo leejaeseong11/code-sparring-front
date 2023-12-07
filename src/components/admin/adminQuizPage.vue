@@ -14,6 +14,6 @@ export default {
 <style scoped>
 *{
     color: var(--main5-color);
-    margin: 2%;
+    padding: 2%;
 }
 </style>

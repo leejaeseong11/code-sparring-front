@@ -815,6 +815,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   /* top: 100px; */
   height: 1000%;
   background-color: rgba(0, 0, 0, 0.3);
+  z-index: 2;
 }
 
 .popupInTc {
@@ -847,7 +848,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   border: 7px solid;
   border-radius: 25px;
   border-color: var(--main5-color);
-  z-index: 1000;
+  z-index: 3;
 }
 
 .outTestcase {
@@ -866,6 +867,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcaseWarn {
   background-color: var(--red-color);
   margin-right: 5px;
+  position: absolute;
 }
 
 .testcaseWarn:hover {
@@ -946,6 +948,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   top: 0%;
   left: 0%;
   cursor: pointer;
+  z-index: 2;
+  margin-left: -100px;
 }
 
 .addInputBt:hover {

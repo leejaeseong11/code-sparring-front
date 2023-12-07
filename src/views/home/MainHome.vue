@@ -206,6 +206,7 @@ export default {
 
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 #main-profile-containers {
   display: flex;
@@ -297,6 +298,7 @@ export default {
 
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 #my-level {
   padding-right: 4px;
@@ -353,6 +355,7 @@ export default {
   }
 }
 #rank-matching-button {
+  width: 84%;
   margin-top: 24px;
   padding: 16px;
 
@@ -364,8 +367,9 @@ export default {
   background-color: var(--red-color);
   color: var(--main1-color);
 
+
   &:hover {
-    background-color: var(--red-hover-color);
+    /* background-color: var(--red-hover-color); */
     transform: scale(1.2);
   }
 }
@@ -381,6 +385,7 @@ export default {
   width: 2rem;
 }
 #rank-container {
+  width: 100%;
   padding: 8px;
   margin-top: 24px;
 
