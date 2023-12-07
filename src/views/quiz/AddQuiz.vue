@@ -90,7 +90,7 @@
   </div>
 
   <div class="addTitle">
-    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" />
+    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" @keyup="titleText" />
   </div>
   <div class="addQuizBox">
     <div class="quizInfo">
@@ -100,7 +100,9 @@
           placeholder="문제를 설명하세요"
           id="info"
           v-model="info"
+          @keyup="updateByteInfo()"
         ></textarea>
+        <div class="byte-info" id="byteInfo">0 / 10000 자</div>
       </div>
       <div class="addInput">
         Input&nbsp;&nbsp;
@@ -260,6 +262,10 @@ export default {
       }
     },
     addInputBtClick() {
+      if(this.inputCnt ==5 ) {
+        alert('테스트케이스 입력값 종류는 최대 5개입니다')
+        return
+      }
       const inputTable = document.getElementById('inputTable')
       const newRow = inputTable.insertRow()
       newRow.style.height = '36px'
@@ -300,6 +306,39 @@ export default {
       document.body.style.overflow = 'scroll'
       this.popup = false
     },
+    titleText() {
+      const title=document.getElementById('title')
+      const maxLength=5
+      const currentLength=title.value.length
+
+      if(currentLength==maxLength+1) {
+        title.value=title.value.slice(0, maxLength)
+        this.title=title.value
+      } else if(currentLength>maxLength+1) {
+        alert('제목의 글자 수는 50자 이하입니다')
+        title.value=title.value.slice(0, maxLength)
+        this.title=title.value
+      }
+    },
+    updateByteInfo() {
+    const info = document.getElementById('info')
+    const byteInfo = document.getElementById('byteInfo')
+    const maxLength = 10000
+
+    const currentLength = info.value.length
+    byteInfo.innerHTML = currentLength + ' / ' + maxLength + ' 자'
+
+    if (currentLength > maxLength) {
+      byteInfo.style.color = 'var(--red-hover-color)'
+      info.value=info.value.slice(0, maxLength)
+      byteInfo.innerHTML =maxLength + ' / ' + maxLength + ' 자'
+      this.infoInput=info.value
+    } else if (currentLength == maxLength) {
+      byteInfo.style.color = 'var(--main3-color)'
+    } else {
+      byteInfo.style.color = 'rgba(124, 124, 153, 0.3)'
+    }
+  },
     cancleBtClick() {
       alert('문제 추가를 취소합니다')
       location.href = '/'
@@ -481,6 +520,10 @@ textarea {
   background-color: var(--main1-color);
   font-size: 15px;
   cursor: text;
+}
+
+textarea {
+  resize: none;
 }
 
 input:focus,
@@ -872,5 +915,15 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .addInputBt:hover {
   background-color: var(--main4-hover-color);
   border-color: var(--main4-hover-color);
+}
+
+.byte-info {
+  font-size: 12px;
+  color: rgba(124, 124, 153, 0.3);
+  text-align: right;
+  width: 100%;
+  height: 20px;
+  padding-right: 10px;
+  bottom: 5%;
 }
 </style>
