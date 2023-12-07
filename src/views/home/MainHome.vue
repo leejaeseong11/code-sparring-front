@@ -189,11 +189,11 @@ export default {
         // "roomPwd": "1234",
         codeShare: 0,
         roomTitle: '테스트방 in vue',
-        roomDt: '2012-04-23T18:25:43.511Z'
+        roomDt: new Date().toJSON()
       }
-
+      data = JSON.stringify(data)
       axios
-        .post(`${this.backURL}/room`, JSON.stringify(data), {
+        .post(`${this.backURL}/room`, data, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -204,6 +204,11 @@ export default {
         })
     },
     rankTierHelpHoverHandler() {}
+  },
+  mounted() {
+    axios.get(`${this.backURL}/room`).then((res) => {
+      console.log(res)
+    })
   }
 }
 </script>
