@@ -1,153 +1,145 @@
 <template>
-  <main class="container-fluid">
-    <div id="main-layout" class="row">
-      <div id="main-side-layout" class="col-2">
-        <img id="main-logo" src="/images/logo.gif" alt="logo" />
-        <div id="main-profile-containers">
-          <div id="my-profile-container">
-            <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
-            <div id="profile-tier-container">
-              <div id="tier-container">
-                <div id="rank-tier-help" class="custom-tooltip">
-                  ?<span class="custom-tooltiptext"
-                    >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
-                    티어의 종류는 다음과 같습니다.<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/bronze.png"
-                      alt="my-tier" />브론즈<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/silver.png"
-                      alt="my-tier" />실버<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/gold.png"
-                      alt="my-tier" />골드<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/platinum.png"
-                      alt="my-tier" />플래티넘<br
-                  /></span>
-                </div>
-                <img
-                  id="my-rank-tier"
-                  class="rank-tier-icon"
-                  src="/images/rank/bronze.png"
-                  alt="my-tier"
-                />
+  <div id="main-layout" class="row">
+    <div id="main-side-layout" class="col-2">
+      <div id="main-profile-containers">
+        <div id="my-profile-container">
+          <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
+          <div id="profile-tier-container">
+            <div id="tier-container">
+              <div id="rank-tier-help" class="custom-tooltip">
+                ?<span class="custom-tooltiptext"
+                  >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
+                  티어의 종류는 다음과 같습니다.<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/bronze.png"
+                    alt="my-tier" />브론즈<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/silver.png"
+                    alt="my-tier" />실버<br />
+                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />골드<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/platinum.png"
+                    alt="my-tier" />플래티넘<br
+                /></span>
               </div>
-              <div id="profile-nickname">닉네임</div>
+              <img
+                id="my-rank-tier"
+                class="rank-tier-icon"
+                src="/images/rank/bronze.png"
+                alt="my-tier"
+              />
             </div>
-            <div id="exp-container">
-              <div id="my-level">Lv. 10</div>
-              <div class="progress col-sm-8">
-                <div
-                  class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
-                  role="progressbar"
-                  aria-valuenow="10"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                  style="width: 10%"
-                >
-                  <span id="my-exp">10 / 100</span>
-                </div>
-              </div>
-            </div>
-            <div id="main-profile-buttons"></div>
+            <div id="profile-nickname">닉네임</div>
           </div>
-        </div>
-        <button id="rank-matching-button" class="btn btn-danger room-menu-button">
-          랭 크
-          <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
-          매 칭
-        </button>
-        <div id="rank-container">
-          <div id="rank-title">순 위</div>
-          <ol id="rank-list">
-            <li>
-              <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname" title="닉네임">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname" title="닉네임">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname" title="닉네임">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--main1-color)">4위</div>
-              <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
-              <div class="rank-nickname" title="닉네임">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--main1-color)">5위</div>
-              <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
-              <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
-                아주아주긴닉네임이지요너무길어서안보일지경이에요
+          <div id="exp-container">
+            <div id="my-level">Lv. 10</div>
+            <div class="progress col-sm-8">
+              <div
+                class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
+                role="progressbar"
+                aria-valuenow="10"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                style="width: 10%"
+              >
+                <span id="my-exp">10 / 100</span>
               </div>
-            </li>
-          </ol>
+            </div>
+          </div>
+          <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <div id="room-layout" class="col">
-        <div id="main-navigation">
-          <div id="main-navigation-left">
-            <button class="btn btn-primary main-menu-button" @click="createWaitingRoomclickHandler">
-              방 만들기
+      <button id="rank-matching-button" class="btn btn-danger room-menu-button">
+        랭 크
+        <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
+        매 칭
+      </button>
+      <div id="rank-container">
+        <div id="rank-title">순 위</div>
+        <ol id="rank-list">
+          <li>
+            <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--main1-color)">4위</div>
+            <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--main1-color)">5위</div>
+            <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
+            <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
+              아주아주긴닉네임이지요너무길어서안보일지경이에요
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div id="room-layout" class="col-9">
+      <div id="main-navigation">
+        <div id="main-navigation-left">
+          <button class="btn btn-primary main-menu-button" @click="createWaitingRoomclickHandler">
+            방 만들기
+          </button>
+          <router-link
+            id="create-problem-button"
+            class="btn btn-primary main-menu-button"
+            to="quiz/add"
+            >문제 만들기</router-link
+          >
+        </div>
+        <div id="main-navigation-right">
+          <button id="mypage-button" class="btn main-menu-button">마이페이지</button>
+          <button id="logout-button" class="btn btn-danger main-menu-button">종료</button>
+        </div>
+      </div>
+      <div id="main-room-containers">
+        <div id="room-navigation">
+          <div id="all-room-title">
+            전체 게임방
+            <button class="btn" id="room-refresh-button">
+              <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
-            <router-link
-              id="create-problem-button"
-              class="btn btn-primary main-menu-button"
-              to="quiz/add"
-              >문제 만들기</router-link
-            >
           </div>
-          <div id="main-navigation-right">
-            <button id="mypage-button" class="btn main-menu-button">마이페이지</button>
-            <button id="logout-button" class="btn btn-danger main-menu-button">종료</button>
+          <div id="room-number-search-container">
+            <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+            <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
         </div>
-        <div id="main-room-containers">
-          <div id="room-navigation">
-            <div id="all-room-title">
-              전체 게임방
-              <button class="btn" id="room-refresh-button">
-                <img src="/images/refresh.png" style="width: 40px" alt="" />
-              </button>
-            </div>
-            <div id="room-number-search-container">
-              <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
-              <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
-            </div>
+        <div id="room-list-container">
+          <div class="row row-cols-2 room-containers">
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
           </div>
-          <div id="room-list-container">
-            <div class="row row-cols-2 room-containers">
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            </div>
-          </div>
-          <div id="pagenation-button-container">
-            <button class="btn pagenation-button">◀</button>
-            <button class="btn pagenation-button">▶</button>
-          </div>
+        </div>
+        <div id="pagenation-button-container">
+          <button class="btn pagenation-button">◀</button>
+          <button class="btn pagenation-button">▶</button>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 <script>
 import axios from 'axios'
@@ -209,13 +201,11 @@ export default {
 }
 #main-side-layout {
   min-width: 260px;
-  padding-left: 0;
+  padding: 0;
+  margin-top: 80px;
 
   display: flex;
   flex-direction: column;
-}
-#main-logo {
-  width: 150px;
 }
 #main-profile-containers {
   display: flex;
@@ -223,7 +213,7 @@ export default {
   align-items: center;
 }
 #my-profile-container {
-  margin-top: 24px;
+  margin-top: 12px;
 
   display: flex;
   flex-direction: column;
@@ -353,13 +343,13 @@ export default {
   }
 }
 #rank-matching-button {
-  margin-top: 34px;
-  padding: 20px;
+  margin-top: 24px;
+  padding: 16px;
 
-  font-size: 1.8rem;
+  font-size: 1.75rem;
 
   cursor: pointer;
-  transition: transform 0.5s linear infinite;
+  transition: transform 0.1s linear infinite;
 
   background-color: var(--red-color);
   color: var(--main1-color);
@@ -387,7 +377,7 @@ export default {
 }
 #rank-container {
   padding: 8px;
-  margin-top: 34px;
+  margin-top: 24px;
 
   display: flex;
   flex-direction: column;
@@ -405,14 +395,14 @@ export default {
 #rank-title {
   padding: 8px;
 
-  font-size: 2rem;
+  font-size: 1.75rem;
   align-self: center;
 
   color: var(--main1-color);
 }
 
 #rank-list > li {
-  padding: 12px;
+  padding: 6px;
 
   display: flex;
   justify-content: flex-start;

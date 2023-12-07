@@ -33,8 +33,6 @@ body {
 }
 
 body {
-  margin: 12px;
-  min-width: 480px;
   line-height: unset !important;
 
   background-color: var(--main1-color) !important;
@@ -42,7 +40,7 @@ body {
 
 a {
   text-decoration: none !important;
-  color: var(--black-color) !important;
+  color: var(--main5-color) !important;
 }
 
 a:link {
