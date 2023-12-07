@@ -2,23 +2,36 @@
   <header>
     <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
 
+    <div id="popup" class="popup">
+      <div class="popup-content"></div>
+    </div>
+
     <div class="headerBar">
       <button class="addQuizEx" @mouseover="onHelp" @mouseleave="offHelp" id="helpBt">?</button
       >&nbsp;&nbsp;문제 추가하기
     </div>
   </header>
 
-  <div id="popup" class="popup">
-    <div class="popup-content"></div>
-  </div>
-
   <div v-if="this.popup" class="testcasePopup" @click="offWarning" id="testcasePopup">
     <div class="popupBt">
-      <div class="outTestcase" @click="offPopup" id="outTestcase">x</div>
+      <div id="outTestcase">
+        <img
+          src="../../../public/images/addTestcaseOut.png"
+          @click="offPopup"
+          class="outTestcase"
+        />
+      </div>
 
       <div>
-        <button class="testcaseWarn" @click="warning">!</button>
-        <button class="testcaseHelp" id="testcaseHelp" @mouseover="onTcHelp" @mouseleave="offTcHelp">?</button>
+        <button class="testcaseWarn" @mouseover="warning" @mouseleave="warning">!</button>
+        <button
+          class="testcaseHelp"
+          id="testcaseHelp"
+          @mouseover="onTcHelp"
+          @mouseleave="offTcHelp"
+        >
+          ?
+        </button>
       </div>
     </div>
 
@@ -48,29 +61,42 @@
         </div>
       </div>
       <div v-if="this.testcaseWarning" class="testcaseWarning">
-        <div style="background-color: #7c354c; height: 45px; line-height: 45px; color: #eaebfe">
+        <div
+          style="
+            background-color: var(--red-color);
+            height: 45px;
+            line-height: 45px;
+            color: var(--main1-color);
+          "
+        >
           주의사항
         </div>
         <br />
         [Input] 아래 예시와 같이 선언 형식으로 작성하세요.<br />
-        <span style="color: #7c354c; background-color: #eaebfe"
+        <span style="color: var(--red-color); background-color: var(--main1-color)"
           >int a=1; String[] str={"abc", "de", "f"}; &nbsp;🙆<br />
           int a=1, String [] str={abc, de, f} &nbsp;🙅 </span
         ><br /><br />
 
         [Output] 예시와 같이 리턴 타입을 준수하여 작성하세요.<br />
-        <span style="color: #7c354c; background-color: #eaebfe"
+        <span style="color: var(--red-color); background-color: var(--main1-color)"
           >ex. 리턴 타입이 String인 경우, "de"<br /><br
         /></span>
 
-        테스트케이스 10개 미만은 문제 제출이 불가합니다.<br />또한 테스트케이스에 문제가 있을 경우
-        오류가 발생할 수 있으니 주의하세요.
+        테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에
+        문제가 있을 경우 오류가 발생할 수 있으니 주의하세요.
       </div>
     </div>
   </div>
 
   <div class="addTitle">
-    <input class="titleInput" placeholder="문제 타이틀을 입력하세요" id="title" v-model="title" />
+    <input
+      class="titleInput"
+      placeholder="문제 타이틀을 입력하세요"
+      id="title"
+      v-model="title"
+      @keyup="titleText"
+    />
   </div>
   <div class="addQuizBox">
     <div class="quizInfo">
@@ -80,7 +106,9 @@
           placeholder="문제를 설명하세요"
           id="info"
           v-model="info"
+          @keyup="updateByteInfo()"
         ></textarea>
+        <div class="byte-info" id="byteInfo">0 / 10000 자</div>
       </div>
       <div class="addInput">
         Input&nbsp;&nbsp;
@@ -136,9 +164,10 @@
       </button>
     </div>
   </div>
-  <div v-if="popup" class="backOff" id="backOff"></div>
+  <div v-if="popup" class="backOff" @click="clickBackOff"></div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   name: 'addQuiz',
   data() {
@@ -229,9 +258,6 @@ export default {
       const console = document.getElementById('console')
       console.innerHTML = this.consoleCode
     },
-    lock(e) {
-      // e.target.blur()
-    },
     updateFileName(e) {
       const input = e.target
       const fileNameDiv = document.querySelector('.fileName')
@@ -243,6 +269,10 @@ export default {
       }
     },
     addInputBtClick() {
+      if (this.inputCnt == 5) {
+        alert('테스트케이스 입력값 종류는 최대 5개입니다')
+        return
+      }
       const inputTable = document.getElementById('inputTable')
       const newRow = inputTable.insertRow()
       newRow.style.height = '36px'
@@ -278,6 +308,43 @@ export default {
       }
       document.body.style.overflow = 'scroll'
       this.popup = false
+    },
+    clickBackOff() {
+      document.body.style.overflow = 'scroll'
+      this.popup = false
+    },
+    titleText() {
+      const title = document.getElementById('title')
+      const maxLength = 5
+      const currentLength = title.value.length
+
+      if (currentLength == maxLength + 1) {
+        title.value = title.value.slice(0, maxLength)
+        this.title = title.value
+      } else if (currentLength > maxLength + 1) {
+        alert('제목의 글자 수는 50자 이하입니다')
+        title.value = title.value.slice(0, maxLength)
+        this.title = title.value
+      }
+    },
+    updateByteInfo() {
+      const info = document.getElementById('info')
+      const byteInfo = document.getElementById('byteInfo')
+      const maxLength = 10000
+
+      const currentLength = info.value.length
+      byteInfo.innerHTML = currentLength + ' / ' + maxLength + ' 자'
+
+      if (currentLength > maxLength) {
+        byteInfo.style.color = 'var(--red-hover-color)'
+        info.value = info.value.slice(0, maxLength)
+        byteInfo.innerHTML = maxLength + ' / ' + maxLength + ' 자'
+        this.infoInput = info.value
+      } else if (currentLength == maxLength) {
+        byteInfo.style.color = 'var(--main3-color)'
+      } else {
+        byteInfo.style.color = 'rgba(124, 124, 153, 0.3)'
+      }
     },
     cancleBtClick() {
       alert('문제 추가를 취소합니다')
@@ -347,15 +414,62 @@ export default {
       this.consoleCode = html
     },
     addQuizBtClick() {
-      alert('문제가 추가되었습니다')
-      location.href = '/'
+      let data = {
+        quizTitle: '방금올린걸수정해볼게요',
+        quizContent: '수정테스트랍니당',
+        quizInput: '인풋이랍니당',
+        quizOutput: '아웃풋이다/!?ㅋ',
+        outputType: 'Double',
+        memberNo: 1,
+        testcaseDTOList: [
+          {
+            testcaseOutput: '1임!',
+            testcaseInputDTOList: [
+              {
+                inputVar: 'String[] s1',
+                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
+              },
+              {
+                inputVar: 'Double',
+                testcaseInput: 3.889
+              }
+            ]
+          },
+          {
+            testcaseOutput: '2번째아!',
+            testcaseInputDTOList: [
+              {
+                inputVar: 'String[] s1',
+                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
+              },
+              {
+                inputVar: 'Double',
+                testcaseInput: 3.889
+              }
+            ]
+          }
+        ]
+      }
+
+      axios
+        .post('http://192.168.1.67:8080/codesparring/quiz', JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          alert('?')
+          alert(res)
+          location.href = '/'
+        })
     },
     onTcHelp() {
       if (this.testcaseWarning) {
         return
       }
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.57)'
+
+      const tcpopup = document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor = '#A3A4B1'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
@@ -386,8 +500,8 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const back=document.getElementById('backOff')
-      back.style.backgroundColor='rgba(0, 0, 0, 0.7)'
+      const tcpopup = document.getElementById('testcasePopup')
+      tcpopup.style.backgroundColor = 'var(--main1-color)'
 
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
@@ -408,20 +522,20 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='default'
-      bt2.style.cursor='default'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'default'
+      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1=document.getElementById('outTestcase')
-      const bt2=document.getElementById('testcaseHelp')
-      bt1.style.cursor='pointer'
-      bt2.style.cursor='pointer'
+      const bt1 = document.getElementById('outTestcase')
+      const bt2 = document.getElementById('testcaseHelp')
+      bt1.style.cursor = 'pointer'
+      bt2.style.cursor = 'pointer'
     }
   }
 }
@@ -459,6 +573,10 @@ textarea {
   background-color: var(--main1-color);
   font-size: 15px;
   cursor: text;
+}
+
+textarea {
+  resize: none;
 }
 
 input:focus,
@@ -502,14 +620,20 @@ textarea:focus {
 }
 
 .addTitle {
-  width: 100%;
+  width: 98%;
+  left: 1%;
+  border: 15px solid;
+  border-radius: 15px;
+  height: 100%;
+  margin-top: 5px;
 }
 
 .titleInput {
   border: none;
   color: #eaebfe;
   width: 95%;
-  margin-left: 20px;
+  /* margin-left: 20px; */
+  height: 90%;
   font-size: large;
 }
 
@@ -700,11 +824,21 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .popupInTc {
   display: none;
   position: fixed;
-  top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+}
+
+.popup {
+  /* top: 100px; */
+  height: 1000%;
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.popupInTc {
+  top: 150px;
+  width: 71%;
+  left: 14%;
+  height: 68%;
 }
 
 .popup-content,
@@ -738,7 +872,12 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   color: var(--main5-color);
   font-size: x-large;
   cursor: pointer;
-  top: -7px;
+  top: 0px;
+  transition: transform 0.5s;
+  &:hover {
+    color: red;
+    transform: rotate(180deg);
+  }
 }
 
 .testcaseWarn {
@@ -747,7 +886,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseWarn:hover {
-  background-color: var(--red-hover-color); 
+  background-color: var(--red-hover-color);
 }
 
 .popupBt {
@@ -816,16 +955,28 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .backOff {
-  width: 120%;
+  width: 200%;
   height: 200%;
   display: fixed;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
   top: 0%;
+  left: 0%;
+  cursor: pointer;
 }
 
 .addInputBt:hover {
   background-color: var(--main4-hover-color);
   border-color: var(--main4-hover-color);
+}
+
+.byte-info {
+  font-size: 12px;
+  color: rgba(124, 124, 153, 0.3);
+  text-align: right;
+  width: 100%;
+  height: 20px;
+  padding-right: 10px;
+  bottom: 5%;
 }
 </style>
