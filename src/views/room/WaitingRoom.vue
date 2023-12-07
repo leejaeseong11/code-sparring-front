@@ -1,16 +1,19 @@
 <template>
-  <main class="container-fluid">
+  <main class="container-fluid ps-0 pe-0">
     <div id="room-layout" class="row">
-      <div id="room-member-layout" class="col-5">
+      <div id="room-member-layout" class="col-6">
         <img id="main-logo" src="/images/logo.gif" alt="logo" />
         <div id="room-title-container">
           <div id="room-number">No. 1000</div>
           <div id="room-title">
             아무나 들어오세요, 그런데 방 제목이 기니까 조심하세요, 아시겠죠?
           </div>
-          <div id="room-member_container">
-            <RoomMember />
-          </div>
+        </div>
+        <div id="room-member_container">
+          <RoomMember />
+          <RoomMember />
+          <RoomMember />
+          <RoomMember />
         </div>
         <div id="room-chat">
           <div id="chat-title">채팅방</div>
@@ -21,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div id="room-info-layout" class="col-5">
+      <div id="room-info-layout" class="col-6">
         <button>방 나가기</button>
         <div id="room-quiz-containers">
           <div id="room-quiz-title">선택된 문제</div>
@@ -169,16 +172,41 @@ export default {
 </script>
 <style scoped>
 #room-layout {
-  width: 100vw;
   min-width: 1280px;
 
   display: flex;
   justify-content: space-around;
+
+  overflow: auto;
+  white-space: nowrap;
+
+  color: var(--main5-color);
 }
 #main-logo {
   width: 150px;
-  margin-bottom: 12px;
 
   cursor: pointer;
+}
+#room-title-container {
+  margin-top: 24px;
+  padding: 16px;
+
+  display: flex;
+
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
+}
+#room-number {
+  margin-right: 16px;
+}
+
+#room-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#room-member_container {
+  display: flex;
 }
 </style>

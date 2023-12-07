@@ -11,8 +11,6 @@
                 <div id="rank-tier-help" class="custom-tooltip">
                   ?<span class="custom-tooltiptext"
                     >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
-                    각 티어별로 5개의 구간이 있습니다. <br />
-                    (ex. 브론즈5 ~ 브론즈1)<br />
                     티어의 종류는 다음과 같습니다.<br />
                     <img
                       class="rank-tier-icon"
@@ -39,7 +37,7 @@
                   alt="my-tier"
                 />
               </div>
-              <div id="profile-nickname">닉네임</div>
+              <div id="profile-nickname">닉네임이길어지면어떨까요</div>
             </div>
             <div id="exp-container">
               <div id="my-level">Lv. 10</div>
@@ -65,35 +63,34 @@
           매 칭
         </button>
         <div id="rank-container">
-          <div id="rank-title">
-            순 위
-            <!-- <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> -->
-          </div>
+          <div id="rank-title">순 위</div>
           <ol id="rank-list">
             <li>
               <div class="rank-number" style="color: #ffcd69">1위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
+              <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
               <div class="rank-number" style="color: #ff7d97">2위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
+              <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
               <div class="rank-number" style="color: #33d6f5">3위</div>
               <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
+              <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
               <div class="rank-number" style="color: var(--main1-color)">4위</div>
               <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
+              <div class="rank-nickname" title="닉네임">닉네임</div>
             </li>
             <li>
               <div class="rank-number" style="color: var(--main1-color)">5위</div>
               <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
-              <div class="rank-nickname">아주아주긴닉네임이지요너무길어서안보일지경이에요</div>
+              <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
+                아주아주긴닉네임이지요너무길어서안보일지경이에요
+              </div>
             </li>
           </ol>
         </div>
@@ -191,7 +188,8 @@ export default {
         },
         // "roomPwd": "1234",
         codeShare: 0,
-        roomTitle: '테스트방 in vue'
+        roomTitle: '테스트방 in vue',
+        roomDt: '2012-04-23T18:25:43.511Z'
       }
 
       axios
@@ -230,8 +228,6 @@ export default {
 }
 #main-logo {
   width: 150px;
-
-  cursor: pointer;
 }
 #main-profile-containers {
   display: flex;
@@ -311,6 +307,7 @@ export default {
 #profile-nickname {
   margin-left: 4px;
 
+  white-space: wrap;
   font-size: 1.25rem;
 }
 #rank-tier-hlep {

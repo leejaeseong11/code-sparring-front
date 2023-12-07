@@ -7,7 +7,10 @@
       <div class="col-10 ps-0 pe-0">
         <div class="pb-2 room-info-container">
           <div class="col">
-            <h5 class="ps-3 pb-3 pt-2 card-title">
+            <h5
+              class="ps-3 pb-3 pt-2 card-title"
+              title="아무나들어와도되지만이방의제목은매우길기때문에잘릴수있습니다"
+            >
               아무나들어와도되지만이방의제목은매우길기때문에잘릴수있습니다
             </h5>
           </div>

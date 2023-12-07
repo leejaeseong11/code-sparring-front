@@ -15,4 +15,21 @@
 <script>
 export default {}
 </script>
-<style></style>
+<style>
+#room-member-profile-container {
+  padding: 12px;
+
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
+}
+#room-member-profile {
+  display: flex;
+  flex-direction: column;
+}
+#profile-image {
+  width: 50%;
+  margin: 12px;
+
+  border-radius: 50%;
+}
+</style>
