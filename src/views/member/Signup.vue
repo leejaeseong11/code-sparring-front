@@ -9,10 +9,11 @@
                 </div>
                 <div class="info" id="info-profileImg">
                     <div id="profile-input">
-                        <img :src="'images/icon/' + (memberProfileImg) + '.png'" :alt="'Icon ' + (memberProfileImg)" class="profile-icon"/>
-                        <button @click="openProfilePopup">변경</button>
-                        <ProfileImgPopup v-if="isProfilePopupOpen" 
-                        @selected="handleSelectedProfileImage" @close="closeProfilePopup"/>        
+                        <img :src="'images/icon/' + (memberProfileImg) + '.png'" :alt="'Icon ' + (memberProfileImg)"
+                            class="profile-icon" />
+                        <button @click="openProfilePopup" type="button">변경</button>
+                        <ProfileImgPopup v-if="isProfilePopupOpen" @selected="handleSelectedProfileImage"
+                            @close="closeProfilePopup" />
                     </div>
                 </div>
 
@@ -20,7 +21,8 @@
                     <div id="id-input">
                         <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (6~20자)"
                             @input="validateId" @focus="clearAllErrMsg" />
-                        <button id="id-check" @click="btIdDupchkClickHandler">중복 확인</button>
+                        <button id="id-check" @click="btIdDupchkClickHandler" :disabled="!isIdValid" type="button">중복
+                            확인</button>
                     </div>
                     <div class="error-msg"
                         :class="{ 'invalid': errMsg.id.invalid, 'fail': errMsg.id.fail, 'success': errMsg.id.success }">
@@ -50,9 +52,10 @@
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="nick" id="n" v-model="c.nick"
-                            placeholder="닉네임 입력 (추후변경가능)" @input="validateNick" @focus="clearAllErrMsg" />
-                        <button id="nick-check" @click="btNickDupchkClickHandler">중복 확인</button>
+                        <input class="box" type="text" name="nick" id="n" v-model="c.nick" placeholder="닉네임 입력 (추후변경가능)"
+                            @input="validateNick" @focus="clearAllErrMsg" />
+                        <button id="nick-check" @click="btNickDupchkClickHandler" :disabled="!isNickValid" type="button">중복
+                            확인</button>
                     </div>
                     <div class="error-msg"
                         :class="{ 'invalid': errMsg.nick.invalid, 'fail': errMsg.nick.fail, 'success': errMsg.nick.success }">
@@ -60,8 +63,8 @@
                     </div>
                 </div>
                 <div class="info" id="info-introduction">
-                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro"
-                        placeholder="소개(자신에 대해 알려주세요)" @focus="clearAllErrMsg"></textarea>
+                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro" placeholder="소개(자신에 대해 알려주세요)"
+                        @focus="clearAllErrMsg"></textarea>
                 </div>
             </section>
             <p for="privacy-checkbox" class="info" id="privacy-agreement">
@@ -73,9 +76,8 @@
                 위의 내용에 동의합니다.
             </div>
 
-
-            <button id="submit" @click="signupFormSubmitHandler" :disabled="!isFormValid || !privacyAgreed"
-                @focus="clearAllErrMsg">가입하기</button>
+            <!-- :disabled="!isFormValid" -->
+            <button id="submit" @click="checkForm" @focus="clearAllErrMsg" type="submit">가입하기</button>
             <!-- <div id="result-fail">{{ resultFailMsg }}</div> -->
             <div class="exist">
                 <span>이미 회원이신가요?</span>
@@ -87,7 +89,7 @@
 </template>
 
 <script>
-import ProfileImgPopup from './ProfileImgPopup.vue'
+import ProfileImgPopup from './ProfileImgPopup.vue';
 import axios from 'axios'
 
 export default {
@@ -127,25 +129,24 @@ export default {
             privacyAgreed: false,
             memberProfileImg: 0,
             isProfilePopupOpen: false,
+            isIdValid: false,
+            isNickValid: false,
+            isPwdValid : false
         }
     },
-    computed: {
-        isFormValid() {
-            const valid = (
-                this.privacyAgreed &&
-                this.errMsg.id.success !== '' &&
-                this.errMsg.pwd.success !== '' &&
-                this.errMsg.pwdRe.success !== '' &&
-                this.errMsg.nick.success !== ''
-            );
-            return valid;
-        },
-
-
-    },
+    // computed: {
+    // isFormValid() {
+    //     const valid = (
+    //         this.privacyAgreed &&
+    //         this.isIdValid &&
+    //         this.isNickValid
+    //     );
+    //     return valid;
+    // },
+    // },
     methods: {
         openProfilePopup() {
-            this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false :true;
+            this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false : true;
         },
         closeProfilePopup() {
             this.isProfilePopupOpen = false;
@@ -167,7 +168,7 @@ export default {
 
         validateId() {
             const idRegExp = /^[a-zA-Z0-9]{5,20}$/;
-            let isIdValid = false;
+            this.isIdValid = false;
             if (!idRegExp.test(this.c.id)) {
                 this.errMsg.id.invalid = '5~20자의 영문 소문자와 숫자만 사용 가능합니다';
                 this.errMsg.id.success = '';
@@ -176,24 +177,26 @@ export default {
                 this.errMsg.id.invalid = '';
                 this.errMsg.id.fail = '';
                 this.errMsg.id.success = '아이디 중복 확인을 해주세요';
-                isIdValid = true;
+                this.isIdValid = true;
+                this.isIdCheck = false;
             }
 
         },
         btIdDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupId`
-            console.log(1)
             axios
                 .post(url, `memberId=${this.c.id}`)
-            // console.log(2)
                 .then(response => {
                     const isDuplicate = response.data;
                     if (isDuplicate) {
                         this.errMsg.id.fail = '이미 사용중인 아이디입니다';
                         this.errMsg.id.success = '';
+                        this.isIdValid = false;
+                        this.isIdCheck = false;
                     } else {
                         this.errMsg.id.success = '사용 가능한 아이디입니다';
                         this.errMsg.id.fail = '';
+                        this.isIdCheck = true;
                     }
                 })
                 .catch(error => {
@@ -216,6 +219,7 @@ export default {
                 this.errMsg.pwd.fail = '';
                 isPwdValid = true;
             }
+            return isPwdValid;
         },
 
         checkPwdReHandler() {
@@ -244,7 +248,7 @@ export default {
 
         validateNick() {
             const nickRegExp = /^[a-zA-Z0-9]{5,20}$/;
-            let isNickValid = false;
+            this.isNickValid = false;
             if (!nickRegExp.test(this.c.nick)) {
                 this.errMsg.nick.invalid = '5~20자의 영문 소문자와 숫자만 사용 가능합니다';
                 this.errMsg.nick.success = '';
@@ -253,7 +257,7 @@ export default {
                 this.errMsg.nick.invalid = '';
                 this.errMsg.nick.fail = '';
                 this.errMsg.nick.success = '닉네임 중복 확인을 해주세요';
-                isNickValid = true;
+                this.isNickValid = true;
             }
         },
 
@@ -266,6 +270,7 @@ export default {
                     if (isDuplicate) {
                         this.errMsg.nick.fail = '이미 사용중인 닉네임입니다';
                         this.errMsg.nick.success = '';
+                        this.isNickValid = false;
                     } else {
                         this.errMsg.nick.success = '사용 가능한 닉네임입니다';
                         this.errMsg.nick.fail = '';
@@ -275,22 +280,51 @@ export default {
                     console.error(error);
                 });
         },
+        checkForm() {
+            if (this.c.id == null || !this.isIdValid ) {
+                alert("아이디를 확인하세요");
+                return;
+            }
+            if (!this.isIdCheck) {
+                alert("아이디 중복체크를 하세요")
+                return;
+            }
+            if (this.c.pwd == null || this.c.pwd.trim() === "") {
+                alert("비밀번호를 확인하세요");
+                return;
+            }
+            if (this.pwdRe == null || this.pwdRe.trim() === "" || this.c.pwd == this.pwdRe) {
+                alert("비밀번호 재입력을 확인하세요");
+                return;
+            }
 
-        signupFormSubmitHandler(e) {
-            const url = `${this.backURL}/auth/signup`
-            const data = new FormData(e.target)
-            axios
-                .post(url, data)
-            console.log(1)
-                .then(response => {
-                    if (response.data) {
-                        location.href = `${this.backURL}/auth/login`
-                    }
-                })
-                .catch(error => {
-                    alert(error.message)
-                })
-        }
+            if (this.c.nick == null || this.c.nick.trim() === ""  || !this.isNickValid) {
+                alert("닉네임을 확인하세요");
+                return;
+            }
+            if (!this.privacyAgreed) {
+                alert("개인정보 수집 및 이용에 동의해주세요");
+                return;
+            }
+            // this.signupFormSubmitHandler();
+        },
+
+
+
+        // signupFormSubmitHandler(e) {
+        //     const url = `${this.backURL}/auth/signup`
+        //     const data = new FormData(e.target)
+        //     axios
+        //         .post(url, data)
+        //         .then(response => {
+        //             if (response.data) {
+        //                 location.href = `${this.backURL}/auth/login`
+        //             }
+        //         })
+        //         .catch(error => {
+        //             alert(error.message)
+        //         })
+        // }
     },
 }
 
@@ -380,7 +414,7 @@ button:disabled {
 }
 
 .info .error-msg.success {
-    color:green;
+    color: var(--green-color);
 }
 
 
@@ -388,7 +422,7 @@ button:disabled {
 select.box {
     margin-left: 5px;
     padding-left: 10px;
-    color: var(--white-color);
+    color: var(--main1-color);
 }
 
 option {
@@ -622,7 +656,7 @@ section {
     }
 }
 
-.divImg>img{
+.divImg>img {
     width: 100px;
 }
 </style>
