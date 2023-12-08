@@ -367,7 +367,6 @@ export default {
   background-color: var(--red-color);
   color: var(--main1-color);
 
-
   &:hover {
     /* background-color: var(--red-hover-color); */
     transform: scale(1.2);
