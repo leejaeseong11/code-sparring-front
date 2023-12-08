@@ -9,7 +9,7 @@
         >&nbsp;&nbsp;문제 추가하기
       </div>
     </header>
-    <div v-if="this.popup" class="testcasePopup" @click="offWarning" id="testcasePopup">
+    <div v-if="this.popup" class="testcasePopup" @click="offWarning">
       <div class="popupBt">
         <div id="outTestcase">
           <img
@@ -75,8 +75,7 @@
           <span style="color: var(--red-color); background-color: var(--main1-color)"
             >ex. 리턴 타입이 String인 경우, "de"<br /><br
           /></span>
-          테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에
-          문제가 있을 경우 오류가 발생할 수 있으니 주의하세요.
+          테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 잘못된 입력은 오류가 발생할 수 있으니 주의하세요.
         </div>
       </div>
     </div>
@@ -294,11 +293,11 @@ export default {
       if (this.testcaseWarning) {
         return
       }
-      document.body.style.overflow = 'scroll'
+      document.body.style.overflow = 'auto'
       this.popup = false
     },
     clickBackOff() {
-      document.body.style.overflow = 'scroll'
+      document.body.style.overflow = 'auto'
       this.popup = false
     },
     titleText() {
@@ -456,9 +455,6 @@ export default {
         return
       }
 
-      const tcpopup = document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor = '#A3A4B1'
-
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
 
@@ -488,9 +484,6 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const tcpopup = document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor = 'var(--main1-color)'
-
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
 
@@ -510,20 +503,12 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'default'
-      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'pointer'
-      bt2.style.cursor = 'pointer'
     }
   }
 }
@@ -536,8 +521,11 @@ export default {
   height: 100%;
   margin: 0;
   color: var(--main5-color);
-  /* cursor: default; */
   position: relative;
+}
+
+div{
+  cursor: default;
 }
 
 header {
@@ -624,7 +612,6 @@ textarea:focus {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  overflow: scroll;
 }
 
 .quizInfo {
@@ -638,7 +625,6 @@ textarea:focus {
   margin-left: 15px;
   width: 100%;
   height: 300px;
-  overflow: scroll;
 }
 
 .infoInput {
@@ -646,7 +632,6 @@ textarea:focus {
   margin-top: 10px;
   width: 96%;
   height: 93%;
-  overflow: scroll;
   vertical-align: top;
 }
 
@@ -658,7 +643,6 @@ textarea:focus {
   margin-top: 10px;
   margin-right: 15px;
   margin-left: 20px;
-  overflow: scroll;
 }
 
 .console {
@@ -730,6 +714,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .fileName {
   cursor: pointer;
   line-height: 65px;
+  color: var(--main2-hover-color);
 }
 
 .addTestcase,
@@ -743,8 +728,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .fileUpload:hover {
-  background-color: var(--main3-hover-color);
-  border-color: var(--main3-hover-color);
+  background-color: var(--main2-hover-color);
+  border-color: var(--main2-hover-color);
 }
 
 .addTestcase {
@@ -752,8 +737,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .addTestcase:hover {
-  background-color: var(--main3-hover-color);
-  border-color: var(--main3-hover-color);
+  background-color: var(--main4-hover-color);
+  border-color: var(--main4-hover-color);
 }
 
 .btBox {
@@ -790,8 +775,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .fileUpload {
   cursor: pointer;
   color: var(--main1-color);
-  background-color: var(--main3-color);
-  border: 3px solid var(--main3-color);
+  background-color: var(--main2-color);
+  border: 3px solid var(--main2-color);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -814,8 +799,6 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .popup {
   /* top: 100px; */
   height: 1000%;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 2;
 }
 
 .popupInTc {
@@ -840,10 +823,10 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcasePopup {
   position: fixed;
   top: 10%;
-  left: 12%;
+  left: 20%;
   padding: 20px;
-  width: 75%;
-  height: 80%;
+  width: 60%;
+  height: 60%;
   background-color: var(--main1-color);
   border: 7px solid;
   border-radius: 25px;
@@ -867,7 +850,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcaseWarn {
   background-color: var(--red-color);
   margin-right: 5px;
-  position: absolute;
+  position: absolut;
 }
 
 .testcaseWarn:hover {
@@ -887,7 +870,6 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   font-size: x-large;
   display: flex;
   justify-content: space-between;
-  overflow: scroll;
 }
 
 .addTestcaseBt {
@@ -925,31 +907,30 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseWarning {
-  width: 84%;
-  top: 5%;
-  left: 8%;
-  height: 78%;
+  width: 40%;
+  top: 20%;
+  left: 30%;
+  height: 340px;
   text-align: center;
-  font-size: 22px;
+  font-size: 16px;
   background-color: #eaebfe;
   border: 3px solid #7c354c;
   border-radius: 30px;
   overflow: hidden;
   color: #022954;
-  position: absolute;
+  position: fixed;
 }
 
 .backOff {
-  width: 200%;
-  height: 200%;
+  width: 100%;
+  height: 100%;
   display: fixed;
-  position: absolute;
+  position: fixed;
   background-color: rgba(0, 0, 0, 0.7);
   top: 0%;
   left: 0%;
   cursor: pointer;
   z-index: 2;
-  margin-left: -100px;
 }
 
 .addInputBt:hover {
