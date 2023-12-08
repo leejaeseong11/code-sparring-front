@@ -10,6 +10,10 @@ body {
   --main5-hover-color: #345376;
   --red-color: #7c354c;
   --red-hover-color: #965d6f;
+  --yellow-rank-color: #ffcd69;
+  --red-rank-color: #ff7d97;
+  --blue-rank-color: #33d6f5;
+
   --black-color: #000000;
   --white-color: #ffffff;
   --green-color:#4c7c35;
@@ -30,8 +34,6 @@ body {
 }
 
 body {
-  margin: 12px;
-  min-width: 480px;
   line-height: unset !important;
 
   background-color: var(--main1-color) !important;
@@ -39,7 +41,7 @@ body {
 
 a {
   text-decoration: none !important;
-  color: var(--black-color) !important;
+  color: var(--main5-color) !important;
 }
 
 a:link {

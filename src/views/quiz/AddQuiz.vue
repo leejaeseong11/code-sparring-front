@@ -1,170 +1,161 @@
 <template>
-  <header>
-    <img src="../../../images/logo.gif" alt="logo" class="logo" @click="gotoMain" />
-
-    <div id="popup" class="popup">
-      <div class="popup-content"></div>
-    </div>
-
-    <div class="headerBar">
-      <button class="addQuizEx" @mouseover="onHelp" @mouseleave="offHelp" id="helpBt">?</button
-      >&nbsp;&nbsp;문제 추가하기
-    </div>
-  </header>
-
-  <div v-if="this.popup" class="testcasePopup" @click="offWarning" id="testcasePopup">
-    <div class="popupBt">
-      <div id="outTestcase">
-        <img
-          src="../../../public/images/addTestcaseOut.png"
-          @click="offPopup"
-          class="outTestcase"
-        />
+  <div class="layout">
+    <header>
+      <div id="popup" class="popup">
+        <div class="popup-content"></div>
       </div>
-
-      <div>
-        <button class="testcaseWarn" @mouseover="warning" @mouseleave="warning">!</button>
-        <button
-          class="testcaseHelp"
-          id="testcaseHelp"
-          @mouseover="onTcHelp"
-          @mouseleave="offTcHelp"
-        >
-          ?
+      <div class="headerBar">
+        <button class="addQuizEx" @mouseover="onHelp" @mouseleave="offHelp" id="helpBt">?</button
+        >&nbsp;&nbsp;문제 추가하기
+      </div>
+    </header>
+    <div v-if="this.popup" class="testcasePopup" @click="offWarning">
+      <div class="popupBt">
+        <div id="outTestcase">
+          <img
+            src="../../../public/images/quiz/addTestcaseOut.png"
+            @click="offPopup"
+            class="outTestcase"
+          />
+        </div>
+        <div>
+          <button class="testcaseWarn" @mouseover="warning" @mouseleave="warning">!</button>
+          <button
+            class="testcaseHelp"
+            id="testcaseHelp"
+            @mouseover="onTcHelp"
+            @mouseleave="offTcHelp"
+          >
+            ?
+          </button>
+        </div>
+      </div>
+      <div id="popupInTc" class="popupInTc">
+        <div class="popupTc-content"></div>
+      </div>
+      <div class="testcaseBox">
+        <div class="testcaseInput">
+          <div style="height: 10%">&nbsp;&nbsp;Input</div>
+          <div v-for="index in 10" :key="index" class="inputDiv">
+            <input
+              class="inputValue"
+              placeholder="입력값을 입력하세요"
+              v-model="inputValueList[index - 1]"
+            />
+          </div>
+        </div>
+        <div class="testcaseOutput">
+          <div style="height: 10%">&nbsp;Output</div>
+          <div v-for="index in 10" :key="index" class="outputDiv">
+            <input
+              class="outputValue"
+              placeholder="리턴값을 입력하세요"
+              v-model="outputValueList[index - 1]"
+            />
+          </div>
+        </div>
+        <div v-if="this.testcaseWarning" class="testcaseWarning">
+          <div
+            style="
+              background-color: var(--red-color);
+              height: 45px;
+              line-height: 45px;
+              color: var(--main1-color);
+            "
+          >
+            주의사항
+          </div>
+          <br />
+          [Input] 아래 예시와 같이 선언 형식으로 작성하세요.<br />
+          <span style="color: var(--red-color); background-color: var(--main1-color)"
+            >int a=1; String[] str={"abc", "de", "f"}; &nbsp;🙆<br />
+            int a=1, String [] str={abc, de, f} &nbsp;🙅 </span
+          ><br /><br />
+          [Output] 예시와 같이 리턴 타입을 준수하여 작성하세요.<br />
+          <span style="color: var(--red-color); background-color: var(--main1-color)"
+            >ex. 리턴 타입이 String인 경우, "de"<br /><br
+          /></span>
+          테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 잘못된 입력은 오류가 발생할 수 있으니 주의하세요.
+        </div>
+      </div>
+    </div>
+    <div class="addTitle">
+      <input
+        class="titleInput"
+        placeholder="문제 타이틀을 입력하세요"
+        id="title"
+        v-model="title"
+        @keyup="titleText"
+      />
+    </div>
+    <div class="addQuizBox">
+      <div class="quizInfo">
+        <div class="addInfo">
+          <textarea
+            class="infoInput"
+            placeholder="문제를 설명하세요"
+            id="info"
+            v-model="info"
+            @keyup="updateByteInfo()"
+          ></textarea>
+          <div class="byte-info" id="byteInfo">0 / 10000 자</div>
+        </div>
+        <div class="addInput">
+          Input&nbsp;&nbsp;
+          <button class="addInputBt" type="button" @click="addInputBtClick">+</button>&nbsp;
+          <button class="subInputBt" type="button" @click="subInputBtClick">-</button>
+          <table class="inputTable" id="inputTable">
+            <tr>
+              <td>
+                <input placeholder="입력값 형식을 입력하세요" id="input1" />
+              </td>
+              <td><input placeholder="입력값을 설명하세요" id="inputInfo1" /></td>
+            </tr>
+          </table>
+        </div>
+        <div class="addOutput">
+          Output<br />
+          <table class="outputTable">
+            <tr>
+              <td>
+                <input placeholder="리턴 타입을 입력하세요" id="returnType" v-model="returnType" />
+              </td>
+              <td>
+                <input placeholder="리턴값을 설명하세요" id="returnInfo" v-model="returnInfo" />
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="addExCode">
+          <label for="fileInput" style="display: flex; justify-content: space-between">
+            <div class="fileUpload">정답 코드 첨부</div>
+            <div class="fileName">선택된 파일 없음</div>
+          </label>
+          <input type="file" id="fileInput" accept=".java" @change="updateFileName" />
+        </div>
+      </div>
+      <div class="consoleEx">
+        <textarea
+          class="console"
+          placeholder="/* Console 창 예시 */"
+          id="console"
+          @click="lock"
+          readonly
+        ></textarea>
+      </div>
+    </div>
+    <div class="btBox">
+      <button class="addTestcase" @click="addTestcase">테스트케이스 설정</button>
+      <div class="rightBt">
+        <button class="cancleBt" @click="cancleBtClick" type="button">취소하기</button>
+        <button class="submitBt" @click="submitBtClick" type="button">확인하기</button>
+        <button v-if="consoleChk" class="submitBt" @click="addQuizBtClick" type="submit">
+          추가하기
         </button>
       </div>
     </div>
-
-    <div id="popupInTc" class="popupInTc">
-      <div class="popupTc-content"></div>
-    </div>
-
-    <div class="testcaseBox">
-      <div class="testcaseInput">
-        <div style="height: 10%">&nbsp;&nbsp;Input</div>
-        <div v-for="index in 10" :key="index" class="inputDiv">
-          <input
-            class="inputValue"
-            placeholder="입력값을 입력하세요"
-            v-model="inputValueList[index - 1]"
-          />
-        </div>
-      </div>
-      <div class="testcaseOutput">
-        <div style="height: 10%">&nbsp;Output</div>
-        <div v-for="index in 10" :key="index" class="outputDiv">
-          <input
-            class="outputValue"
-            placeholder="리턴값을 입력하세요"
-            v-model="outputValueList[index - 1]"
-          />
-        </div>
-      </div>
-      <div v-if="this.testcaseWarning" class="testcaseWarning">
-        <div
-          style="
-            background-color: var(--red-color);
-            height: 45px;
-            line-height: 45px;
-            color: var(--main1-color);
-          "
-        >
-          주의사항
-        </div>
-        <br />
-        [Input] 아래 예시와 같이 선언 형식으로 작성하세요.<br />
-        <span style="color: var(--red-color); background-color: var(--main1-color)"
-          >int a=1; String[] str={"abc", "de", "f"}; &nbsp;🙆<br />
-          int a=1, String [] str={abc, de, f} &nbsp;🙅 </span
-        ><br /><br />
-
-        [Output] 예시와 같이 리턴 타입을 준수하여 작성하세요.<br />
-        <span style="color: var(--red-color); background-color: var(--main1-color)"
-          >ex. 리턴 타입이 String인 경우, "de"<br /><br
-        /></span>
-
-        테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 테스트케이스에
-        문제가 있을 경우 오류가 발생할 수 있으니 주의하세요.
-      </div>
-    </div>
+    <div v-if="popup" class="backOff" @click="clickBackOff"></div>
   </div>
-
-  <div class="addTitle">
-    <input
-      class="titleInput"
-      placeholder="문제 타이틀을 입력하세요"
-      id="title"
-      v-model="title"
-      @keyup="titleText"
-    />
-  </div>
-  <div class="addQuizBox">
-    <div class="quizInfo">
-      <div class="addInfo">
-        <textarea
-          class="infoInput"
-          placeholder="문제를 설명하세요"
-          id="info"
-          v-model="info"
-          @keyup="updateByteInfo()"
-        ></textarea>
-        <div class="byte-info" id="byteInfo">0 / 10000 자</div>
-      </div>
-      <div class="addInput">
-        Input&nbsp;&nbsp;
-        <button class="addInputBt" type="button" @click="addInputBtClick">+</button>&nbsp;
-        <button class="subInputBt" type="button" @click="subInputBtClick">-</button>
-        <table class="inputTable" id="inputTable">
-          <tr>
-            <td>
-              <input placeholder="입력값 형식을 입력하세요" id="input1" />
-            </td>
-            <td><input placeholder="입력값을 설명하세요" id="inputInfo1" /></td>
-          </tr>
-        </table>
-      </div>
-      <div class="addOutput">
-        Output<br />
-        <table class="outputTable">
-          <tr>
-            <td>
-              <input placeholder="리턴 타입을 입력하세요" id="returnType" v-model="returnType" />
-            </td>
-            <td>
-              <input placeholder="리턴값을 설명하세요" id="returnInfo" v-model="returnInfo" />
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div class="addExCode">
-        <label for="fileInput" style="display: flex; justify-content: space-between">
-          <div class="fileUpload">정답 코드 첨부</div>
-          <div class="fileName">선택된 파일 없음</div>
-        </label>
-        <input type="file" id="fileInput" accept=".java" @change="updateFileName" />
-      </div>
-    </div>
-    <div class="consoleEx">
-      <textarea
-        class="console"
-        placeholder="/* Console 창 예시 */"
-        id="console"
-        @click="lock"
-        readonly
-      ></textarea>
-    </div>
-  </div>
-  <div class="btBox">
-    <button class="addTestcase" @click="addTestcase">테스트케이스 설정</button>
-    <div class="rightBt">
-      <button class="cancleBt" @click="cancleBtClick" type="button">취소하기</button>
-      <button class="submitBt" @click="submitBtClick" type="button">확인하기</button>
-      <button v-if="consoleChk" class="submitBt" @click="addQuizBtClick" type="submit">
-        추가하기
-      </button>
-    </div>
-  </div>
-  <div v-if="popup" class="backOff" @click="clickBackOff"></div>
 </template>
 <script>
 import axios from 'axios'
@@ -186,10 +177,6 @@ export default {
     }
   },
   methods: {
-    gotoMain() {
-      alert('변경된 내용이 저장되지 않습니다')
-      location.href = '/'
-    },
     onHelp() {
       const popup = document.getElementById('popup')
       popup.style.display = 'block'
@@ -306,11 +293,11 @@ export default {
       if (this.testcaseWarning) {
         return
       }
-      document.body.style.overflow = 'scroll'
+      document.body.style.overflow = 'auto'
       this.popup = false
     },
     clickBackOff() {
-      document.body.style.overflow = 'scroll'
+      document.body.style.overflow = 'auto'
       this.popup = false
     },
     titleText() {
@@ -468,9 +455,6 @@ export default {
         return
       }
 
-      const tcpopup = document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor = '#A3A4B1'
-
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'block'
 
@@ -500,9 +484,6 @@ export default {
       outputValue[9].placeholder = '"880208"'
     },
     offTcHelp() {
-      const tcpopup = document.getElementById('testcasePopup')
-      tcpopup.style.backgroundColor = 'var(--main1-color)'
-
       const popup = document.getElementById('popupInTc')
       popup.style.display = 'none'
 
@@ -522,31 +503,29 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'default'
-      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'pointer'
-      bt2.style.cursor = 'pointer'
     }
   }
 }
 </script>
 <style scoped>
+.layout {
+  min-width: 1024px;
+}
 * {
   height: 100%;
   margin: 0;
   color: var(--main5-color);
-  cursor: default;
   position: relative;
+}
+
+div{
+  cursor: default;
 }
 
 header {
@@ -587,14 +566,6 @@ textarea:focus {
 ::placeholder {
   color: var(--main2-color);
 }
-
-.logo {
-  width: 150px;
-  margin-left: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
 .headerBar {
   font-size: 25px;
   text-align: right;
@@ -641,7 +612,6 @@ textarea:focus {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  overflow: scroll;
 }
 
 .quizInfo {
@@ -655,7 +625,6 @@ textarea:focus {
   margin-left: 15px;
   width: 100%;
   height: 300px;
-  overflow: scroll;
 }
 
 .infoInput {
@@ -663,7 +632,6 @@ textarea:focus {
   margin-top: 10px;
   width: 96%;
   height: 93%;
-  overflow: scroll;
   vertical-align: top;
 }
 
@@ -675,7 +643,6 @@ textarea:focus {
   margin-top: 10px;
   margin-right: 15px;
   margin-left: 20px;
-  overflow: scroll;
 }
 
 .console {
@@ -747,6 +714,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .fileName {
   cursor: pointer;
   line-height: 65px;
+  color: var(--main2-hover-color);
 }
 
 .addTestcase,
@@ -760,8 +728,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .fileUpload:hover {
-  background-color: var(--main3-hover-color);
-  border-color: var(--main3-hover-color);
+  background-color: var(--main2-hover-color);
+  border-color: var(--main2-hover-color);
 }
 
 .addTestcase {
@@ -769,8 +737,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .addTestcase:hover {
-  background-color: var(--main3-hover-color);
-  border-color: var(--main3-hover-color);
+  background-color: var(--main4-hover-color);
+  border-color: var(--main4-hover-color);
 }
 
 .btBox {
@@ -807,8 +775,8 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .fileUpload {
   cursor: pointer;
   color: var(--main1-color);
-  background-color: var(--main3-color);
-  border: 3px solid var(--main3-color);
+  background-color: var(--main2-color);
+  border: 3px solid var(--main2-color);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -831,7 +799,6 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .popup {
   /* top: 100px; */
   height: 1000%;
-  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .popupInTc {
@@ -856,15 +823,15 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcasePopup {
   position: fixed;
   top: 10%;
-  left: 12%;
+  left: 20%;
   padding: 20px;
-  width: 75%;
-  height: 80%;
+  width: 60%;
+  height: 60%;
   background-color: var(--main1-color);
   border: 7px solid;
   border-radius: 25px;
   border-color: var(--main5-color);
-  z-index: 1000;
+  z-index: 3;
 }
 
 .outTestcase {
@@ -883,6 +850,7 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 .testcaseWarn {
   background-color: var(--red-color);
   margin-right: 5px;
+  position: absolut;
 }
 
 .testcaseWarn:hover {
@@ -902,7 +870,6 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   font-size: x-large;
   display: flex;
   justify-content: space-between;
-  overflow: scroll;
 }
 
 .addTestcaseBt {
@@ -940,29 +907,30 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
 }
 
 .testcaseWarning {
-  width: 84%;
-  top: 5%;
-  left: 8%;
-  height: 78%;
+  width: 40%;
+  top: 20%;
+  left: 30%;
+  height: 340px;
   text-align: center;
-  font-size: 22px;
+  font-size: 16px;
   background-color: #eaebfe;
   border: 3px solid #7c354c;
   border-radius: 30px;
   overflow: hidden;
   color: #022954;
-  position: absolute;
+  position: fixed;
 }
 
 .backOff {
-  width: 200%;
-  height: 200%;
+  width: 100%;
+  height: 100%;
   display: fixed;
-  position: absolute;
+  position: fixed;
   background-color: rgba(0, 0, 0, 0.7);
   top: 0%;
   left: 0%;
   cursor: pointer;
+  z-index: 2;
 }
 
 .addInputBt:hover {

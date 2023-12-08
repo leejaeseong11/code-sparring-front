@@ -1,173 +1,145 @@
 <template>
-  <main class="container-fluid">
-    <div id="main-layout" class="row">
-      <div id="main-side-layout" class="col-2">
-        <img id="main-logo" src="/images/logo.gif" alt="logo" />
-        <div id="main-profile-containers">
-          <div id="my-profile-container">
-            <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
-            <div id="profile-tier-container">
-              <div id="tier-container">
-                <div id="rank-tier-help" class="custom-tooltip">
-                  ?<span class="custom-tooltiptext"
-                    >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
-                    각 티어별로 5개의 구간이 있습니다. <br />
-                    (ex. 브론즈5 ~ 브론즈1)<br />
-                    티어의 종류는 다음과 같습니다.<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/bronze.png"
-                      alt="my-tier" />브론즈<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/silver.png"
-                      alt="my-tier" />실버<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/gold.png"
-                      alt="my-tier" />골드<br />
-                    <img
-                      class="rank-tier-icon"
-                      src="/images/rank/platinum.png"
-                      alt="my-tier" />플래티넘<br
-                  /></span>
-                </div>
-                <img
-                  id="my-rank-tier"
-                  class="rank-tier-icon"
-                  src="/images/rank/bronze.png"
-                  alt="my-tier"
-                />
+  <div id="main-layout" class="row">
+    <div id="main-side-layout" class="col-2">
+      <div id="main-profile-containers">
+        <div id="my-profile-container">
+          <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
+          <div id="profile-tier-container">
+            <div id="tier-container">
+              <div id="rank-tier-help" class="custom-tooltip">
+                ?<span class="custom-tooltiptext"
+                  >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
+                  티어의 종류는 다음과 같습니다.<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/bronze.png"
+                    alt="my-tier" />브론즈<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/silver.png"
+                    alt="my-tier" />실버<br />
+                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />골드<br />
+                  <img
+                    class="rank-tier-icon"
+                    src="/images/rank/platinum.png"
+                    alt="my-tier" />플래티넘<br
+                /></span>
               </div>
-              <div id="profile-nickname">닉네임</div>
+              <img
+                id="my-rank-tier"
+                class="rank-tier-icon"
+                src="/images/rank/bronze.png"
+                alt="my-tier"
+              />
             </div>
-            <div id="exp-container">
-              <div id="my-level">Lv. 10</div>
-              <div class="progress col-sm-8">
-                <div
-                  class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
-                  role="progressbar"
-                  aria-valuenow="10"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                  style="width: 10%"
-                >
-                  <span id="my-exp">10 / 100</span>
-                </div>
+            <div id="profile-nickname">닉네임</div>
+          </div>
+          <div id="exp-container">
+            <div id="my-level">Lv. 10</div>
+            <div class="progress col-sm-8">
+              <div
+                class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
+                role="progressbar"
+                aria-valuenow="10"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                style="width: 10%"
+              >
+                <span id="my-exp">10 / 100</span>
               </div>
             </div>
-            <div id="main-profile-buttons"></div>
           </div>
-        </div>
-        <button id="rank-matching-button" class="btn btn-danger room-menu-button">
-          랭 크
-          <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
-          매 칭
-        </button>
-        <div id="rank-container">
-          <div id="rank-title">
-            순 위
-            <!-- <font-awesome-icon id="rank-title-icon" :icon="['fas', 'ranking-star']" /> -->
-          </div>
-          <ol id="rank-list">
-            <li>
-              <div class="rank-number" style="color: #ffcd69">1위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: #ff7d97">2위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: #33d6f5">3위</div>
-              <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--main1-color)">4위</div>
-              <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
-              <div class="rank-nickname">닉네임</div>
-            </li>
-            <li>
-              <div class="rank-number" style="color: var(--main1-color)">5위</div>
-              <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
-              <div class="rank-nickname">아주아주긴닉네임이지요너무길어서안보일지경이에요</div>
-            </li>
-          </ol>
+          <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <div id="room-layout" class="col-9">
-        <div id="main-navigation">
-          <div id="main-navigation-left">
-            <button class="btn btn-primary room-menu-button" @click="createWaitingRoomclickHandler">
-              방 만들기
+      <button id="rank-matching-button" class="btn btn-danger room-menu-button">
+        랭 크
+        <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
+        매 칭
+      </button>
+      <div id="rank-container">
+        <div id="rank-title">순 위</div>
+        <ol id="rank-list">
+          <li>
+            <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--main1-color)">4위</div>
+            <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
+          <li>
+            <div class="rank-number" style="color: var(--main1-color)">5위</div>
+            <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
+            <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
+              아주아주긴닉네임이지요너무길어서안보일지경이에요
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div id="room-layout" class="col-9">
+      <div id="main-navigation">
+        <div id="main-navigation-left">
+          <button class="btn btn-primary main-menu-button" @click="createWaitingRoomclickHandler">
+            방 만들기
+          </button>
+          <router-link
+            id="create-problem-button"
+            class="btn btn-primary main-menu-button"
+            to="quiz/add"
+            >문제 만들기</router-link
+          >
+        </div>
+        <div id="main-navigation-right">
+          <button id="mypage-button" class="btn main-menu-button">마이페이지</button>
+          <button id="logout-button" class="btn btn-danger main-menu-button">종료</button>
+        </div>
+      </div>
+      <div id="main-room-containers">
+        <div id="room-navigation">
+          <div id="all-room-title">
+            전체 게임방
+            <button class="btn" id="room-refresh-button">
+              <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
-            <router-link
-              id="create-problem-button"
-              class="btn btn-primary room-menu-button"
-              to="quiz/add"
-              >문제 만들기</router-link
-            >
           </div>
-          <div id="main-navigation-right">
-            <button id="mypage-button" class="btn">마이페이지</button>
-            <button id="logout-button" class="btn btn-danger">종료</button>
+          <div id="room-number-search-container">
+            <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+            <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
         </div>
-        <div id="main-room-containers">
-          <div id="room-navigation">
-            <div id="all-room-title">
-              전체 게임방
-              <button class="btn" id="room-refresh-button">
-                <!-- <font-awesome-icon id="room-refresh-icon" :icon="['fa', 'arrows-rotate']" /> -->
-                <img src="/images/refresh.png" style="width: 40px" alt="" />
-              </button>
-            </div>
-            <div id="room-buttons">
-              <!-- <button id="room-number-sort" class="btn">
-                <div>방 번호</div>
-                <font-awesome-icon v-if="roomNumberOrder == 'desc'" :icon="['fa', 'caret-down']" />
-                <font-awesome-icon v-if="roomNumberOrder == 'asc'" :icon="['fa', 'caret-up']" />
-              </button> -->
-              <div id="room-number-search-container">
-                <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
-                <font-awesome-icon
-                  id="room-number-search-icon"
-                  :icon="['fa', 'magnifying-glass']"
-                />
-              </div>
-            </div>
+        <div id="room-list-container">
+          <div class="row row-cols-2 room-containers">
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
           </div>
-          <div id="room-list-container">
-            <div class="row row-cols-2 room-containers">
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-              <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            </div>
-            <nav aria-label="...">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" tabindex="-1" aria-disabled="true">◀</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="#">▶</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+        </div>
+        <div id="pagenation-button-container">
+          <button class="btn pagenation-button">◀</button>
+          <button class="btn pagenation-button">▶</button>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 <script>
 import axios from 'axios'
@@ -191,11 +163,12 @@ export default {
         },
         // "roomPwd": "1234",
         codeShare: 0,
-        roomTitle: '테스트방 in vue'
+        roomTitle: '테스트방 in vue',
+        roomDt: new Date().toJSON()
       }
-
+      data = JSON.stringify(data)
       axios
-        .post(`${this.backURL}/room`, JSON.stringify(data), {
+        .post(`${this.backURL}/room`, data, {
           headers: {
             'Content-Type': 'application/json'
           }
@@ -206,6 +179,11 @@ export default {
         })
     },
     rankTierHelpHoverHandler() {}
+  },
+  mounted() {
+    axios.get(`${this.backURL}/room`).then((res) => {
+      console.log(res)
+    })
   }
 }
 </script>
@@ -216,21 +194,19 @@ export default {
   display: flex;
   justify-content: space-around;
 
-  overflow: auto;
+  overflow: visible;
   white-space: nowrap;
 
   color: var(--main5-color);
 }
 #main-side-layout {
   min-width: 260px;
+  padding: 0;
+  margin-top: 80px;
 
   display: flex;
   flex-direction: column;
-}
-#main-logo {
-  width: 150px;
-
-  cursor: pointer;
+  align-items: center;
 }
 #main-profile-containers {
   display: flex;
@@ -238,6 +214,8 @@ export default {
   align-items: center;
 }
 #my-profile-container {
+  margin-top: 12px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -308,6 +286,7 @@ export default {
 #profile-nickname {
   margin-left: 4px;
 
+  white-space: wrap;
   font-size: 1.25rem;
 }
 #rank-tier-hlep {
@@ -319,6 +298,7 @@ export default {
 
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 #my-level {
   padding-right: 4px;
@@ -343,12 +323,18 @@ export default {
 
   color: var(--main5-color);
 }
+
 .btn-primary {
   color: var(--main1-color);
   background-color: var(--main4-color);
   border: none;
 
   &:hover {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
+    border: none;
+  }
+  &:active {
     color: var(--main1-color);
     background-color: var(--main4-hover-color);
     border: none;
@@ -363,12 +349,17 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+  &:active {
+    color: var(--main1-color);
+    background-color: var(--red-hover-color);
+  }
 }
 #rank-matching-button {
+  width: 84%;
   margin-top: 24px;
-  padding: 20px;
+  padding: 16px;
 
-  font-size: 2rem;
+  font-size: 1.75rem;
 
   cursor: pointer;
   transition: transform 0.5s;
@@ -376,26 +367,27 @@ export default {
   background-color: var(--red-color);
   color: var(--main1-color);
 
-  &:hover {
-    transform: scale(1.2);
-  }
 
-  &:hover #rank-title-icon {
-    color: red;
-    transform: rotate(360deg);
+  &:hover {
+    /* background-color: var(--red-hover-color); */
+    transform: scale(1.2);
   }
 }
 #rank-title-icon {
-  width: 2rem;
-
-  &:hover {
-    transform: rotate(360deg);
-  }
+  transition: transform 0.5s;
 }
 
+#rank-matching-button:hover #rank-title-icon {
+  transform: rotate(180deg);
+}
+
+#rank-title-icon {
+  width: 2rem;
+}
 #rank-container {
+  width: 100%;
   padding: 8px;
-  margin-top: 30px;
+  margin-top: 24px;
 
   display: flex;
   flex-direction: column;
@@ -404,10 +396,7 @@ export default {
   text-align: center;
 
   color: var(--white-color);
-  /* background-color: #295402; */
   background-color: var(--main5-color);
-  /* opacity: 80%; */
-  /* background-color: #feeaeb; */
   border: 5px inset var(--main1-color);
   border-style: dotted solid;
   border-radius: 10px;
@@ -416,24 +405,21 @@ export default {
 #rank-title {
   padding: 8px;
 
-  font-size: 2rem;
+  font-size: 1.75rem;
   align-self: center;
 
   color: var(--main1-color);
-
-  /* border: 3px solid var(--main5-color);
-  border-radius: 10px; */
 }
 
 #rank-list > li {
-  padding: 12px;
+  padding: 6px;
 
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
 }
 #rank-list > li > * {
-  margin: 4px 4px;
+  margin: 4px;
 }
 .rank-number {
   width: 24px;
@@ -472,12 +458,16 @@ li {
   font-size: 1.5rem;
 }
 #mypage-button {
+  border: none;
   background-color: var(--main3-color);
   color: var(--main1-color);
 
   &:hover {
     background-color: var(--main3-hover-color);
     color: var(--main1-color);
+  }
+  &:active {
+    border: none;
   }
 }
 #main-navigation-left > *,
@@ -487,7 +477,7 @@ li {
 #create-problem-button {
   color: var(--main1-color) !important;
 }
-.room-menu-button {
+.main-menu-button {
   font-size: 1.25rem;
 }
 #main-room-containers {
@@ -506,55 +496,33 @@ li {
 #all-room-title {
   font-size: 1.5rem;
 }
-#room-number-sort {
-  padding: 6px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-
-  color: var(--main1-color);
-  background-color: var(--main3-color);
-  border: none;
-  border-radius: 10px;
-
-  &:hover {
-    background-color: var(--main3-hover-color);
-  }
-}
-#room-number-sort > div {
-  margin-right: 8px;
-}
-#room-buttons {
-  display: flex;
-  align-items: center;
-}
-#room-buttons > * {
-  margin: 0 8px;
-}
 #room-number-search-container {
+  margin-right: 8px;
+
   display: flex;
   align-items: center;
 
+  background-color: var(--white-color);
   border: 1px solid var(--main3-color);
-  border-radius: 10px;
+  border-radius: 20px;
 }
 #room-number-search-input {
   height: 2rem;
 
-  text-indent: 4px;
+  text-indent: 14px;
 
-  outline: none;
-  /* border: 1px solid var(--main3-color); */
+  border: none;
+  border-radius: 20px;
 }
 #room-number-search-icon {
-  padding: 4px;
+  padding: 8px 12px 8px 0;
 
   font-size: 1.5rem;
 
   cursor: pointer;
 
-  color: var(--main1-color);
-  background-color: var(--main3-color);
+  color: var(--black-color);
+  opacity: 50%;
   border: none;
 }
 input[type='number']::-webkit-outer-spin-button,
@@ -562,39 +530,43 @@ input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-#room-refresh-icon {
-  font-size: 2rem;
+#room-refresh-button {
+  cursor: pointer;
+  transition: transform 0.5s;
 
-  color: var(--main5-color);
+  border: none;
 
   &:hover {
-    color: var(--main5-hover-color);
+    transform: rotate(180deg);
+  }
+  &:active {
+    border: none;
   }
 }
 #room-list-container {
   display: flex;
   flex-direction: column;
 }
-
 #room-list-container > nav {
   align-self: center;
 }
-.active > a {
-  color: var(--main1-color) !important;
-  background-color: var(--main4-color);
-  border: none;
+#pagenation-button-container {
+  display: flex;
+  justify-content: center;
 }
-.page-link {
-  width: 100px;
-  margin: 0 20px;
-  color: var(--main5-color) !important;
-}
-#room-refresh-button {
-  cursor: pointer;
-  transition: transform 0.5s;
+.pagenation-button {
+  width: 120px;
+  margin: 0 12px;
+
+  font-size: 1.125rem;
+
+  background-color: var(--white-color);
+  border: 3px solid var(--main5-color);
+  transition: 0.25s;
+
   &:hover {
-    color: red;
-    transform: rotate(180deg);
+    background-color: var(--main2-color);
+    border: 3px solid var(--main5-color);
   }
 }
 </style>

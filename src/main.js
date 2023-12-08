@@ -10,27 +10,17 @@ import './assets/main.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-  faCaretDown,
-  faCaretUp,
   faMagnifyingGlass,
   faUser,
-  faArrowsRotate,
   faLock,
   faCrown,
-  faHouse,
-  faRankingStar,
-  faPowerOff
+  faHouse
 } from '@fortawesome/free-solid-svg-icons'
-library.add(faCaretDown)
-library.add(faCaretUp)
 library.add(faMagnifyingGlass)
 library.add(faUser)
-library.add(faArrowsRotate)
 library.add(faLock)
 library.add(faCrown)
 library.add(faHouse)
-library.add(faRankingStar)
-library.add(faPowerOff)
 
 const app = createApp(App)
 app.use(router)
