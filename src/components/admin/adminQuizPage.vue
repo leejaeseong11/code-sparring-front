@@ -1,19 +1,191 @@
 <template>
-    <div>Quizlist 입니당~~</div>
+  <main>
+    <QuizInfo v-if="false"></QuizInfo>
+
+    <div id="layout">
+      <div id="quiz-header">
+        <div id="quiz-filter">
+            <button class="quiz-opt" id="quiz-all" @click="allquiz">전체</button>&nbsp;
+            <button class="quiz-opt" id="quiz-urk" @click="urkquiz">UNRANKED</button>
+        </div>
+
+        <div id="quiz-search-box">
+          <input id="search-text" type="number" placeholder="문제 번호 검색" />
+          <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" />
+        </div>
+      </div>
+
+      <div id="quiz-content">
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+      </div>
+
+      <div id="quiz-page">
+        <button class="page-bt" id="prev">◀</button>&nbsp;
+        <!-- v-for 사용으로 page 생성 -->
+        <button class="page-bt-num" id="pg1">1</button>&nbsp;
+        <button class="page-bt-num" id="pg2">2</button>&nbsp;
+        <button class="page-bt-num" id="pg3">3</button>&nbsp;
+        <button class="page-bt-num" id="pg4">4</button>&nbsp;
+        <button class="page-bt-num" id="pg5">5</button>&nbsp;
+        <button class="page-bt" id="next">▶︎</button>
+      </div>
+    </div>
+  </main>
 </template>
 <script>
+import QuizInfo from '../quiz/quizView.vue'
+
 export default {
-    name: 'AdminQuizPage',
-    data() {
-        return {
-            
-        }
+  name: 'AdminQuizPage',
+  components: { QuizInfo },
+  data() {
+    return {}
+  },
+  methods: {
+    allquiz() {
+        const onBt=document.getElementById('quiz-all')
+        onBt.style.opacity='100%'
+        const offBt=document.getElementById('quiz-urk')
+        offBt.style.opacity='50%'
+    },
+    urkquiz() {
+        const onBt=document.getElementById('quiz-urk')
+        onBt.style.opacity='100%'
+        const offBt=document.getElementById('quiz-all')
+        offBt.style.opacity='50%'
     }
+  }
 }
 </script>
 <style scoped>
-*{
+#layout {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+#quiz-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#quiz-filter {
+    margin-left: 10px;
+    margin-top: 8px;
+}
+
+.quiz-opt {
+    padding: 4px;
+    border: none;
+    background-color: var(--main1-color);
     color: var(--main5-color);
-    padding: 2%;
+
+    &:hover {
+        background-color: var(--main2-color);
+        border-radius: 5px;
+    }
+}
+
+#quiz-urk {
+    opacity: 50%;
+}
+
+#quiz-search-box {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  border: 3px solid var(--main5-color);
+  border-radius: 20px;
+  width: 20%;
+}
+
+#search-text {
+  width: 100%;
+  height: 1.5rem;
+  font-size: 0.9rem;
+  text-indent: 14px;
+  border: none;
+  border-radius: 20px;
+  background-color: var(--main1-color);
+  color: var(--main5-color);
+
+  &::placeholder {
+    color: var(--main4-hover-color);
+  }
+}
+
+#search-icon {
+  padding: 8px 12px 8px 0;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--main5-color);
+  border: none;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#quiz-content {
+  width: 100%;
+  margin-top: 25px;
+}
+
+.quiz-object {
+  border: 3px solid var(--white-color);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 10px;
+  height: 9%;
+  background-color: var(--white-color);
+  vertical-align: center;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 50%;
+  }
+}
+
+#quiz-page {
+    margin-top: 22px;
+}
+
+.page-bt, .page-bt-num {
+    padding: 5px;
+    width: 35px;
+    height: 35px;
+    background-color: var(--main1-color);
+    border: none;
+    color: var(--main5-color);
+    padding-bottom: 27px;
+
+    &:hover {
+        opacity: 50%; 
+    }
+}
+
+#prev {
+    display: none;
+}
+
+#pg1 { /* main page */
+    border: 2px solid var(--main5-color);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+
+    &:hover {
+        opacity: 100%;
+    }
 }
 </style>
