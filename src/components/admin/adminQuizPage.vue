@@ -16,16 +16,13 @@
       </div>
 
       <div id="quiz-content">
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
-        <div class="quiz-object">문제번호 | 티어 | 타이틀 | 닉네임 | 조회버튼</div>
+        <div v-for="q in quizList" :key="q.quizNo" class="quiz-object">
+          <span class="quiz-no">{{ q.quizNo }}</span>
+          <span :class="'quiz-tier-'+q.quizTier">{{ q.quizTier }}</span>
+          <span class="quiz-title">{{ q.quizTitle }}</span>
+          <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
+          <button class="quiz-info-bt">조회</button>
+        </div>
       </div>
 
       <div id="quiz-page">
@@ -42,13 +39,18 @@
   </main>
 </template>
 <script>
+import axios from 'axios'
 import QuizInfo from '../quiz/quizView.vue'
 
 export default {
   name: 'AdminQuizPage',
   components: { QuizInfo },
   data() {
-    return {}
+    return {
+        currentPage: 1,
+        quizList: [],
+        totalPage: 0
+    }
   },
   methods: {
     allquiz() {
@@ -63,6 +65,14 @@ export default {
         const offBt=document.getElementById('quiz-all')
         offBt.style.opacity='50%'
     }
+  },
+  created() {
+    const url = `${this.backURL}/quiz/list/${this.currentPage}`
+        axios.get(url)
+        .then(res=>{
+            this.quizList=res.data
+            this.totalPage=Math.ceil(res.data[0].quizCnt/10)
+        })
   }
 }
 </script>
@@ -146,15 +156,54 @@ input[type='number']::-webkit-inner-spin-button {
   border: 3px solid var(--white-color);
   border-radius: 10px;
   padding: 5px;
-  margin: 10px;
+  margin: 5px;
   height: 9%;
   background-color: var(--white-color);
   vertical-align: center;
-  cursor: pointer;
+}
 
-  &:hover {
-    opacity: 50%;
-  }
+.quiz-no {
+  width: 5%;
+  display: inline-block;
+  color: var(--main5-color);
+  font-size: 13px;
+}
+
+.quiz-tier-UNRANKED, .quiz-tier-BRONZE,
+.quiz-tier-SILVER, .quiz-tier-GOLD, .quiz-tier-PLATINUM {
+  width: 15%;
+  display: inline-block;
+  color: var(--main4-color)
+}
+
+.quiz-tier-BRONZE {
+  color: #846353;
+}
+
+.quiz-tier-SILVER {
+  color: #7382A3;
+}
+
+.quiz-tier-GOLD {
+  color: #CC9336;
+}
+
+.quiz-tier-PLATINUM {
+  color: #34A8B1;
+}
+
+.quiz-title {
+  width: 50%;
+  display: inline-block;
+}
+
+.quiz-correct {
+  width: 20%;
+  display: inline-block;
+}
+
+.quiz-info-bt {
+  width: 10%;
 }
 
 #quiz-page {
