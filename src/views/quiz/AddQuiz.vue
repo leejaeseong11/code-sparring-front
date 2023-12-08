@@ -503,20 +503,12 @@ export default {
         return
       }
       this.testcaseWarning = true
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'default'
-      bt2.style.cursor = 'default'
     },
     offWarning(e) {
       if (e.target.className == 'testcaseWarn') {
         return
       }
       this.testcaseWarning = false
-      const bt1 = document.getElementById('outTestcase')
-      const bt2 = document.getElementById('testcaseHelp')
-      bt1.style.cursor = 'pointer'
-      bt2.style.cursor = 'pointer'
     }
   }
 }
