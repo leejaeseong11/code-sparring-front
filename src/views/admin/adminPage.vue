@@ -24,7 +24,6 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
 import AdminQuizPage from '../../components/admin/adminQuizPage.vue'
 import AdminReportPage from '../../components/admin/adminReportPage.vue'
 
