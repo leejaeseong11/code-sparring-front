@@ -300,7 +300,7 @@ export default {
 #room-quiz-containers {
   margin-top: 24px;
   padding: 12px;
-  height: 52.725f%;
+  height: 52.725%;
 
   background-color: var(--white-color);
   border: 3px solid var(--main5-color);
