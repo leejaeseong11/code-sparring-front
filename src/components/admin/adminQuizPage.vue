@@ -5,8 +5,8 @@
     <div id="layout">
       <div id="quiz-header">
         <div id="quiz-filter">
-            <button class="quiz-opt" id="quiz-all" @click="allquiz">전체</button>&nbsp;
-            <button class="quiz-opt" id="quiz-urk" @click="urkquiz">UNRANKED</button>
+          <button class="quiz-opt" id="quiz-all" @click="allquiz">전체</button>&nbsp;
+          <button class="quiz-opt" id="quiz-urk" @click="urkquiz">UNRANKED</button>
         </div>
 
         <div id="quiz-search-box">
@@ -18,7 +18,7 @@
       <div id="quiz-content">
         <div v-for="q in quizList" :key="q.quizNo" class="quiz-object">
           <span class="quiz-no">{{ q.quizNo }}</span>
-          <span :class="'quiz-tier-'+q.quizTier">{{ q.quizTier }}</span>
+          <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
           <span class="quiz-title">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
           <button class="quiz-info-bt">조회</button>
@@ -47,32 +47,44 @@ export default {
   components: { QuizInfo },
   data() {
     return {
-        currentPage: 1,
-        quizList: [],
-        totalPage: 0
+      currentPage: 1,
+      quizList: [],
+      totalPage: 0,
+      sort: 0
     }
   },
   methods: {
     allquiz() {
-        const onBt=document.getElementById('quiz-all')
-        onBt.style.opacity='100%'
-        const offBt=document.getElementById('quiz-urk')
-        offBt.style.opacity='50%'
+      const onBt = document.getElementById('quiz-all')
+      onBt.style.opacity = '100%'
+      const offBt = document.getElementById('quiz-urk')
+      offBt.style.opacity = '50%'
+     
+      const url = `${this.backURL}/quiz/list/${this.currentPage}`
+      axios.get(url).then((res) => {
+        this.quizList = res.data
+        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+      })
     },
     urkquiz() {
-        const onBt=document.getElementById('quiz-urk')
-        onBt.style.opacity='100%'
-        const offBt=document.getElementById('quiz-all')
-        offBt.style.opacity='50%'
+      const onBt = document.getElementById('quiz-urk')
+      onBt.style.opacity = '100%'
+      const offBt = document.getElementById('quiz-all')
+      offBt.style.opacity = '50%'
+
+      const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
+      axios.get(url).then((res) => {
+        this.quizList = res.data
+        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+      })
     }
   },
   created() {
     const url = `${this.backURL}/quiz/list/${this.currentPage}`
-        axios.get(url)
-        .then(res=>{
-            this.quizList=res.data
-            this.totalPage=Math.ceil(res.data[0].quizCnt/10)
-        })
+    axios.get(url).then((res) => {
+        this.quizList = res.data
+        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+      })
   }
 }
 </script>
@@ -84,29 +96,29 @@ export default {
 }
 
 #quiz-header {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 #quiz-filter {
-    margin-left: 10px;
-    margin-top: 8px;
+  margin-left: 10px;
+  margin-top: 8px;
 }
 
 .quiz-opt {
-    padding: 4px;
-    border: none;
-    background-color: var(--main1-color);
-    color: var(--main5-color);
+  padding: 4px;
+  border: none;
+  background-color: var(--main1-color);
+  color: var(--main5-color);
 
-    &:hover {
-        background-color: var(--main2-color);
-        border-radius: 5px;
-    }
+  &:hover {
+    background-color: var(--main2-color);
+    border-radius: 5px;
+  }
 }
 
 #quiz-urk {
-    opacity: 50%;
+  opacity: 50%;
 }
 
 #quiz-search-box {
@@ -149,6 +161,7 @@ input[type='number']::-webkit-inner-spin-button {
 
 #quiz-content {
   width: 100%;
+  height: 77%;
   margin-top: 25px;
 }
 
@@ -169,11 +182,14 @@ input[type='number']::-webkit-inner-spin-button {
   font-size: 13px;
 }
 
-.quiz-tier-UNRANKED, .quiz-tier-BRONZE,
-.quiz-tier-SILVER, .quiz-tier-GOLD, .quiz-tier-PLATINUM {
+.quiz-tier-UNRANKED,
+.quiz-tier-BRONZE,
+.quiz-tier-SILVER,
+.quiz-tier-GOLD,
+.quiz-tier-PLATINUM {
   width: 15%;
   display: inline-block;
-  color: var(--main4-color)
+  color: var(--main4-color);
 }
 
 .quiz-tier-BRONZE {
@@ -181,15 +197,15 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .quiz-tier-SILVER {
-  color: #7382A3;
+  color: #7382a3;
 }
 
 .quiz-tier-GOLD {
-  color: #CC9336;
+  color: #cc9336;
 }
 
 .quiz-tier-PLATINUM {
-  color: #34A8B1;
+  color: #34a8b1;
 }
 
 .quiz-title {
@@ -204,37 +220,43 @@ input[type='number']::-webkit-inner-spin-button {
 
 .quiz-info-bt {
   width: 10%;
+  background-color: var(--main4-color);
+  border: 2px solid var(--main4-color);
+  border-radius: 5px;
+  color: var(--white-color);
+
+  &:hover {
+    background-color: var(--main4-hover-color);
+    border-color: var(--main4-hover-color);
+  }
 }
 
 #quiz-page {
-    margin-top: 22px;
+  margin-top: 22px;
 }
 
-.page-bt, .page-bt-num {
-    padding: 5px;
-    width: 35px;
-    height: 35px;
-    background-color: var(--main1-color);
-    border: none;
-    color: var(--main5-color);
-    padding-bottom: 27px;
+.page-bt,
+.page-bt-num {
+  padding: 5px;
+  width: 35px;
+  height: 35px;
+  background-color: var(--main1-color);
+  border: none;
+  color: var(--main5-color);
+  padding-bottom: 27px;
 
-    &:hover {
-        opacity: 50%; 
-    }
+  &:hover {
+    opacity: 50%;
+  }
 }
 
 #prev {
-    display: none;
+  display: none;
 }
 
-#pg1 { /* main page */
-    border: 2px solid var(--main5-color);
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.8);
-
-    &:hover {
-        opacity: 100%;
-    }
+#pg1 {
+  /* main page */
+  opacity: 50%;
+  cursor: default;
 }
 </style>
