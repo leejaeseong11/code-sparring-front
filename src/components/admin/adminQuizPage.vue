@@ -1,7 +1,5 @@
 <template>
   <main>
-    <QuizInfo v-if="false"></QuizInfo>
-
     <div id="layout">
       <div id="quiz-header">
         <div id="quiz-filter">
@@ -10,12 +8,20 @@
         </div>
 
         <div id="quiz-search-box">
-          <input id="search-text" type="number" placeholder="문제 번호 검색" />
-          <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" />
+          <input id="search-text" type="number" placeholder="문제 번호 검색" @focus="searchQuiz" />
+          <font-awesome-icon
+            id="search-icon"
+            :icon="['fa', 'magnifying-glass']"
+            @click="searchQuiz"
+          />
         </div>
       </div>
 
-      <div id="quiz-content">
+      <div class="quiz-content" v-if="this.popup">
+        <AdminQuizPopup class="quiz-object"></AdminQuizPopup>
+      </div>
+
+      <div class="quiz-content" v-if="!this.popup">
         <div v-for="q in quizList" :key="q.quizNo" class="quiz-object">
           <span class="quiz-no">{{ q.quizNo }}</span>
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
@@ -25,32 +31,35 @@
         </div>
       </div>
 
-      <div id="quiz-page">
-        <button class="page-bt" id="prev">◀</button>&nbsp;
-        <!-- v-for 사용으로 page 생성 -->
-        <button class="page-bt-num" id="pg1">1</button>&nbsp;
-        <button class="page-bt-num" id="pg2">2</button>&nbsp;
-        <button class="page-bt-num" id="pg3">3</button>&nbsp;
-        <button class="page-bt-num" id="pg4">4</button>&nbsp;
-        <button class="page-bt-num" id="pg5">5</button>&nbsp;
-        <button class="page-bt" id="next">▶︎</button>
+      <div v-if="!popup" id="quiz-page">
+        <button class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button
+          v-for="pg in totalPage"
+          :key="pg"
+          class="page-bt-num"
+          :id="'' + pg"
+          @click="pgClick"
+        >
+          {{ pg }}</button
+        >&nbsp;
+        <button class="page-bt" id="next" @click="pgNextClick">▶︎</button>
       </div>
     </div>
   </main>
 </template>
 <script>
 import axios from 'axios'
-import QuizInfo from '../quiz/quizView.vue'
+import AdminQuizPopup from '../admin/adminQuizPopup.vue'
 
 export default {
   name: 'AdminQuizPage',
-  components: { QuizInfo },
+  components: { AdminQuizPopup },
   data() {
     return {
       currentPage: 1,
       quizList: [],
       totalPage: 0,
-      sort: 0
+      popup: false
     }
   },
   methods: {
@@ -59,7 +68,17 @@ export default {
       onBt.style.opacity = '100%'
       const offBt = document.getElementById('quiz-urk')
       offBt.style.opacity = '50%'
-     
+
+      this.popup = false
+
+      const text = document.getElementById('search-text')
+      text.value = ''
+
+      this.currentPage = 1
+      // const mainPg = document.getElementById(this.currentPage)
+      // mainPg.style.opacity = '50%'
+      // mainPg.style.cursor = 'default'
+
       const url = `${this.backURL}/quiz/list/${this.currentPage}`
       axios.get(url).then((res) => {
         this.quizList = res.data
@@ -72,7 +91,58 @@ export default {
       const offBt = document.getElementById('quiz-all')
       offBt.style.opacity = '50%'
 
+      this.popup = false
+
+      const text = document.getElementById('search-text')
+      text.value = ''
+
+      this.currentPage = 1
+      // const mainPg = document.getElementById(this.currentPage)
+      // mainPg.style.opacity = '50%'
+      // mainPg.style.cursor = 'default'
+
       const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
+      axios.get(url).then((res) => {
+        this.quizList = res.data
+        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+      })
+    },
+    searchQuiz(e) {
+      if (this.popup) {
+        if (e.target.id == 'search-icon') return
+        this.popup = false
+      } else {
+        if (e.target.id == 'search-icon') {
+          const onBt = document.getElementById('quiz-all')
+          onBt.style.opacity = '50%'
+          const offBt = document.getElementById('quiz-urk')
+          offBt.style.opacity = '50%'
+
+          this.popup = true
+        }
+      }
+    },
+    pgPrevClick() {
+      this.currentPage = (this.currentPage / 5 - 1) * 5
+      // const mainPg = document.getElementById(this.currentPage)
+      // mainPg.style.opacity = '50%'
+      // mainPg.style.cursor = 'default'
+
+      // location.href='/admin/:viewName/:currentPage'
+      const url = `${this.backURL}/quiz/list/${this.currentPage}`
+      axios.get(url).then((res) => {
+        this.quizList = res.data
+        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+      })
+    },
+    pgClick(e) {
+      this.currentPage = e.target.id
+      // const mainPg = document.getElementById(this.currentPage)
+      // mainPg.style.opacity = '50%'
+      // mainPg.style.cursor = 'default'
+
+      // location.href='/admin/:viewName/:currentPage'
+      const url = `${this.backURL}/quiz/list/${this.currentPage}`
       axios.get(url).then((res) => {
         this.quizList = res.data
         this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
@@ -82,9 +152,14 @@ export default {
   created() {
     const url = `${this.backURL}/quiz/list/${this.currentPage}`
     axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
+      this.quizList = res.data
+      this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+
+      if (this.totalPage <= 5) {
+        const next = document.getElementById('next')
+        next.style.display = 'none'
+      }
+    })
   }
 }
 </script>
@@ -159,7 +234,7 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
-#quiz-content {
+.quiz-content {
   width: 100%;
   height: 77%;
   margin-top: 25px;
@@ -252,11 +327,5 @@ input[type='number']::-webkit-inner-spin-button {
 
 #prev {
   display: none;
-}
-
-#pg1 {
-  /* main page */
-  opacity: 50%;
-  cursor: default;
 }
 </style>
