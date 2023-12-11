@@ -77,10 +77,11 @@ export default {
                 })
                 .then(responseData => {
                     console.log(responseData);
-                    // Access Token을 로컬 스토리지에 저장
+                    // Access Token을 세션 스토리지에 저장
                     console.log(responseData.data.accessToken)
                     console.log(responseData.data.refreshToken)
-                    localStorage.setItem("accessToken", responseData.data.accessToken);
+                    sessionStorage.setItem("accessToken", responseData.data.accessToken);
+                    // localStorage.setItem("accessToken", responseData.data.accessToken);
                     location.href = '/';
                 })
                 .catch(error => {
