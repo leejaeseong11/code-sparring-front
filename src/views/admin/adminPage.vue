@@ -6,8 +6,8 @@
 
     <div class="content-box">
       <div class="index-bar">
-        <div class="quiz-page" id="quiz-page" @click="OnQuizPage">전체 문제 조회</div>
-        <div class="report-page" id="report-page" @click="OnReportPage">신고 목록 조회</div>
+        <div class="quiz-page" id="quiz-page" @click="OnQuizPage">문제 조회</div>
+        <div class="report-page" id="report-page" @click="OnReportPage">신고 목록</div>
         <img
           src="../../../public/images/admin/home.png"
           class="home-bt"
@@ -17,14 +17,13 @@
       </div>
 
       <div class="content-area">
-        <AdminQuizPage v-if="this.quizPage"></AdminQuizPage>
-        <AdminReportPage v-if="this.reportPage"></AdminReportPage>
+        <AdminQuizPage v-if="this.quizPage" class="view-area"></AdminQuizPage>
+        <AdminReportPage v-if="this.reportPage" class="view-area"></AdminReportPage>
       </div>
     </div>
   </main>
 </template>
 <script>
-// import axios from 'axios'
 import AdminQuizPage from '../../components/admin/adminQuizPage.vue'
 import AdminReportPage from '../../components/admin/adminReportPage.vue'
 
@@ -149,5 +148,9 @@ export default {
 
 .content-area {
   height: 650px;
+}
+
+.view-area {
+  padding: 2%;
 }
 </style>
