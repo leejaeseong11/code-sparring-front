@@ -4,7 +4,7 @@
         <span :class="'quiz-tier-' + this.quizTier">{{ this.quizTier }}</span>
         <span class="quiz-title">{{ this.quizTitle }}</span>
         <span class="quiz-correct">{{ this.quizCorrectPercent }}</span>
-        <button class="quiz-info-bt">조회</button>
+        <button class="quiz-info-bt" @click="quizView">조회</button>
     </div>
 </template>
 <script>
@@ -25,6 +25,9 @@ export default {
         }
     },
     methods: {
+      quizView() {
+        location.href='/quiz'
+      }
     },
     created() {
         const quizNo=document.getElementById('search-text').value

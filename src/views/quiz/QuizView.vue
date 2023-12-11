@@ -136,7 +136,7 @@ input, textarea {
 }
 
 #title {
-  margin-top: 10px;
+  margin-top: 15px;
   width: 100%;
   background-color: var(--main5-color);
   height: 50px;
@@ -208,7 +208,7 @@ input, textarea {
 
 #content {
   width: 800px;
-  margin-top: 15px;
+  margin-top: 10px;
   padding: 15px;
 }
 

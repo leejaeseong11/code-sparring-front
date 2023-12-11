@@ -149,7 +149,7 @@ export default {
       })
     },
     quizView() {
-      location.href='/admin/quiz'
+      location.href='/quiz'
     }
   },
   created() {
