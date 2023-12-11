@@ -9,6 +9,7 @@ import Login from '@/views/member/Login.vue'
 import AdminPage from '@/views/admin/adminPage.vue'
 import QuizView from '@/views/quiz/QuizView.vue'
 
+import Normal from '@/views/code/Normal.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/quiz',
       name: 'QuizView',
       component: QuizView
+    },
+    {
+      path: '/normal/:roomNo',
+      name: 'Normal',
+      component: Normal
     }
   ]
 })

@@ -141,6 +141,7 @@
 </template>
 <script>
 import RoomMember from '../../components/room/RoomMember.vue'
+import axios from 'axios';
 export default {
   name: 'WaitingRoom',
   components: { RoomMember },
@@ -189,7 +190,18 @@ export default {
       this.socket.send(JSON.stringify(talkMessage))
     },
     gameStartButtonClickHandler() {
-      this.$router.push({ path: `` })
+      this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
+      // axios
+      //   .post(`${this.backURL}/room`, data, {
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     }
+      //   })
+      //   .then((res) => {
+      //     console.log(res)
+          
+          
+      //   })
     }
   }
 }
