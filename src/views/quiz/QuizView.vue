@@ -7,7 +7,8 @@
         <button v-if="modifyBt" id="not-button">임시버튼</button>
       </div>
 
-      <AddTestcase v-if="testcaseBt"></AddTestcase>
+      <div v-if="testcaseBt" id="back-off" @click="offTc"></div>
+      <AddTestcase v-if="testcaseBt" id="testcase-popup" @close-testcase="offTc" @update-testcase="updateTestcase"></AddTestcase>
 
       <div id="title">
         <div v-if="!modifyBt" id="quiz-title-div">{{ this.quizTitle }}</div>
@@ -98,7 +99,7 @@
 
           <div id="button-area">
             <div id="left-button">
-              <button v-if="modifyBt" id="tc-button" @click="addTc">테스트케이스 추가</button>
+              <button v-if="!modifyBt" id="tc-button" @click="addTc">테스트케이스 추가</button>
               <button v-if="!modifyBt" id="code-button" @click="codeFile">정답코드 조회</button>
             </div>
             <div id="right-button">
@@ -161,6 +162,14 @@ export default {
     },
     addTc() {
       this.testcaseBt=true
+    },
+    offTc() {
+      this.testcaseBt=false
+    },
+    updateTestcase(input) {
+      alert(input)
+      this.quizTitle=input
+      alert(this.quizTitle)
     }
   },
   created() {
@@ -196,7 +205,7 @@ input,
 textarea {
   cursor: text;
   color: var(--main3-hover-color) !important;
-  text-indent: 5px;
+  padding: 5px;
 }
 
 #header {
@@ -282,7 +291,7 @@ textarea {
 
 #quiz-tier-input {
   text-align: center;
-  text-indent: 0px !important;
+  padding: 0px !important;
   width: 150px;
   margin-left: 55px;
 }
@@ -389,6 +398,7 @@ textarea {
 
 #tc-button {
   width: 200px;
+  margin-right: 10px;
 }
 
 #modify-button,
@@ -430,5 +440,30 @@ textarea {
   border-radius: 7px;
   width: 40px;
   height: 30px;
+}
+
+#testcase-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main1-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 700px;
+  height: 400px;
+  margin-top: 5%;
+  margin-left: 17%;
+  z-index: 2;
+}
+
+#back-off {
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  cursor: pointer;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
