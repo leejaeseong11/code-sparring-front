@@ -41,6 +41,8 @@ export default {
         .then(() => {
           alert('테스트케이스가 추가되었습니다')
           window.history.go(0)
+        }).catch(()=>{
+            alert('테스트케이스 추가에 실패하였습니다')
         })
     }
   }

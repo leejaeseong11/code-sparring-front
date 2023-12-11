@@ -8,7 +8,7 @@
       </div>
 
       <div v-if="testcaseBt" id="back-off" @click="offTc"></div>
-      <AddTestcase v-if="testcaseBt" id="testcase-popup" @close-testcase="offTc" @update-testcase="updateTestcase"></AddTestcase>
+      <AddTestcase v-if="testcaseBt" id="testcase-popup" @close-testcase="offTc"></AddTestcase>
 
       <div id="title">
         <div v-if="!modifyBt" id="quiz-title-div">{{ this.quizTitle }}</div>
@@ -57,22 +57,25 @@
           <div id="testcase">
             <div class="index-name">테스트케이스 목록</div>
             <div id="textcase-box">
-              <div v-if="testcaseCnt==0 && !modifyBt">존재하지 않습니다</div>
-              <div v-for="(tc, index) in testcaseList" :key="tc">
-                <div class="testcase-no">[{{ index+1 }}]&nbsp;&nbsp;&nbsp;<button v-if="modifyBt" class="delete-tc-button" :id="tc.testcaseNo">삭제</button></div>
-                <div>
-                  입력값 :
-                  <span v-if="!modifyBt">{{
-                    tc.testcaseInput == null ? '-' : tc.testcaseInput
-                  }}</span>
-                  <input v-if="modifyBt" :value="tc.testcaseInput" />
+              <div v-if="testcaseCnt == 0 && !modifyBt">존재하지 않습니다</div>
+              <div class="testcase-box-for" v-for="(tc, index) in testcaseList" :key="tc">
+                <div class="testcase-no">
+                  [{{ index + 1 }}]&nbsp;&nbsp;&nbsp;<button
+                    v-if="!modifyBt"
+                    class="delete-tc-button"
+                    :id="tc.testcaseNo"
+                    @click="deleteTc"
+                  >
+                    삭제
+                  </button>
                 </div>
-                <div>
-                  출력값 :
-                  <span v-if="!modifyBt">{{
-                    tc.testcaseOutput == null ? '-' : tc.testcaseOutput
-                  }}</span>
-                  <input v-if="modifyBt" :value="tc.testcaseOutput" />
+                <div class="testcase-div">
+                  <div class="tc-text">입력값 :</div>
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput" readonly />
+                </div>
+                <div class="testcase-div">
+                  <div class="tc-text">출력값 :</div>
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput" readonly />
                 </div>
                 <br />
               </div>
@@ -82,19 +85,15 @@
 
         <div id="content">
           <div class="index-name">문제 내용</div>
-          <div v-if="!modifyBt" id="quiz-content">{{ this.quizContent }}</div>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-content" v-model="this.quizContent"></textarea>
 
           <div class="index-name">입력값 설명</div>
-          <div v-if="!modifyBt" id="quiz-input">
-            {{ this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo }}
-          </div>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input" :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-input" v-model="this.inputInfo"></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <div v-if="!modifyBt" id="quiz-output">
-            {{ this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo }}
-          </div>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output" :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-output" v-model="this.outputInfo"></textarea>
 
           <div id="button-area">
@@ -104,7 +103,7 @@
             </div>
             <div id="right-button">
               <button v-if="!modifyBt" id="modify-button" @click="modifyQuiz">수정</button>&nbsp;
-              <button v-if="!modifyBt" id="delete-button">삭제</button>
+              <button v-if="!modifyBt" id="delete-button" @click="deleteQuiz">삭제</button>
               <button v-if="modifyBt" id="cancle-button" @click="modifyQuiz">취소</button>&nbsp;
               <button v-if="modifyBt" id="save-button" @click="modifyQuiz">저장</button>
             </div>
@@ -120,7 +119,7 @@ import AddTestcase from '../../components/quiz/AddTestcase.vue'
 
 export default {
   name: 'QuizView',
-  components: {AddTestcase},
+  components: { AddTestcase },
   data() {
     return {
       quizNo: 0,
@@ -147,11 +146,34 @@ export default {
       if (e.target.id == 'modify-button') {
         this.modifyBt = true
       } else if (e.target.id == 'cancle-button') {
-        alert('문제 수정을 취소합니다')
-        window.history.go(0)
+        var result = confirm('문제 수정을 취소하시겠습니까?')
+        if (result) window.history.go(0)
       } else if (e.target.id == 'save-button') {
-        alert('문제를 저장합니다')
-        this.modifyBt = false
+        result = confirm('문제를 저장하시겠습니까?')
+        if (!result) return
+        const data = {
+          quizTitle: this.quizTitle,
+          quizContent: this.quizContent,
+          quizInput: this.inputInfo,
+          quizOutput: this.outputInfo,
+          quizTier: this.quizTier
+        }
+        const url = `${this.backURL}/quiz/` + this.quizNo
+        axios
+          .put(url, JSON.stringify(data), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(() => {
+            alert('문제가 수정되었습니다')
+            this.modifyBt = false
+            window.history.go(0)
+          })
+          .catch(() => {
+            alert('문제 수정에 실패하였습니다')
+            window.history.go(0)
+          })
       }
     },
     codeFile() {
@@ -161,33 +183,64 @@ export default {
       )
     },
     addTc() {
-      this.testcaseBt=true
+      this.testcaseBt = true
     },
     offTc() {
-      this.testcaseBt=false
+      this.testcaseBt = false
     },
-    updateTestcase(input) {
-      alert(input)
-      this.quizTitle=input
-      alert(this.quizTitle)
+    deleteTc(e) {
+      var result = confirm('테스트케이스를 삭제하시겠습니까?')
+
+      if (result) {
+        const tcNo = e.target.id
+        const url = `${this.backURL}/testcase/` + tcNo
+        axios
+          .delete(url)
+          .then(() => {
+            alert('테스트케이스가 삭제되었습니다')
+            window.history.go(0)
+          })
+          .catch(() => {
+            alert('네트워크 오류가 발생했습니다')
+          })
+      }
+    },
+    deleteQuiz() {
+      var result = confirm('문제를 삭제하시겠습니까?')
+      if (!result) return
+      const url = `${this.backURL}/quiz/` + this.quizNo
+      axios
+        .delete(url)
+        .then(() => {
+          alert('문제가 삭제되었습니다')
+          location.href = '/admin/quiz/all/1'
+        })
+        .catch(() => {
+          alert('네트워크 오류가 발생했습니다')
+        })
     }
   },
   created() {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
-    axios.get(url).then((res) => {
-      this.quizTitle = res.data.quizTitle
-      this.quizContent = res.data.quizContent
-      this.quizTier = res.data.quizTier
-      this.quizAuthor = res.data.memberName
-      this.quizSubmitCnt = res.data.quizSubmitCnt
-      this.quizSuccessCnt = res.data.quizSuccessCnt
-      this.quizCorrect = res.data.quizCorrectPercent
-      this.inputInfo = res.data.quizInput
-      this.outputInfo = res.data.quizOutput
-      this.testcaseList = res.data.testcaseDTOList
-      this.testcaseCnt = this.testcaseList.length
-    })
+    axios
+      .get(url)
+      .then((res) => {
+        this.quizTitle = res.data.quizTitle
+        this.quizContent = res.data.quizContent
+        this.quizTier = res.data.quizTier
+        this.quizAuthor = res.data.memberName
+        this.quizSubmitCnt = res.data.quizSubmitCnt
+        this.quizSuccessCnt = res.data.quizSuccessCnt
+        this.quizCorrect = res.data.quizCorrectPercent
+        this.inputInfo = res.data.quizInput
+        this.outputInfo = res.data.quizOutput
+        this.testcaseList = res.data.testcaseDTOList
+        this.testcaseCnt = this.testcaseList.length
+      })
+      .catch(() => {
+        alert('문제 조회에 실패하였습니다')
+      })
   }
 }
 </script>
@@ -204,8 +257,13 @@ button {
 input,
 textarea {
   cursor: text;
-  color: var(--main3-hover-color) !important;
+  color: var(--main3-hover-color);
   padding: 5px;
+  resize: none;
+  
+  &:focus {
+    outline: none;
+  }
 }
 
 #header {
@@ -252,6 +310,10 @@ textarea {
   background-color: var(--main5-color);
   color: var(--main1-color);
   font-size: 20px;
+}
+
+#quiz-title-input {
+  color: var(--main2-color);
 }
 
 #quiz-title-div {
@@ -333,7 +395,6 @@ textarea {
   margin-top: 30px;
 }
 
-
 #textcase-box {
   height: 300px;
   overflow: auto;
@@ -348,28 +409,18 @@ textarea {
 #quiz-content {
   width: 98%;
   height: 250px;
-  resize: none;
   line-height: 30px;
   overflow: auto;
   margin-bottom: 15px;
-
-  &:focus {
-    outline: none;
-  }
 }
 
 #quiz-input,
 #quiz-output {
   width: 98%;
   height: 50px;
-  resize: none;
   line-height: 30px;
   overflow: auto;
   margin-bottom: 15px;
-
-  &:focus {
-    outline: none;
-  }
 }
 
 .testcase-no {
@@ -382,7 +433,8 @@ textarea {
   margin-top: 15px;
 }
 
-#code-button, #tc-button {
+#code-button,
+#tc-button {
   width: 150px;
   height: 50px;
   background-color: var(--main3-color);
@@ -465,5 +517,30 @@ textarea {
   cursor: pointer;
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.readonlyTextarea, .readonlyTextareaTc {
+  background-color: var(--main1-color);
+  color: var(--main5-color);
+  border: none;
+  cursor: default;
+}
+
+.testcase-div {
+  display: flex;
+  justify-content: space-between;
+  height: auto;
+}
+
+.tc-text {
+  line-height: 33px;
+}
+
+.readonlyTextareaTc {
+  width: 350px;
+}
+
+.testcase-box-for {
+  height: auto;
 }
 </style>
