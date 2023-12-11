@@ -27,7 +27,7 @@
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
           <span class="quiz-title">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
-          <button class="quiz-info-bt">조회</button>
+          <button class="quiz-info-bt" :id="''+q.quizNo" @click="quizView">조회</button>
         </div>
       </div>
 
@@ -147,6 +147,9 @@ export default {
         this.quizList = res.data
         this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
       })
+    },
+    quizView() {
+      location.href='/admin/quiz'
     }
   },
   created() {
