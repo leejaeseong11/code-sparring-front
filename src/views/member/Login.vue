@@ -1,15 +1,19 @@
 <template>
+    <div id="logoOff">
+
+    </div>
     <div class="video-background">
         <video autoplay muted loop id="myVideo">
             <source src="images/login/mainBackGround.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
+
         <div class="login">
-            <div>
-                <img src="images/login/join.png" alt="join" class="join" @click="signinForm()">
-                &nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="action-buttons">
+                <img src="images/login/join.png" alt="join" class="join" @click="signUpForm()">
+
             </div>
-            <form id="joinForm">
+            <form id="joinForm" class="action-buttons">
                 <table>
                     <tr>
                         <td>
@@ -32,12 +36,11 @@
                         </td>
                     </tr>
                 </table>
-           
-                <div>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <img src="images/login/start.png" alt="start" class="start" @click="loginFormSubmitHandler()">
+                <div class="action-buttons">
+                    <img src="images/login/start.png" alt="start" class="start" @click="goToMain()">
                 </div>
             </form>
+
         </div>
     </div>
 </template>
@@ -56,35 +59,36 @@ export default {
         // submitForm() {
         //     document.getElementById('joinForm').submit();
         // },
-        signinForm() {
+        signUpForm() {
             location.href = '/signup'
         },
 
+        goToMain() {
+            location.href = '/'
+        },
 
-        loginFormSubmitHandler() {
+
+        loginFormSubmitHandler(e) {
             const url = `${this.backURL}/auth/login`;
-            const data = {
+            let data = {
                 id: this.id,
                 pwd: this.pwd
             };
+            axios
+                .post(url, JSON.stringify(data), {
+                    headers:{
+                        'Content-Type': 'application/json'       
+                    },
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then(response => response.json())
+                })
                 .then(responseData => {
                     console.log(responseData);
-                   
+
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
             alert("end loginFormSubmitHandler")
-
         }
     },
 
@@ -94,6 +98,25 @@ export default {
 
 </script>
 <style scoped>
+#logoOff {
+    width: 100%;
+    height: 100px;
+    z-index: 1;
+    position: absolute;
+    background-color: var(--main1-color);
+}
+
+.video-background {
+    z-index: 2;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 body,
 html {
     height: 100%;
@@ -116,6 +139,8 @@ html {
     bottom: 0;
     width: 100%;
     height: 100%;
+
+    object-fit: cover;
 }
 
 .login {
@@ -127,7 +152,7 @@ html {
     color: white;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     cursor: default;
 }
 

@@ -1,4 +1,7 @@
 <template>
+    <div id="logoOff">
+
+    </div>
     <div class="logo">
         <img id="main-logo" src="/images/logo.gif" alt="logo" @click="gotoMain">
     </div>
@@ -72,12 +75,17 @@
                 코드스파링은 이용자 식별을 위해 아이디와 비밀번호를 수집하고 있으며, 게임 탈퇴 시까지 이용합니다.
             </p>
             <div id="info-agree">
-                <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed" @focus="clearAllErrMsg">
+                <!-- <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed" @click="clearAllErrMsg"> -->
+                <input type="checkbox" id="privacy-checkbox"  v-model="privacyAgreed">
                 위의 내용에 동의합니다.
             </div>
 
             <!-- :disabled="!isFormValid" -->
-            <button id="submit" @click="checkForm" @focus="clearAllErrMsg" type="submit">가입하기</button>
+            <!-- <button disabled="false"> {{ flag }}</button> -->
+            <!-- <button id="submit" :disabled="!flag">가입하기</button> -->
+            <button id="submit">가입하기</button>
+           
+            <!-- <button id="submit" @click="checkForm" @focus="clearAllErrMsg" type="submit">가입하기</button> -->
             <!-- <div id="result-fail">{{ resultFailMsg }}</div> -->
             <div class="exist">
                 <span>이미 회원이신가요?</span>
@@ -98,9 +106,9 @@ export default {
     data() {
         return {
             pwdRe: '',
-            intro: '',
+            intro: 'hi',
             c: {
-                id: '',
+                id: 'test',
                 pwd: '',
                 name: '',
             },
@@ -131,20 +139,30 @@ export default {
             isProfilePopupOpen: false,
             isIdValid: false,
             isNickValid: false,
-            isPwdValid : false
+            isPwdValid: false,
+            flag : false,
+
+
         }
     },
-    // computed: {
-    // isFormValid() {
-    //     const valid = (
-    //         this.privacyAgreed &&
-    //         this.isIdValid &&
-    //         this.isNickValid
-    //     );
-    //     return valid;
-    // },
-    // },
+    computed: {
+
+    },
     methods: {
+        test(){
+            this.privacyAgreed = !this.privacyAgreed
+            this.clearAllErrMsg()
+        },
+        isFormValid() {
+        // alert("isFormValid")
+        const valid = (
+            this.privacyAgreed &&
+            this.isIdValid &&
+            this.isNickValid
+        );
+        // console.log(" isFormValid",  this.privacyAgreed, this.isIdValid,  this.isNickValid)
+        return valid;
+    },
         openProfilePopup() {
             this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false : true;
         },
@@ -159,11 +177,16 @@ export default {
             location.href = '/'
         },
         clearAllErrMsg() {
+            console.log("clearAllErrMsg before call isFormValid privacyAgreed=", this.privacyAgreed)
+            this.flag = this.isFormValid();
+
             Object.keys(this.errMsg).forEach(field => {
                 if (this.errMsg[field].invalid === '' && this.errMsg[field].fail === '') {
                     this.errMsg[field].success = '';
                 }
             });
+            console.log("clearAllErrMsg after call isFormValid privacyAgreed=", this.privacyAgreed)
+            
         },
 
         validateId() {
@@ -183,24 +206,23 @@ export default {
 
         },
         btIdDupchkClickHandler() {
-            const url = `${this.backURL}/auth/chkDupId`
+            const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
+            console.log(url)
             axios
-                .post(url, `memberId=${this.c.id}`)
+                .post(url)
                 .then(response => {
                     const isDuplicate = response.data;
-                    if (isDuplicate) {
-                        this.errMsg.id.fail = '이미 사용중인 아이디입니다';
-                        this.errMsg.id.success = '';
-                        this.isIdValid = false;
-                        this.isIdCheck = false;
-                    } else {
+                    if (!isDuplicate) {
                         this.errMsg.id.success = '사용 가능한 아이디입니다';
                         this.errMsg.id.fail = '';
                         this.isIdCheck = true;
-                    }
+                    } 
                 })
                 .catch(error => {
-                    console.error(error);
+                        this.errMsg.id.fail = error.response.data.errors[0];
+                        this.errMsg.id.success = '';
+                        this.isIdValid = false;
+                        this.isIdCheck = false;
                 });
         },
 
@@ -267,16 +289,15 @@ export default {
                 .then(response => {
                     const isDuplicate = response.data;
                     console.log(response)
-                    if (isDuplicate) {
-                        this.errMsg.nick.fail = '이미 사용중인 닉네임입니다';
-                        this.errMsg.nick.success = '';
-                        this.isNickValid = false;
-                    } else {
+                    if (!isDuplicate) {
                         this.errMsg.nick.success = '사용 가능한 닉네임입니다';
                         this.errMsg.nick.fail = '';
-                    }
+                    } 
                 })
                 .catch(error => {
+                    this.errMsg.nick.fail = '이미 사용중인 닉네임입니다';
+                    this.errMsg.nick.success = '';
+                    this.isNickValid = false;
                     console.error(error);
                 });
         },
@@ -308,34 +329,52 @@ export default {
             }
             // this.signupFormSubmitHandler();
         },
-
-
-
-        // signupFormSubmitHandler(e) {
-        //     const url = `${this.backURL}/auth/signup`
-        //     const data = new FormData(e.target)
-        //     axios
-        //         .post(url, data)
-        //         .then(response => {
-        //             if (response.data) {
-        //                 location.href = `${this.backURL}/auth/login`
-        //             }
-        //         })
-        //         .catch(error => {
-        //             alert(error.message)
-        //         })
-        // }
+        signupFormSubmitHandler(e) {
+            let data = {
+                memberInfo:this.intro,
+                memberId:this.c.id,
+                memberPwd:this.c.pwd,
+                memberName:this.c.nick,
+                memberProfileImg:this.memberProfileImg
+                }
+                // JSON.stringify(data)
+            axios
+                .post(`${this.backURL}/auth/signup`, data, {
+                    headers:{
+                        'Content-Type': 'application/json'       
+                    }
+                })
+                .then(response => {
+                    console.log(response);
+                    alert("가입에 성공했습니다")
+                    location.href = '/login'
+                    
+                })
+                .catch(error => {
+                    // alert(error.message)
+                    alert(error.response.data.errors[0]); // 서버에서 전송한 예외 객체
+                })
+        }
     },
 }
 
 </script>
 
 <style scoped>
-/* Logo */
+#logoOff {
+    width: 100%;
+    height: 100px;
+    z-index: 1;
+    position: absolute;
+    background-color: var(--main1-color);
+}
 .logo {
     text-align: center;
     margin-top: 20px;
     margin-bottom: 10px;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
 }
 
 #main-logo {
@@ -432,8 +471,7 @@ option {
 /* signup */
 .signup {
     position: relative;
-
-
+    margin-top: 500px;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -448,6 +486,10 @@ option {
     border-radius: 40px;
     box-shadow: 1px 1px 12px var(--main2-color);
     box-sizing: border-box;
+
+    z-index: 3;
+
+        top: 100px;
 }
 
 .content {
