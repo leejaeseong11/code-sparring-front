@@ -41,7 +41,7 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/admin/:viewName/:currentPage',
+      path: '/admin/:viewName/:filter/:currentPage',
       // path: '/admin',
       name: 'AdminPage',
       component: AdminPage

@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     backHome() {
-      location.href='/admin'
+      window.history.back()
     },
     modifyQuiz(e) {
       if(e.target.id=='modify-button') {
@@ -93,7 +93,6 @@ export default {
         alert('문제를 저장합니다')
         this.modifyBt=false
       }
-      
     }
   },
   created() {

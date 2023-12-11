@@ -27,22 +27,22 @@
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
           <span class="quiz-title">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
-          <button class="quiz-info-bt" :id="''+q.quizNo" @click="quizView">조회</button>
+          <button class="quiz-info-bt" :id="'' + q.quizNo" @click="quizView">조회</button>
         </div>
       </div>
 
       <div v-if="!popup" id="quiz-page">
-        <button class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button v-if="startPage!==1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
         <button
-          v-for="pg in totalPage"
+          v-for="pg in endPage-startPage+1"
           :key="pg"
-          class="page-bt-num"
-          :id="'' + pg"
+          :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
+          :id="'pg'+(startPage+pg-1)"
           @click="pgClick"
         >
-          {{ pg }}</button
+          {{ startPage+pg-1 }}</button
         >&nbsp;
-        <button class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+        <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
       </div>
     </div>
   </main>
@@ -58,54 +58,18 @@ export default {
     return {
       currentPage: 1,
       quizList: [],
-      totalPage: 0,
+      startPage: '',
+      endPage: '',
+      totalPage: '',
       popup: false
     }
   },
   methods: {
     allquiz() {
-      const onBt = document.getElementById('quiz-all')
-      onBt.style.opacity = '100%'
-      const offBt = document.getElementById('quiz-urk')
-      offBt.style.opacity = '50%'
-
-      this.popup = false
-
-      const text = document.getElementById('search-text')
-      text.value = ''
-
-      this.currentPage = 1
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '100%'
-      // mainPg.style.cursor = 'default'
-
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
+      location.href = '/admin/quiz/all/1'
     },
     urkquiz() {
-      const onBt = document.getElementById('quiz-urk')
-      onBt.style.opacity = '100%'
-      const offBt = document.getElementById('quiz-all')
-      offBt.style.opacity = '50%'
-
-      this.popup = false
-
-      const text = document.getElementById('search-text')
-      text.value = ''
-
-      this.currentPage = 1
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
-
-      const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
+      location.href = '/admin/quiz/UNRANKED/1'
     },
     searchQuiz(e) {
       if (this.popup) {
@@ -119,56 +83,85 @@ export default {
           onBt.style.opacity = '50%'
           const offBt = document.getElementById('quiz-urk')
           offBt.style.opacity = '50%'
-
           this.popup = true
         }
       }
     },
     pgPrevClick() {
-      this.currentPage = (this.currentPage / 5 - 1) * 5
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
-
-      // location.href='/admin/:viewName/:currentPage'
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
+      this.currentPage = Math.floor(((this.currentPage - 1) / 5)) * 5
+      const filter = this.$route.params.filter
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
+    },
+    pgNextClick() {
+      if (this.currentPage == 1) this.currentPage = 2
+      this.currentPage = (Math.floor(((this.currentPage - 1) / 5)) + 1) * 5 + 1
+      const filter = this.$route.params.filter
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     pgClick(e) {
-      this.currentPage = e.target.id
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
+      const pg=parseInt(e.target.id.replace("pg", ""));
+      this.currentPage=pg
+      const filter = this.$route.params.filter
 
-      // location.href='/admin/:viewName/:currentPage'
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     quizView(e) {
-      location.href='/quiz/'+e.target.id
+      location.href = '/quiz/' + e.target.id
     }
   },
-  created() {
-    const url = `${this.backURL}/quiz/list/${this.currentPage}`
-    axios.get(url).then((res) => {
-      this.quizList = res.data
-      this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
+  mounted() {
+    const filter = this.$route.params.filter
+    if (filter == 'all') {
+      const onBt = document.getElementById('quiz-all')
+      onBt.style.opacity = '100%'
+      const offBt = document.getElementById('quiz-urk')
+      offBt.style.opacity = '50%'
 
-      if (this.totalPage <= 5) {
-        const next = document.getElementById('next')
-        next.style.display = 'none'
-      }
-    }).catch((res)=>{
-        const next = document.getElementById('next')
-        next.style.display = 'none'
-        alert(res.data.status)
-    })
+      this.popup = false
+
+      const text = document.getElementById('search-text')
+      text.value = ''
+
+      this.currentPage = this.$route.params.currentPage
+
+      const url = `${this.backURL}/quiz/list/${this.currentPage}`
+      axios
+        .get(url)
+        .then((res) => {
+          this.quizList = res.data.list
+          this.startPage = res.data.startPage
+          this.endPage = res.data.endPage
+          this.totalPage=res.data.totalPage
+        })
+        .catch(() => {
+          window.history.back()
+        })
+    } else if (filter == 'UNRANKED') {
+      const onBt = document.getElementById('quiz-urk')
+      onBt.style.opacity = '100%'
+      const offBt = document.getElementById('quiz-all')
+      offBt.style.opacity = '50%'
+
+      this.popup = false
+
+      const text = document.getElementById('search-text')
+      text.value = ''
+
+      this.currentPage = this.$route.params.currentPage
+
+      const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
+      axios
+        .get(url)
+        .then((res) => {
+          this.quizList = res.data.list
+          this.startPage = res.data.startPage
+          this.endPage = res.data.endPage
+          this.totalPage=res.data.totalPage
+        })
+        .catch(() => {
+          window.history.back()
+        })
+    }
   }
 }
 </script>
@@ -335,7 +328,8 @@ input[type='number']::-webkit-inner-spin-button {
   }
 }
 
-#prev {
-  display: none;
+.page-bt-num.current-page {
+  opacity: 100%;
+  cursor: default;
 }
 </style>

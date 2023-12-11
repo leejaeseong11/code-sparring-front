@@ -41,16 +41,16 @@ export default {
       location.href = '/'
     },
     OnQuizPage() {
-      location.href='/admin/quiz/1'
+      // 전체 조회 all, unranked 조회
+      location.href='/admin/quiz/all/1'
     },
     OnReportPage() {
-      location.href='/admin/report/1'
+      // 전체 조회 all, 조치X 조회
+      location.href='/admin/report/all/1'
     }
   },
   mounted() {
-    alert('mounted!!')
     const viewName=this.$route.params.viewName
-    alert(viewName)
     if(viewName=='quiz') {
       this.quizPage=true
       this.reportPage=false
