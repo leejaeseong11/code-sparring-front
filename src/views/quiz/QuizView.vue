@@ -7,9 +7,11 @@
         <button v-if="modifyBt" id="not-button">임시버튼</button>
       </div>
 
+      <AddTestcase v-if="testcaseBt"></AddTestcase>
+
       <div id="title">
         <div v-if="!modifyBt" id="quiz-title-div">{{ this.quizTitle }}</div>
-        <input v-if="modifyBt" id="quiz-title-input" :value="this.quizTitle">
+        <input v-if="modifyBt" id="quiz-title-input" v-model="this.quizTitle" />
       </div>
 
       <div id="quiz-box">
@@ -17,37 +19,87 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span v-if="!modifyBt" class="info-span" :id="'quiz-tier-'+this.quizTier">{{this.quizTier}}</span>
-              <input v-if="modifyBt" id="quiz-tier-input" :value="this.quizTier">
+              <span class="info-text">티어</span>:<span
+                v-if="!modifyBt"
+                class="info-span"
+                :id="'quiz-tier-' + this.quizTier"
+                >{{ this.quizTier }}</span
+              >
+              <input v-if="modifyBt" id="quiz-tier-input" v-model="this.quizTier" />
             </div>
             <div class="info-div" id="author">
-              <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">{{this.quizAuthor}}</span>
+              <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">{{
+                this.quizAuthor
+              }}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{this.quizSubmitCnt}}회</span>
+              <span class="info-text">제출된 횟수</span>:<span
+                class="info-span"
+                id="quiz-submit-cnt"
+                >{{ this.quizSubmitCnt }}회</span
+              >
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{this.quizSuccessCnt}}회</span>
+              <span class="info-text">성공한 횟수</span>:<span
+                class="info-span"
+                id="quiz-success-cnt"
+                >{{ this.quizSuccessCnt }}회</span
+              >
             </div>
             <div class="info-div" id="correct">
-              <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{this.quizCorrect}}</span>
+              <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{
+                this.quizCorrect
+              }}</span>
             </div>
           </div>
 
           <div id="testcase">
             <div class="index-name">테스트케이스 목록</div>
-            <div>솰라솰라다</div>
+            <div id="textcase-box">
+              <div v-if="testcaseCnt==0 && !modifyBt">존재하지 않습니다</div>
+              <div v-for="(tc, index) in testcaseList" :key="tc">
+                <div class="testcase-no">[{{ index+1 }}]&nbsp;&nbsp;&nbsp;<button v-if="modifyBt" class="delete-tc-button" :id="tc.testcaseNo">삭제</button></div>
+                <div>
+                  입력값 :
+                  <span v-if="!modifyBt">{{
+                    tc.testcaseInput == null ? '-' : tc.testcaseInput
+                  }}</span>
+                  <input v-if="modifyBt" :value="tc.testcaseInput" />
+                </div>
+                <div>
+                  출력값 :
+                  <span v-if="!modifyBt">{{
+                    tc.testcaseOutput == null ? '-' : tc.testcaseOutput
+                  }}</span>
+                  <input v-if="modifyBt" :value="tc.testcaseOutput" />
+                </div>
+                <br />
+              </div>
+            </div>
           </div>
         </div>
 
         <div id="content">
           <div class="index-name">문제 내용</div>
           <div v-if="!modifyBt" id="quiz-content">{{ this.quizContent }}</div>
-          <textarea v-if="modifyBt" id="quiz-content" :value="this.quizContent"></textarea>
+          <textarea v-if="modifyBt" id="quiz-content" v-model="this.quizContent"></textarea>
+
+          <div class="index-name">입력값 설명</div>
+          <div v-if="!modifyBt" id="quiz-input">
+            {{ this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo }}
+          </div>
+          <textarea v-if="modifyBt" id="quiz-input" v-model="this.inputInfo"></textarea>
+
+          <div class="index-name">출력값 설명</div>
+          <div v-if="!modifyBt" id="quiz-output">
+            {{ this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo }}
+          </div>
+          <textarea v-if="modifyBt" id="quiz-output" v-model="this.outputInfo"></textarea>
 
           <div id="button-area">
             <div id="left-button">
-              <button id="rpc-button">신고 내역 조회</button>
+              <button v-if="modifyBt" id="tc-button" @click="addTc">테스트케이스 추가</button>
+              <button v-if="!modifyBt" id="code-button" @click="codeFile">정답코드 조회</button>
             </div>
             <div id="right-button">
               <button v-if="!modifyBt" id="modify-button" @click="modifyQuiz">수정</button>&nbsp;
@@ -63,20 +115,27 @@
 </template>
 <script>
 import axios from 'axios'
+import AddTestcase from '../../components/quiz/AddTestcase.vue'
 
 export default {
   name: 'QuizView',
+  components: {AddTestcase},
   data() {
     return {
-        quizNo: 0,
-        quizTitle: '',
-        quizContent: '',
-        quizTier: '',
-        quizAuthor: '',
-        quizSubmitCnt: '',
-        quizSuccessCnt: '',
-        quizCorrect: '',
-        modifyBt: false
+      quizNo: 0,
+      quizTitle: '',
+      quizContent: '',
+      quizTier: '',
+      quizAuthor: '',
+      quizSubmitCnt: '',
+      quizSuccessCnt: '',
+      quizCorrect: '',
+      inputInfo: '',
+      outputInfo: '',
+      testcaseList: [],
+      testcaseCnt: '',
+      modifyBt: false,
+      testcaseBt: false
     }
   },
   methods: {
@@ -84,36 +143,47 @@ export default {
       window.history.back()
     },
     modifyQuiz(e) {
-      if(e.target.id=='modify-button') {
-        this.modifyBt=true
-      } else if(e.target.id=='cancle-button') {
+      if (e.target.id == 'modify-button') {
+        this.modifyBt = true
+      } else if (e.target.id == 'cancle-button') {
         alert('문제 수정을 취소합니다')
-        this.modifyBt=false
-      } else if(e.target.id=='save-button') {
+        window.history.go(0)
+      } else if (e.target.id == 'save-button') {
         alert('문제를 저장합니다')
-        this.modifyBt=false
+        this.modifyBt = false
       }
+    },
+    codeFile() {
+      window.open(
+        'https://s3.ap-northeast-2.amazonaws.com/codesparring/answer_' + this.quizNo + '.java',
+        '_blank'
+      )
+    },
+    addTc() {
+      this.testcaseBt=true
     }
   },
   created() {
-    this.quizNo=this.$route.params.quizNo
-    const url=`${this.backURL}/quiz/${this.quizNo}`
-    axios.get(url)
-    .then(res=>{
-      this.quizTitle=res.data.quizTitle
-      this.quizContent=res.data.quizContent
-      this.quizTier=res.data.quizTier
-      this.quizAuthor=res.data.memberName
-      this.quizSubmitCnt=res.data.quizSubmitCnt
-      this.quizSuccessCnt=res.data.quizSuccessCnt
-      this.quizCorrect=res.data.quizCorrectPercent
+    this.quizNo = this.$route.params.quizNo
+    const url = `${this.backURL}/quiz/${this.quizNo}`
+    axios.get(url).then((res) => {
+      this.quizTitle = res.data.quizTitle
+      this.quizContent = res.data.quizContent
+      this.quizTier = res.data.quizTier
+      this.quizAuthor = res.data.memberName
+      this.quizSubmitCnt = res.data.quizSubmitCnt
+      this.quizSuccessCnt = res.data.quizSuccessCnt
+      this.quizCorrect = res.data.quizCorrectPercent
+      this.inputInfo = res.data.quizInput
+      this.outputInfo = res.data.quizOutput
+      this.testcaseList = res.data.testcaseDTOList
+      this.testcaseCnt = this.testcaseList.length
     })
   }
 }
 </script>
 <style scoped>
-
-*{
+* {
   color: var(--main5-color);
   cursor: default;
 }
@@ -122,9 +192,11 @@ button {
   font-size: 18px;
 }
 
-input, textarea {
+input,
+textarea {
   cursor: text;
   color: var(--main3-hover-color) !important;
+  text-indent: 5px;
 }
 
 #header {
@@ -132,7 +204,8 @@ input, textarea {
   justify-content: space-between;
 }
 
-#back-button, #not-button {
+#back-button,
+#not-button {
   width: 100px;
   height: 45px;
   margin-top: 30px;
@@ -163,12 +236,12 @@ input, textarea {
   padding-left: 10px;
 }
 
-#quiz-title-div, #quiz-title-input {
+#quiz-title-div,
+#quiz-title-input {
   height: 100%;
   width: 99%;
   background-color: var(--main5-color);
   color: var(--main1-color);
-  border: none;
   font-size: 20px;
 }
 
@@ -187,26 +260,29 @@ input, textarea {
   width: 35%;
 }
 
-.info-text {
+.info-text,
+.tc-info-text {
   display: inline-block;
   width: 100px;
 }
 
-.info-div {
+.info-div,
+.tc-info-div {
   height: 30px;
   line-height: 30px;
 }
 
-.info-span {
+.info-span,
+.tc-info-span {
   display: inline-block;
-  height: 20px;
+  height: 30px;
   width: 260px;
   text-align: center;
 }
 
 #quiz-tier-input {
   text-align: center;
-  border: none;
+  text-indent: 0px !important;
   width: 150px;
   margin-left: 55px;
 }
@@ -240,28 +316,55 @@ input, textarea {
   width: 97%;
 }
 
+#testcase-info {
+  margin-top: 30px;
+}
+
 #testcase {
   margin-top: 30px;
 }
 
+
+#textcase-box {
+  height: 300px;
+  overflow: auto;
+}
+
 #content {
   width: 800px;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 15px;
 }
 
 #quiz-content {
   width: 98%;
-  height: 500px;
-  /* background-color: var(--main1-color); */
-  border: none;
+  height: 250px;
   resize: none;
   line-height: 30px;
   overflow: auto;
+  margin-bottom: 15px;
 
   &:focus {
     outline: none;
   }
+}
+
+#quiz-input,
+#quiz-output {
+  width: 98%;
+  height: 50px;
+  resize: none;
+  line-height: 30px;
+  overflow: auto;
+  margin-bottom: 15px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.testcase-no {
+  height: 40px;
 }
 
 #button-area {
@@ -270,8 +373,7 @@ input, textarea {
   margin-top: 15px;
 }
 
-#rpc-button {
-  margin-left: 15px;
+#code-button, #tc-button {
   width: 150px;
   height: 50px;
   background-color: var(--main3-color);
@@ -281,34 +383,52 @@ input, textarea {
 
   &:hover {
     background-color: var(--main3-hover-color);
-  border: 2px solid var(--main3-hover-color);
+    border: 2px solid var(--main3-hover-color);
   }
 }
 
-#modify-button, #delete-button, #save-button, #cancle-button {
+#tc-button {
+  width: 200px;
+}
+
+#modify-button,
+#delete-button,
+#save-button,
+#cancle-button {
   width: 100px;
   height: 50px;
   color: var(--main1-color);
   border-radius: 10px;
 }
 
-#modify-button, #save-button {
+#modify-button,
+#save-button {
   background-color: var(--main4-color);
   border: 2px solid var(--main4-color);
-  
+
   &:hover {
     background-color: var(--main4-hover-color);
     border-color: var(--main4-hover-color);
   }
 }
 
-#delete-button, #cancle-button {
+#delete-button,
+#cancle-button,
+.delete-tc-button {
   background-color: var(--red-color);
   border: 2px solid var(--red-color);
-  
+
   &:hover {
     background-color: var(--red-hover-color);
     border-color: var(--red-hover-color);
   }
+}
+
+.delete-tc-button {
+  font-size: 15px;
+  color: var(--main1-color);
+  border-radius: 7px;
+  width: 40px;
+  height: 30px;
 }
 </style>

@@ -49,7 +49,7 @@
 </template>
 <script>
 import axios from 'axios'
-import AdminQuizPopup from '../admin/adminQuizPopup.vue'
+import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
   name: 'AdminQuizPage',

@@ -24,8 +24,8 @@
   </main>
 </template>
 <script>
-import AdminQuizPage from '../../components/admin/adminQuizPage.vue'
-import AdminReportPage from '../../components/admin/adminReportPage.vue'
+import AdminQuizPage from '../../components/admin/AdminQuizPage.vue'
+import AdminReportPage from '../../components/admin/AdminReportPage.vue'
 
 export default {
   name: 'AdminPage',
