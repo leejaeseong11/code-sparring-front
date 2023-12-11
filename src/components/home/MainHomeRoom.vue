@@ -20,8 +20,10 @@
             <div class="pe-3 room-enter">
               <font-awesome-icon :icon="['fa', 'user']" />
               <div class="room-member-number">3/4</div>
-              <button class="btn btn-primary see-quiz-button"><div>문제보기</div></button>
-              <button class="btn btn-primary enter-button"><div>입장</div></button>
+              <button class="btn-custom-primary see-quiz-button">
+                <div>문제보기</div>
+              </button>
+              <button class="btn-custom-primary enter-button"><div>입장</div></button>
             </div>
           </div>
         </div>
@@ -108,5 +110,12 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+}
+.btn-custom-primary {
+  padding: 6px 12px;
+
+  color: var(--white-color);
+  border: none;
+  border-radius: 6px;
 }
 </style>
