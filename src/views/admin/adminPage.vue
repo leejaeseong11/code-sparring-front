@@ -41,9 +41,19 @@ export default {
       location.href = '/'
     },
     OnQuizPage() {
-      this.quizPage = true
-      this.reportPage = false
-
+      location.href='/admin/quiz/1'
+    },
+    OnReportPage() {
+      location.href='/admin/report/1'
+    }
+  },
+  mounted() {
+    alert('mounted!!')
+    const viewName=this.$route.params.viewName
+    alert(viewName)
+    if(viewName=='quiz') {
+      this.quizPage=true
+      this.reportPage=false
       const onPg = document.getElementById('quiz-page')
       onPg.style.color = 'var(--main5-color)'
       onPg.style.backgroundColor = 'var(--main1-color)'
@@ -51,10 +61,9 @@ export default {
       const offPg = document.getElementById('report-page')
       offPg.style.color = 'var(--main1-color)'
       offPg.style.backgroundColor = 'var(--main5-color)'
-    },
-    OnReportPage() {
-      this.quizPage = false
-      this.reportPage = true
+    } else if(viewName=='report') {
+      this.quizPage=false
+      this.reportPage=true
 
       const onPg = document.getElementById('report-page')
       onPg.style.color = 'var(--main5-color)'
@@ -63,6 +72,7 @@ export default {
       const offPg = document.getElementById('quiz-page')
       offPg.style.color = 'var(--main1-color)'
       offPg.style.backgroundColor = 'var(--main5-color)'
+
     }
   }
 }

@@ -26,7 +26,7 @@ export default {
     },
     methods: {
       quizView() {
-        location.href='/quiz'
+        location.href='/quiz/'+this.quizNo
       }
     },
     created() {

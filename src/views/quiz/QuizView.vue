@@ -8,8 +8,8 @@
       </div>
 
       <div id="title">
-        <div v-if="!modifyBt" id="quiz-title-div">대충 제목이라 칩시다 맞다 근데 db 제목 길이 수정해야됨 잊지말기 지금 너무 짧음</div>
-        <input v-if="modifyBt" id="quiz-title-input" :value="'대충 제목이라 칩시다 맞다 근데 db 제목 길이 수정해야됨 잊지말기 지금 너무 짧음'">
+        <div v-if="!modifyBt" id="quiz-title-div">{{ this.quizTitle }}</div>
+        <input v-if="modifyBt" id="quiz-title-input" :value="this.quizTitle">
       </div>
 
       <div id="quiz-box">
@@ -17,20 +17,20 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span v-if="!modifyBt" class="info-span" id="quiz-tier">GOLD</span>
-              <input v-if="modifyBt" id="quiz-tier-input" value="GOLD">
+              <span class="info-text">티어</span>:<span v-if="!modifyBt" class="info-span" :id="'quiz-tier-'+this.quizTier">{{this.quizTier}}</span>
+              <input v-if="modifyBt" id="quiz-tier-input" :value="this.quizTier">
             </div>
             <div class="info-div" id="author">
-              <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">나다 임마</span>
+              <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">{{this.quizAuthor}}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">10991회</span>
+              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{this.quizSubmitCnt}}회</span>
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">7898회</span>
+              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{this.quizSuccessCnt}}회</span>
             </div>
             <div class="info-div" id="correct">
-              <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">71.86%</span>
+              <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{this.quizCorrect}}</span>
             </div>
           </div>
 
@@ -42,13 +42,8 @@
 
         <div id="content">
           <div class="index-name">문제 내용</div>
-          <div v-if="!modifyBt" id="quiz-content">이 편지는 영국에서 최초로 시작되어 일년에 한 바퀴 돌면서 받는 사람에게 행운을 주었고 지금 당신에게로 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함해서 7통을 행운이 필요한 사람에게 보내 주셔야 합니다. 복사를 해도 좋습니다. 혹 미신이라 하실지 모르지만 사실입니다. 영국에서 HGXWCH이라는 사람은 1930년에 이 편지를 받았습니다. 그는 비서에게 복사해서 보내라고 했습니다. 며칠 뒤에 복권에 당첨되어 20억을 받았습니다. 어떤 이는 이 편지를 받았으나 96시간 이내 자신의 손에서 떠나야 한다는 사실을 잊었습니다. 그는 곧 사직되었습니다. 나중에야 이 사실을 알고 7통의 편지를 보냈는데 다시 좋은 직장을 얻었습니다. 미국의 케네디 대통령은 이 편지를 받았지만 그냥 버렸습니다. 결국 9일 후 그는 암살 당했습니다. 기억해 주세요. 이 편지를 보내면 7년의 행운이 있을 것이고 그렇지 않으면 3년의 불행이 있을 것입니다. 그리고 이 편지를 버리거나 낙서를 해서는 절대로 안됩니다. 7통입니다. 이 편지를 받은 사람은 행운이 깃들 것입니다. 힘들겠지만 좋은게 좋다고 생각하세요. 7년의 행운을 빌면서..
-            만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?
-            만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?</div>
-          <textarea v-if="modifyBt" id="quiz-content">이 편지는 영국에서 최초로 시작되어 일년에 한 바퀴 돌면서 받는 사람에게 행운을 주었고 지금 당신에게로 옮겨진 이 편지는 4일 안에 당신 곁을 떠나야 합니다. 이 편지를 포함해서 7통을 행운이 필요한 사람에게 보내 주셔야 합니다. 복사를 해도 좋습니다. 혹 미신이라 하실지 모르지만 사실입니다. 영국에서 HGXWCH이라는 사람은 1930년에 이 편지를 받았습니다. 그는 비서에게 복사해서 보내라고 했습니다. 며칠 뒤에 복권에 당첨되어 20억을 받았습니다. 어떤 이는 이 편지를 받았으나 96시간 이내 자신의 손에서 떠나야 한다는 사실을 잊었습니다. 그는 곧 사직되었습니다. 나중에야 이 사실을 알고 7통의 편지를 보냈는데 다시 좋은 직장을 얻었습니다. 미국의 케네디 대통령은 이 편지를 받았지만 그냥 버렸습니다. 결국 9일 후 그는 암살 당했습니다. 기억해 주세요. 이 편지를 보내면 7년의 행운이 있을 것이고 그렇지 않으면 3년의 불행이 있을 것입니다. 그리고 이 편지를 버리거나 낙서를 해서는 절대로 안됩니다. 7통입니다. 이 편지를 받은 사람은 행운이 깃들 것입니다. 힘들겠지만 좋은게 좋다고 생각하세요. 7년의 행운을 빌면서..
-            만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?
-            만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?만약엄청길면어케되징?
-          </textarea>
+          <div v-if="!modifyBt" id="quiz-content">{{ this.quizContent }}</div>
+          <textarea v-if="modifyBt" id="quiz-content" :value="this.quizContent"></textarea>
 
           <div id="button-area">
             <div id="left-button">
@@ -67,10 +62,20 @@
   </main>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
   name: 'QuizView',
   data() {
     return {
+        quizNo: 0,
+        quizTitle: '',
+        quizContent: '',
+        quizTier: '',
+        quizAuthor: '',
+        quizSubmitCnt: '',
+        quizSuccessCnt: '',
+        quizCorrect: '',
         modifyBt: false
     }
   },
@@ -90,6 +95,20 @@ export default {
       }
       
     }
+  },
+  created() {
+    this.quizNo=this.$route.params.quizNo
+    const url=`${this.backURL}/quiz/${this.quizNo}`
+    axios.get(url)
+    .then(res=>{
+      this.quizTitle=res.data.quizTitle
+      this.quizContent=res.data.quizContent
+      this.quizTier=res.data.quizTier
+      this.quizAuthor=res.data.memberName
+      this.quizSubmitCnt=res.data.quizSubmitCnt
+      this.quizSuccessCnt=res.data.quizSuccessCnt
+      this.quizCorrect=res.data.quizCorrectPercent
+    })
   }
 }
 </script>
@@ -191,6 +210,26 @@ input, textarea {
   border: none;
   width: 150px;
   margin-left: 55px;
+}
+
+#quiz-tier-UNRANKED {
+  color: var(--main4-color);
+}
+
+#quiz-tier-BRONZE {
+  color: #846353;
+}
+
+#quiz-tier-SILVER {
+  color: #7382a3;
+}
+
+#quiz-tier-GOLD {
+  color: #cc9336;
+}
+
+#quiz-tier-PLATINUM {
+  color: #34a8b1;
 }
 
 .index-name {

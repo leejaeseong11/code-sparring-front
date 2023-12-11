@@ -76,7 +76,7 @@ export default {
 
       this.currentPage = 1
       // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
+      // mainPg.style.opacity = '100%'
       // mainPg.style.cursor = 'default'
 
       const url = `${this.backURL}/quiz/list/${this.currentPage}`
@@ -110,6 +110,8 @@ export default {
     searchQuiz(e) {
       if (this.popup) {
         if (e.target.id == 'search-icon') return
+        const onBt = document.getElementById('quiz-all')
+        onBt.style.opacity = '100%'
         this.popup = false
       } else {
         if (e.target.id == 'search-icon') {
@@ -148,8 +150,8 @@ export default {
         this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
       })
     },
-    quizView() {
-      location.href='/quiz'
+    quizView(e) {
+      location.href='/quiz/'+e.target.id
     }
   },
   created() {
@@ -162,6 +164,10 @@ export default {
         const next = document.getElementById('next')
         next.style.display = 'none'
       }
+    }).catch((res)=>{
+        const next = document.getElementById('next')
+        next.style.display = 'none'
+        alert(res.data.status)
     })
   }
 }
@@ -319,12 +325,13 @@ input[type='number']::-webkit-inner-spin-button {
   width: 35px;
   height: 35px;
   background-color: var(--main1-color);
+  opacity: 50%;
   border: none;
   color: var(--main5-color);
   padding-bottom: 27px;
 
   &:hover {
-    opacity: 50%;
+    opacity: 100%;
   }
 }
 
