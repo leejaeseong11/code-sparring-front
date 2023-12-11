@@ -23,7 +23,9 @@
               <button class="btn-custom-primary see-quiz-button">
                 <div>문제보기</div>
               </button>
-              <button class="btn-custom-primary enter-button"><div>입장</div></button>
+              <button class="btn-custom-primary enter-button" @:click="enterButtonClickHandler">
+                <div>입장</div>
+              </button>
             </div>
           </div>
         </div>
@@ -34,7 +36,12 @@
 <script>
 export default {
   name: 'MainHomeRoom',
-  props: ['roomNumber', 'roomTitle', 'roomStatus', 'roomMember', 'roomPwd']
+  props: ['roomNumber', 'roomTitle', 'roomStatus', 'roomMember', 'roomPwd'],
+  methods: {
+    enterButtonClickHandler() {
+      this.$router.push({ path: `/room/1000` })
+    }
+  }
 }
 </script>
 <style scoped>
