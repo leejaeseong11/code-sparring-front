@@ -52,7 +52,7 @@
           <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <button id="rank-matching-button" class="btn btn-danger room-menu-button">
+      <button id="rank-matching-button" class="btn-custom-danger room-menu-button">
         랭 크
         <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
         매 칭
@@ -93,26 +93,35 @@
     <div id="room-layout" class="col-9">
       <div id="main-navigation">
         <div id="main-navigation-left">
-          <button class="btn btn-primary main-menu-button" @click="createWaitingRoomclickHandler">
+          <button
+            class="btn-custom-primary main-menu-button"
+            @click="createWaitingRoomclickHandler"
+          >
             방 만들기
           </button>
           <router-link
             id="create-problem-button"
-            class="btn btn-primary main-menu-button"
+            class="btn-custom-primary main-menu-button"
             to="quiz/add"
             >문제 만들기</router-link
           >
         </div>
         <div id="main-navigation-right">
-          <button id="mypage-button" class="btn main-menu-button">마이페이지</button>
-          <button id="logout-button" class="btn btn-danger main-menu-button">종료</button>
+          <button
+            id="mypage-button"
+            class="btn-custom main-menu-button"
+            @:click="mypageButtonClickHandler"
+          >
+            {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
+          </button>
+          <button id="logout-button" class="btn-custom-danger main-menu-button">종료</button>
         </div>
       </div>
       <div id="main-room-containers">
         <div id="room-navigation">
           <div id="all-room-title">
             전체 게임방
-            <button class="btn" id="room-refresh-button">
+            <button class="btn-custom" id="room-refresh-button">
               <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
           </div>
@@ -134,8 +143,8 @@
           </div>
         </div>
         <div id="pagenation-button-container">
-          <button class="btn pagenation-button">◀</button>
-          <button class="btn pagenation-button">▶</button>
+          <button class="pagenation-button">◀</button>
+          <button class="pagenation-button">▶</button>
         </div>
       </div>
     </div>
@@ -150,6 +159,7 @@ export default {
   components: { MainHomeRoom },
   data() {
     return {
+      memberAuthority: 'ROLE_ADMIN',
       roomNumberOrder: 'desc',
       roomNumber: 1000,
       roomStatus: 1
@@ -178,7 +188,10 @@ export default {
           this.$router.push({ path: `/room/${res.data}` })
         })
     },
-    rankTierHelpHoverHandler() {}
+    rankTierHelpHoverHandler() {},
+    mypageButtonClickHandler() {
+      this.$router.push({ path: `/admin` })
+    }
   },
   mounted() {
     axios.get(`${this.backURL}/room`).then((res) => {
@@ -323,11 +336,19 @@ export default {
 
   color: var(--main5-color);
 }
+.btn-custom {
+  padding: 6px 12px;
 
-.btn-primary {
+  color: var(--main1-color);
+  border-radius: 6px;
+}
+.btn-custom-primary {
+  padding: 6px 12px;
+
   color: var(--main1-color);
   background-color: var(--main4-color);
   border: none;
+  border-radius: 6px;
 
   &:hover {
     color: var(--main1-color);
@@ -338,6 +359,23 @@ export default {
     color: var(--main1-color);
     background-color: var(--main4-hover-color);
     border: none;
+  }
+}
+.btn-custom-danger {
+  padding: 6px 12px;
+
+  color: var(--main1-color);
+  background-color: var(--red-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    border: none;
+    background-color: var(--red-hover-color);
+  }
+  &:active {
+    color: var(--main1-color);
+    background-color: var(--red-hover-color);
   }
 }
 .btn-danger {
@@ -366,7 +404,6 @@ export default {
 
   background-color: var(--red-color);
   color: var(--main1-color);
-
 
   &:hover {
     /* background-color: var(--red-hover-color); */
@@ -557,16 +594,24 @@ input[type='number']::-webkit-inner-spin-button {
 .pagenation-button {
   width: 120px;
   margin: 0 12px;
+  padding: 8px 16px;
 
   font-size: 1.125rem;
 
-  background-color: var(--white-color);
-  border: 3px solid var(--main5-color);
   transition: 0.25s;
 
+  color: var(--white-color);
+  background-color: var(--main4-color);
+  border: none;
+  border-radius: 6px;
+
   &:hover {
-    background-color: var(--main2-color);
-    border: 3px solid var(--main5-color);
+    background-color: var(--main4-hover-color);
+    border: none;
+  }
+  &:active {
+    background-color: var(--main4-hover-color);
+    border: none;
   }
 }
 </style>
