@@ -9,20 +9,32 @@
         <div class="room-info">
           <div>
             <div v-if="roomInfo.roomStatus == 1" style="color: var(--red-color)">WAITING</div>
-            <div v-else-if="roomInfo.roomStatus == 0" style="color: var(--red-color)">PLAYING</div>
+            <div v-else-if="roomInfo.roomStatus == 0" style="color: var(--main5-color)">
+              PLAYING
+            </div>
             <div v-else style="color: var(--red-color)"></div>
           </div>
           <div class="room-enter">
             <font-awesome-icon :icon="['fa', 'user']" />
-            <div v-if="roomInfo.roomMember != null" class="room-member-number">
-              {{ roomMember.length }}/4
+            <div v-if="roomInfo.roomMemberList != null" class="room-member-number">
+              {{ roomInfo.roomMemberList.length }}/4
             </div>
             <div v-else class="room-member-number">0/4</div>
-            <button class="btn-custom-primary see-quiz-button">
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary see-quiz-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+            >
               <div>문제보기</div>
             </button>
-            <button class="btn-custom-primary enter-button" @:click="enterButtonClickHandler">
-              <div>입장</div>
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary enter-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+              @:click="enterButtonClickHandler"
+            >
+              <div v-if="roomInfo.roomPwd == null">입장</div>
+              <font-awesome-icon v-else :icon="['fa', 'lock']" />
             </button>
           </div>
         </div>
@@ -137,5 +149,11 @@ export default {
   color: var(--white-color);
   border: none;
   border-radius: 6px;
+}
+.button-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+
+  border: none;
 }
 </style>
