@@ -571,6 +571,7 @@ input[type='number']::-webkit-inner-spin-button {
   cursor: pointer;
   transition: transform 0.5s;
 
+  background-color: transparent;
   border: none;
 
   &:hover {
