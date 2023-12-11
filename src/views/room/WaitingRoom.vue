@@ -114,7 +114,7 @@
           </div>
         </fieldset>
       </div>
-      <button id="game-start-button">시 작 하 기</button>
+      <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
   <!-- <br />
@@ -188,6 +188,9 @@ export default {
       }
       this.socket.send(JSON.stringify(talkMessage))
     }
+  },
+  gameStartButtonClickHandler() {
+    this.$router.push({ path: `` })
   }
 }
 </script>
