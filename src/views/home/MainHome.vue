@@ -132,14 +132,10 @@
         </div>
         <div id="room-list-container">
           <div class="row row-cols-2 room-containers">
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+            <template v-for="room in 8" :key="'room' + room">
+              <MainHomeRoom v-if="room < roomList.length" v-model:roomInfo="roomList[room]" />
+              <MainHomeRoom v-if="room >= roomList.length" v-model:roomInfo="nullRoom" />
+            </template>
           </div>
         </div>
         <div id="pagenation-button-container">
@@ -150,7 +146,7 @@
     </div>
   </div>
 </template>
-<script>
+<script scoped>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 
@@ -159,13 +155,23 @@ export default {
   components: { MainHomeRoom },
   data() {
     return {
+      roomPage: 0,
+      roomSize: 8,
+      roomList: [],
+      nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
       memberAuthority: 'ROLE_ADMIN',
-      roomNumberOrder: 'desc',
-      roomNumber: 1000,
-      roomStatus: 1
+      roomNumber: null,
+      roomStatus: null
     }
   },
   methods: {
+    refreshButtonClickHandler() {
+      axios
+        .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
+        .then((response) => {
+          this.roomList = response.data
+        })
+    },
     createWaitingRoomclickHandler() {
       let data = {
         quiz: {
@@ -194,9 +200,7 @@ export default {
     }
   },
   mounted() {
-    axios.get(`${this.backURL}/room`).then((res) => {
-      console.log(res)
-    })
+    this.refreshButtonClickHandler()
   }
 }
 </script>
@@ -518,8 +522,7 @@ li {
   font-size: 1.25rem;
 }
 #main-room-containers {
-  padding: 16px;
-  margin-top: 16px;
+  margin-top: 48px;
 
   border-top: 3px solid var(--main5-color);
 }
@@ -589,6 +592,8 @@ input[type='number']::-webkit-inner-spin-button {
   align-self: center;
 }
 #pagenation-button-container {
+  margin-top: 12px;
+
   display: flex;
   justify-content: center;
 }
