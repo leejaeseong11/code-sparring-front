@@ -187,10 +187,10 @@ export default {
         msg: this.chatMessage
       }
       this.socket.send(JSON.stringify(talkMessage))
+    },
+    gameStartButtonClickHandler() {
+      this.$router.push({ path: `` })
     }
-  },
-  gameStartButtonClickHandler() {
-    this.$router.push({ path: `` })
   }
 }
 </script>

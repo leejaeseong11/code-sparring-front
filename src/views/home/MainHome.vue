@@ -8,7 +8,7 @@
             <div id="tier-container">
               <div id="rank-tier-help" class="custom-tooltip">
                 ?<span class="custom-tooltiptext"
-                  >티어는 랭크 모드 결과를 통해 정해지집니다. <br />
+                  >티어는 랭크 모드 결과를 통해 정해집니다. <br />
                   티어의 종류는 다음과 같습니다.<br />
                   <img
                     class="rank-tier-icon"
