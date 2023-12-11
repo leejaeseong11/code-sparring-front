@@ -107,7 +107,13 @@
           >
         </div>
         <div id="main-navigation-right">
-          <button id="mypage-button" class="btn-custom main-menu-button">마이페이지</button>
+          <button
+            id="mypage-button"
+            class="btn-custom main-menu-button"
+            @:click="mypageButtonClickHandler"
+          >
+            {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
+          </button>
           <button id="logout-button" class="btn-custom-danger main-menu-button">종료</button>
         </div>
       </div>
@@ -153,6 +159,7 @@ export default {
   components: { MainHomeRoom },
   data() {
     return {
+      memberAuthority: 'ROLE_ADMIN',
       roomNumberOrder: 'desc',
       roomNumber: 1000,
       roomStatus: 1
@@ -181,7 +188,10 @@ export default {
           this.$router.push({ path: `/room/${res.data}` })
         })
     },
-    rankTierHelpHoverHandler() {}
+    rankTierHelpHoverHandler() {},
+    mypageButtonClickHandler() {
+      this.$router.push({ path: `/admin` })
+    }
   },
   mounted() {
     axios.get(`${this.backURL}/room`).then((res) => {
