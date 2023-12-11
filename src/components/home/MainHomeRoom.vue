@@ -3,7 +3,7 @@
     <div class="room-container">
       <div class="room-no">{{ roomInfo.roomNo }}</div>
       <div class="room-infos">
-        <h5 class="room-title" title="{{ roomInfo.roomTitle }}">
+        <h5 class="room-title" :title="roomInfo.roomTitle">
           {{ roomInfo.roomTitle }}
         </h5>
         <div class="room-info">
@@ -40,7 +40,7 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.roomInfo)
+    console.log(this.roomInfo)
   }
 }
 </script>
