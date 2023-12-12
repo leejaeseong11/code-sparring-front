@@ -1,32 +1,41 @@
 <template>
-  <div class="card ms-3 mb-3 room-container">
-    <div class="row">
-      <div class="col-2 ps-0 pe-0">
-        <div class="room-no">{{ roomNumber }}</div>
-      </div>
-      <div class="col-10 ps-0 pe-0">
-        <div class="pb-2 room-info-container">
-          <div class="col">
-            <h5
-              class="ps-3 pb-3 pt-2 card-title"
-              title="아무나들어와도되지만이방의제목은매우길기때문에잘릴수있습니다"
-            >
-              아무나들어와도되지만이방의제목은매우길기때문에잘릴수있습니다
-            </h5>
-          </div>
-          <div class="room-info">
-            <div v-if="roomStatus == 1" class="ps-3" style="color: var(--red-color)">WAITING</div>
-            <div v-if="roomStatus == 0" class="ps-3" style="color: var(--red-color)">PLAYING</div>
-            <div class="pe-3 room-enter">
-              <font-awesome-icon :icon="['fa', 'user']" />
-              <div class="room-member-number">3/4</div>
-              <button class="btn-custom-primary see-quiz-button">
-                <div>문제보기</div>
-              </button>
-              <button class="btn-custom-primary enter-button" @:click="enterButtonClickHandler">
-                <div>입장</div>
-              </button>
+  <div :class="{ 'in-game': roomInfo.roomStatus == 1 }" class="room-containers">
+    <div class="room-container">
+      <div class="room-no">{{ roomInfo.roomNo }}</div>
+      <div class="room-infos">
+        <h5 class="room-title" :title="roomInfo.roomTitle">
+          {{ roomInfo.roomTitle }}
+        </h5>
+        <div class="room-info">
+          <div>
+            <div v-if="roomInfo.roomStatus == 1" style="color: var(--red-color)">WAITING</div>
+            <div v-else-if="roomInfo.roomStatus == 0" style="color: var(--main5-color)">
+              PLAYING
             </div>
+            <div v-else style="color: var(--red-color)"></div>
+          </div>
+          <div class="room-enter">
+            <font-awesome-icon :icon="['fa', 'user']" />
+            <div v-if="roomInfo.roomMemberList != null" class="room-member-number">
+              {{ roomInfo.roomMemberList.length }}/4
+            </div>
+            <div v-else class="room-member-number">0/4</div>
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary see-quiz-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+            >
+              <div>문제보기</div>
+            </button>
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary enter-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+              @:click="enterButtonClickHandler"
+            >
+              <div v-if="roomInfo.roomPwd == null">입장</div>
+              <font-awesome-icon v-else :icon="['fa', 'lock']" />
+            </button>
           </div>
         </div>
       </div>
@@ -36,25 +45,37 @@
 <script>
 export default {
   name: 'MainHomeRoom',
-  props: ['roomNumber', 'roomTitle', 'roomStatus', 'roomMember', 'roomPwd'],
+  props: ['roomInfo'],
   methods: {
     enterButtonClickHandler() {
       this.$router.push({ path: `/room/1000` })
     }
+  },
+  mounted() {
+    console.log(this.roomInfo)
   }
 }
 </script>
 <style scoped>
-.room-container {
+.room-containers {
   width: 48%;
+  margin: 8px;
+  padding: 0;
 
   color: var(--main5-color);
+  background-color: var(--white-color);
   border: 6px solid var(--main5-color);
-
-  /* opacity: 30%; */
+  opacity: 30%;
+}
+.in-game {
+  opacity: 100%;
+}
+.room-container {
+  display: flex;
 }
 .room-no {
-  height: 100%;
+  width: 24%;
+  padding: 0 4px;
 
   display: flex;
   align-items: center;
@@ -63,19 +84,23 @@ export default {
 
   font-size: 1.5rem;
 
-  border-right: 3px solid var(--main3-color);
+  border-right: 3px solid var(--main5-color);
 }
-.room-info-container {
-  padding: 8px 0;
+.room-infos {
+  width: 100%;
 }
+.room-title {
+  height: 48px;
+  padding: 10px;
 
-.card-title {
   overflow: hidden;
   text-overflow: ellipsis;
 
-  border-bottom: 2px dashed var(--main3-color);
+  border-bottom: 2px dashed var(--main5-color);
 }
 .room-info {
+  padding: 0 10px 10px 10px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -124,5 +149,11 @@ export default {
   color: var(--white-color);
   border: none;
   border-radius: 6px;
+}
+.button-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+
+  border: none;
 }
 </style>
