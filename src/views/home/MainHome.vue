@@ -212,7 +212,7 @@ export default {
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
-      this.$router.push({ path: `/admin/quiz/all` })
+      this.$router.push({ path: `/admin/quiz/all/1` })
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
