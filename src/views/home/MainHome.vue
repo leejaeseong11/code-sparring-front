@@ -121,7 +121,7 @@
         <div id="room-navigation">
           <div id="all-room-title">
             전체 게임방
-            <button class="btn-custom" id="room-refresh-button">
+            <button class="btn-custom" id="room-refresh-button" @:click="refreshButtonClickHandler">
               <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
           </div>
@@ -131,26 +131,36 @@
           </div>
         </div>
         <div id="room-list-container">
-          <div class="row row-cols-2 room-containers">
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
-            <MainHomeRoom v-model:roomNumber="roomNumber" v-model:roomStatus="roomStatus" />
+          <div class="row room-containers">
+            <template v-for="room in roomSize" :key="'room' + room">
+              <MainHomeRoom v-if="room <= roomList.length" v-model:roomInfo="roomList[room - 1]" />
+              <MainHomeRoom v-if="room > roomList.length" v-model:roomInfo="nullRoom" />
+            </template>
           </div>
         </div>
         <div id="pagenation-button-container">
-          <button class="pagenation-button">◀</button>
-          <button class="pagenation-button">▶</button>
+          <button
+            :class="{ 'page-disabled': roomPage == 0 }"
+            class="pagenation-button"
+            v-bind:disabled="roomPage == 0"
+            @:click="prevButtonClickHandler"
+          >
+            ◀
+          </button>
+          <button
+            :class="{ 'page-disabled': roomPage == totalPages - 1 }"
+            class="pagenation-button"
+            v-bind:disabled="roomPage == totalPages - 1"
+            @:click="nextButtonClickHandler"
+          >
+            ▶
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
+<script scoped>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 
@@ -159,13 +169,25 @@ export default {
   components: { MainHomeRoom },
   data() {
     return {
+      roomPage: 0,
+      roomSize: 8,
+      totalPages: 0,
+      roomList: [],
+      nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
       memberAuthority: 'ROLE_ADMIN',
-      roomNumberOrder: 'desc',
-      roomNumber: 1000,
-      roomStatus: 1
+      roomNumber: null,
+      roomStatus: null
     }
   },
   methods: {
+    refreshButtonClickHandler() {
+      axios
+        .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
+        .then((response) => {
+          this.roomList = response.data.content
+          this.totalPages = response.data.totalPages
+        })
+    },
     createWaitingRoomclickHandler() {
       let data = {
         quiz: {
@@ -191,12 +213,18 @@ export default {
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
       this.$router.push({ path: `/admin` })
+    },
+    prevButtonClickHandler() {
+      this.roomPage -= 1
+      this.refreshButtonClickHandler()
+    },
+    nextButtonClickHandler() {
+      this.roomPage += 1
+      this.refreshButtonClickHandler()
     }
   },
   mounted() {
-    axios.get(`${this.backURL}/room`).then((res) => {
-      console.log(res)
-    })
+    this.refreshButtonClickHandler()
   }
 }
 </script>
@@ -518,8 +546,7 @@ li {
   font-size: 1.25rem;
 }
 #main-room-containers {
-  padding: 16px;
-  margin-top: 16px;
+  margin-top: 48px;
 
   border-top: 3px solid var(--main5-color);
 }
@@ -571,6 +598,7 @@ input[type='number']::-webkit-inner-spin-button {
   cursor: pointer;
   transition: transform 0.5s;
 
+  background-color: transparent;
   border: none;
 
   &:hover {
@@ -581,6 +609,8 @@ input[type='number']::-webkit-inner-spin-button {
   }
 }
 #room-list-container {
+  width: 100%;
+
   display: flex;
   flex-direction: column;
 }
@@ -588,12 +618,14 @@ input[type='number']::-webkit-inner-spin-button {
   align-self: center;
 }
 #pagenation-button-container {
+  margin-top: 12px;
+
   display: flex;
   justify-content: center;
 }
 .pagenation-button {
   width: 120px;
-  margin: 0 12px;
+  margin: 0 12px 0 4px;
   padding: 8px 16px;
 
   font-size: 1.125rem;
@@ -613,5 +645,11 @@ input[type='number']::-webkit-inner-spin-button {
     background-color: var(--main4-hover-color);
     border: none;
   }
+}
+.page-disabled {
+  cursor: not-allowed;
+
+  background-color: var(--main4-hover-color);
+  border: none;
 }
 </style>
