@@ -6,7 +6,7 @@ import AddQuiz from '@/views/quiz/AddQuiz.vue'
 import Signup from '@/views/member/Signup.vue'
 import Login from '@/views/member/Login.vue'
 
-import AdminPage from '@/views/admin/adminPage.vue'
+import AdminPage from '@/views/admin/AdminPage.vue'
 import QuizView from '@/views/quiz/QuizView.vue'
 
 
@@ -41,13 +41,13 @@ const router = createRouter({
       component: Login
     },
     {
-      // path: '/admin/:viewName/:currentPage',
-      path: '/admin',
+      path: '/admin/:viewName/:filter/:currentPage',
+      // path: '/admin',
       name: 'AdminPage',
       component: AdminPage
     },
     {
-      path: '/quiz',
+      path: '/quiz/:quizNo',
       name: 'QuizView',
       component: QuizView
     }

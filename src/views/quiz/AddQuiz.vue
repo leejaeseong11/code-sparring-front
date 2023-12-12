@@ -445,8 +445,7 @@ export default {
           }
         })
         .then((res) => {
-          alert('?')
-          alert(res)
+          
           location.href = '/'
         })
     },

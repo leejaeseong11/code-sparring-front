@@ -24,8 +24,8 @@
   </main>
 </template>
 <script>
-import AdminQuizPage from '../../components/admin/adminQuizPage.vue'
-import AdminReportPage from '../../components/admin/adminReportPage.vue'
+import AdminQuizPage from '../../components/admin/AdminQuizPage.vue'
+import AdminReportPage from '../../components/admin/AdminReportPage.vue'
 
 export default {
   name: 'AdminPage',
@@ -41,9 +41,19 @@ export default {
       location.href = '/'
     },
     OnQuizPage() {
-      this.quizPage = true
-      this.reportPage = false
-
+      // 전체 조회 all, unranked 조회
+      location.href='/admin/quiz/all/1'
+    },
+    OnReportPage() {
+      // 전체 조회 all, 조치X 조회
+      location.href='/admin/report/all/1'
+    }
+  },
+  mounted() {
+    const viewName=this.$route.params.viewName
+    if(viewName=='quiz') {
+      this.quizPage=true
+      this.reportPage=false
       const onPg = document.getElementById('quiz-page')
       onPg.style.color = 'var(--main5-color)'
       onPg.style.backgroundColor = 'var(--main1-color)'
@@ -51,10 +61,9 @@ export default {
       const offPg = document.getElementById('report-page')
       offPg.style.color = 'var(--main1-color)'
       offPg.style.backgroundColor = 'var(--main5-color)'
-    },
-    OnReportPage() {
-      this.quizPage = false
-      this.reportPage = true
+    } else if(viewName=='report') {
+      this.quizPage=false
+      this.reportPage=true
 
       const onPg = document.getElementById('report-page')
       onPg.style.color = 'var(--main5-color)'
@@ -63,6 +72,7 @@ export default {
       const offPg = document.getElementById('quiz-page')
       offPg.style.color = 'var(--main1-color)'
       offPg.style.backgroundColor = 'var(--main5-color)'
+
     }
   }
 }

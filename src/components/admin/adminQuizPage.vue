@@ -27,29 +27,29 @@
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
           <span class="quiz-title">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
-          <button class="quiz-info-bt" :id="''+q.quizNo" @click="quizView">조회</button>
+          <button class="quiz-info-bt" :id="'' + q.quizNo" @click="quizView">조회</button>
         </div>
       </div>
 
       <div v-if="!popup" id="quiz-page">
-        <button class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button v-if="startPage!==1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
         <button
-          v-for="pg in totalPage"
+          v-for="pg in endPage-startPage+1"
           :key="pg"
-          class="page-bt-num"
-          :id="'' + pg"
+          :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
+          :id="'pg'+(startPage+pg-1)"
           @click="pgClick"
         >
-          {{ pg }}</button
+          {{ startPage+pg-1 }}</button
         >&nbsp;
-        <button class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+        <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
       </div>
     </div>
   </main>
 </template>
 <script>
 import axios from 'axios'
-import AdminQuizPopup from '../admin/adminQuizPopup.vue'
+import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
   name: 'AdminQuizPage',
@@ -58,12 +58,60 @@ export default {
     return {
       currentPage: 1,
       quizList: [],
-      totalPage: 0,
+      startPage: '',
+      endPage: '',
+      totalPage: '',
       popup: false
     }
   },
   methods: {
     allquiz() {
+      location.href = '/admin/quiz/all/1'
+    },
+    urkquiz() {
+      location.href = '/admin/quiz/UNRANKED/1'
+    },
+    searchQuiz(e) {
+      if (this.popup) {
+        if (e.target.id == 'search-icon') return
+        const onBt = document.getElementById('quiz-all')
+        onBt.style.opacity = '100%'
+        this.popup = false
+      } else {
+        if (e.target.id == 'search-icon') {
+          const onBt = document.getElementById('quiz-all')
+          onBt.style.opacity = '50%'
+          const offBt = document.getElementById('quiz-urk')
+          offBt.style.opacity = '50%'
+          this.popup = true
+        }
+      }
+    },
+    pgPrevClick() {
+      this.currentPage = Math.floor(((this.currentPage - 1) / 5)) * 5
+      const filter = this.$route.params.filter
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
+    },
+    pgNextClick() {
+      if (this.currentPage == 1) this.currentPage = 2
+      this.currentPage = (Math.floor(((this.currentPage - 1) / 5)) + 1) * 5 + 1
+      const filter = this.$route.params.filter
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
+    },
+    pgClick(e) {
+      const pg=parseInt(e.target.id.replace("pg", ""));
+      this.currentPage=pg
+      const filter = this.$route.params.filter
+
+      location.href = '/admin/quiz/' + filter + '/' + this.currentPage
+    },
+    quizView(e) {
+      location.href = '/quiz/' + e.target.id
+    }
+  },
+  mounted() {
+    const filter = this.$route.params.filter
+    if (filter == 'all') {
       const onBt = document.getElementById('quiz-all')
       onBt.style.opacity = '100%'
       const offBt = document.getElementById('quiz-urk')
@@ -74,18 +122,21 @@ export default {
       const text = document.getElementById('search-text')
       text.value = ''
 
-      this.currentPage = 1
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
+      this.currentPage = this.$route.params.currentPage
 
       const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
-    },
-    urkquiz() {
+      axios
+        .get(url)
+        .then((res) => {
+          this.quizList = res.data.list
+          this.startPage = res.data.startPage
+          this.endPage = res.data.endPage
+          this.totalPage=res.data.totalPage
+        })
+        .catch(() => {
+          window.history.back()
+        })
+    } else if (filter == 'UNRANKED') {
       const onBt = document.getElementById('quiz-urk')
       onBt.style.opacity = '100%'
       const offBt = document.getElementById('quiz-all')
@@ -96,73 +147,21 @@ export default {
       const text = document.getElementById('search-text')
       text.value = ''
 
-      this.currentPage = 1
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
+      this.currentPage = this.$route.params.currentPage
 
       const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
-    },
-    searchQuiz(e) {
-      if (this.popup) {
-        if (e.target.id == 'search-icon') return
-        this.popup = false
-      } else {
-        if (e.target.id == 'search-icon') {
-          const onBt = document.getElementById('quiz-all')
-          onBt.style.opacity = '50%'
-          const offBt = document.getElementById('quiz-urk')
-          offBt.style.opacity = '50%'
-
-          this.popup = true
-        }
-      }
-    },
-    pgPrevClick() {
-      this.currentPage = (this.currentPage / 5 - 1) * 5
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
-
-      // location.href='/admin/:viewName/:currentPage'
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
-    },
-    pgClick(e) {
-      this.currentPage = e.target.id
-      // const mainPg = document.getElementById(this.currentPage)
-      // mainPg.style.opacity = '50%'
-      // mainPg.style.cursor = 'default'
-
-      // location.href='/admin/:viewName/:currentPage'
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios.get(url).then((res) => {
-        this.quizList = res.data
-        this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-      })
-    },
-    quizView() {
-      location.href='/quiz'
+      axios
+        .get(url)
+        .then((res) => {
+          this.quizList = res.data.list
+          this.startPage = res.data.startPage
+          this.endPage = res.data.endPage
+          this.totalPage=res.data.totalPage
+        })
+        .catch(() => {
+          window.history.back()
+        })
     }
-  },
-  created() {
-    const url = `${this.backURL}/quiz/list/${this.currentPage}`
-    axios.get(url).then((res) => {
-      this.quizList = res.data
-      this.totalPage = Math.ceil(res.data[0].quizCnt / 10)
-
-      if (this.totalPage <= 5) {
-        const next = document.getElementById('next')
-        next.style.display = 'none'
-      }
-    })
   }
 }
 </script>
@@ -319,16 +318,18 @@ input[type='number']::-webkit-inner-spin-button {
   width: 35px;
   height: 35px;
   background-color: var(--main1-color);
+  opacity: 50%;
   border: none;
   color: var(--main5-color);
   padding-bottom: 27px;
 
   &:hover {
-    opacity: 50%;
+    opacity: 100%;
   }
 }
 
-#prev {
-  display: none;
+.page-bt-num.current-page {
+  opacity: 100%;
+  cursor: default;
 }
 </style>
