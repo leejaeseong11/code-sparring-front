@@ -9,6 +9,8 @@ import Login from '@/views/member/Login.vue'
 import AdminPage from '@/views/admin/AdminPage.vue'
 import QuizView from '@/views/quiz/QuizView.vue'
 
+import MyPage from '@/views/member/MyPage.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +52,11 @@ const router = createRouter({
       path: '/quiz/:quizNo',
       name: 'QuizView',
       component: QuizView
+    },
+    {
+      path: '/profile/:viewName/:memberNo',
+      name: 'MyPage',
+      component: MyPage
     }
   ]
 })
