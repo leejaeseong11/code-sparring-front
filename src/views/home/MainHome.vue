@@ -114,7 +114,7 @@
           >
             {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
-          <button id="logout-button" class="btn-custom-danger main-menu-button">종료</button>
+          <button id="logout-button" class="btn-custom-danger main-menu-button" @click="logoutButtonClickHandler">종료</button>
         </div>
       </div>
       <div id="main-room-containers">
@@ -221,6 +221,21 @@ export default {
     nextButtonClickHandler() {
       this.roomPage += 1
       this.refreshButtonClickHandler()
+    },
+    logoutButtonClickHandler(){
+      console.log('Request sent'); 
+      const url = `${this.backURL}/auth/logout`;
+      axios
+          .post(url, {}, {
+          withCredentials : true
+        })
+          .then(res => {
+            sessionStorage.removeItem("accessToken");
+            location.href = '/login';
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
     }
   },
   mounted() {
