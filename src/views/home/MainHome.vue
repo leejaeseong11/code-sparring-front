@@ -160,7 +160,7 @@
     </div>
   </div>
 </template>
-<script scoped>
+<script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 
@@ -212,7 +212,7 @@ export default {
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
-      this.$router.push({ path: `/admin/quiz/all` })
+      this.$router.push({ path: `/admin/quiz/all/1` })
     },
     prevButtonClickHandler() {
       this.roomPage -= 1

@@ -24,9 +24,26 @@
               :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
               class="btn-custom-primary see-quiz-button"
               v-bind:disabled="roomInfo.roomStatus == 0"
+              @click="showQuizClickHandler"
             >
-              <div>문제보기</div>
+              문제보기
             </button>
+            <div class="modal-wrap" v-show="modalCheck" @click="showQuizClickHandler">
+              <div class="modal-container" @click.stop="">
+                <h5 id="show-quiz-modal-label">
+                  <font-awesome-icon id="show-quiz-modal-house-icon" :icon="['fa', 'house']" />
+                  <div>방 문제 확인</div>
+                </h5>
+                <ShowQuizSimply />
+                <button
+                  id="modal-close-button"
+                  class="btn-custom-primary"
+                  @click="showQuizClickHandler"
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
             <button
               :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
               class="btn-custom-primary enter-button"
@@ -43,17 +60,28 @@
   </div>
 </template>
 <script>
+import ShowQuizSimply from './ShowQuizSimply.vue'
+
 export default {
   name: 'MainHomeRoom',
   props: ['roomInfo'],
+  data() {
+    return {
+      modalCheck: false
+    }
+  },
   methods: {
+    showQuizClickHandler() {
+      this.modalCheck = !this.modalCheck
+    },
     enterButtonClickHandler() {
       this.$router.push({ path: `/room/1000` })
     }
   },
   mounted() {
     console.log(this.roomInfo)
-  }
+  },
+  components: { ShowQuizSimply }
 }
 </script>
 <style scoped>
@@ -126,6 +154,66 @@ export default {
   &:active {
     border: none;
     background-color: var(--main4-hover-color);
+  }
+}
+.modal-wrap {
+  width: 100%;
+  height: 100%;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal-container {
+  width: 50%;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  top: 400px;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+#show-quiz-modal-label {
+  margin-bottom: 12px;
+
+  display: flex;
+  align-items: center;
+  align-self: center;
+
+  color: var(--red-color);
+}
+#show-quiz-modal-house-icon {
+  margin-right: 4px;
+}
+#modal-close-button {
+  margin-top: 12px;
+  padding: 4px 16px;
+
+  align-self: center;
+
+  font-size: 1.25rem;
+
+  border: none;
+  background-color: var(--main4-color);
+
+  &:hover {
+    border: none;
+    background-color: var(--main4-hover-color);
+  }
+  &:active {
+    border: none;
+    background-color: var(--main5-hover-color);
   }
 }
 .enter-button {
