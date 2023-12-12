@@ -26,7 +26,7 @@ export default {
     },
     methods: {
       quizView() {
-        location.href='/quiz'
+        location.href='/quiz/'+this.quizNo
       }
     },
     created() {
@@ -42,7 +42,7 @@ export default {
             this.status=true
         }).catch(()=>{
             alert('존재하지 않는 번호입니다')
-            location.href='/admin'
+            window.history.go(0)
         })
     }
 }

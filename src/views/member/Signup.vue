@@ -3,7 +3,7 @@
 
     </div>
     <div class="logo">
-        <img id="main-logo" src="/images/logo.gif" alt="logo" @click="gotoMain">
+        <img id="main-logo" src="/images/logo.gif" alt="logo" @click="gotoLogin">
     </div>
     <form class="signup" v-on:submit.prevent="signupFormSubmitHandler">
         <div class="content">
@@ -176,6 +176,10 @@ export default {
         gotoMain() {
             location.href = '/'
         },
+        gotoLogin() {
+            location.href = '/login'
+        },
+
         clearAllErrMsg() {
             console.log("clearAllErrMsg before call isFormValid privacyAgreed=", this.privacyAgreed)
             this.flag = this.isFormValid();
