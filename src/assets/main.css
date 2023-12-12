@@ -17,6 +17,11 @@ body {
   --black-color: #000000;
   --white-color: #ffffff;
   --green-color:#4c7c35;
+
+  --bronze-color: #846353;
+  --silver-color: #7382a3;
+  --gold-color: #cc9336;
+  --platinum-color: #34a8b1;
 }
 
 @font-face {
