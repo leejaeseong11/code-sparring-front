@@ -37,7 +37,7 @@
                     </tr>
                 </table>
                 <div class="action-buttons">
-                    <img src="images/login/start.png" alt="start" class="start" @click="goToMain()">
+                    <img src="images/login/start.png" alt="start" class="start" @click="loginFormSubmitHandler()">
                 </div>
             </form>
 
@@ -56,34 +56,33 @@ export default {
         }
     },
     methods: {
-        // submitForm() {
-        //     document.getElementById('joinForm').submit();
-        // },
         signUpForm() {
             location.href = '/signup'
         },
 
-        goToMain() {
-            location.href = '/'
-        },
-
-
-        loginFormSubmitHandler(e) {
+        loginFormSubmitHandler() {
             const url = `${this.backURL}/auth/login`;
             let data = {
-                id: this.id,
-                pwd: this.pwd
+                memberId: this.id,
+                memberPwd: this.pwd
             };
+
             axios
                 .post(url, JSON.stringify(data), {
                     headers:{
                         'Content-Type': 'application/json'       
                     },
+                    withCredentials : true,
 
                 })
                 .then(responseData => {
                     console.log(responseData);
-
+                    // Access Token을 세션 스토리지에 저장
+                    console.log(responseData.data.accessToken)
+                    console.log(responseData.data.refreshToken)
+                    sessionStorage.setItem("accessToken", responseData.data.accessToken);
+                    // localStorage.setItem("accessToken", responseData.data.accessToken);
+                    location.href = '/';
                 })
                 .catch(error => {
                     console.error('Error:', error);
