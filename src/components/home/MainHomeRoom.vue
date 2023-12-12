@@ -78,7 +78,8 @@ export default {
     enterButtonClickHandler() {
       let addMemberUrl
       if (this.roomInfo.roomPwd) {
-        addMemberUrl = `${this.backURL}/room-member?roomPwd=${this.roomInfo.roomPwd}`
+        const passwordInput = prompt('비밀번호를 입력하세요')
+        addMemberUrl = `${this.backURL}/room-member?roomPwd=${passwordInput}`
       } else {
         addMemberUrl = `${this.backURL}/room-member`
       }
