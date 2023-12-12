@@ -60,6 +60,7 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 import ShowQuizSimply from './ShowQuizSimply.vue'
 
 export default {
@@ -75,7 +76,21 @@ export default {
       this.modalCheck = !this.modalCheck
     },
     enterButtonClickHandler() {
-      this.$router.push({ path: `/room/1000` })
+      let addMemberUrl
+      if (this.roomInfo.roomPwd) {
+        addMemberUrl = `${this.backURL}/room-member?roomPwd=${this.roomInfo.roomPwd}`
+      } else {
+        addMemberUrl = `${this.backURL}/room-member`
+      }
+      axios
+        .post(addMemberUrl, {})
+        .then((response) => {
+          console.log(response)
+          this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   },
   mounted() {
