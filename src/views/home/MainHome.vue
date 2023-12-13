@@ -60,8 +60,13 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
+          <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
+            <div class="rank-number" style="color: var(--yellow-rank-color)">{{ i + 1 }}위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
           <li>
-            <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
+            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
             <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
             <div class="rank-nickname" title="닉네임">닉네임</div>
           </li>
@@ -186,9 +191,8 @@ export default {
       totalPages: 1,
       roomList: [],
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
-      memberAuthority: 'ROLE_ADMIN',
-      roomNumber: null,
-      roomStatus: null
+      memberRankList: [],
+      memberAuthority: 'ROLE_ADMIN'
     }
   },
   methods: {
@@ -549,11 +553,10 @@ li {
   padding-top: 32px;
 }
 #main-navigation {
-  margin-bottom: 24px;
+  margin-top: 12px;
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 #main-navigation-left,
 #main-navigation-right {
@@ -586,7 +589,8 @@ li {
   font-size: 1.25rem;
 }
 #main-room-containers {
-  margin-top: 48px;
+  margin-top: 24px;
+  padding-top: 12px;
 
   border-top: 3px solid var(--main5-color);
 }
