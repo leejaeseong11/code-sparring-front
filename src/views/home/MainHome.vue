@@ -60,8 +60,13 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
+          <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
+            <div class="rank-number" style="color: var(--yellow-rank-color)">{{ i + 1 }}위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
           <li>
-            <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
+            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
             <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
             <div class="rank-nickname" title="닉네임">닉네임</div>
           </li>
@@ -110,7 +115,7 @@
           <button
             id="mypage-button"
             class="btn-custom main-menu-button"
-            @:click="mypageButtonClickHandler"
+            @click="mypageButtonClickHandler"
           >
             {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
@@ -127,7 +132,7 @@
         <div id="room-navigation">
           <div id="all-room-title">
             전체 게임방
-            <button class="btn-custom" id="room-refresh-button" @:click="refreshButtonClickHandler">
+            <button class="btn-custom" id="room-refresh-button" @click="refreshButtonClickHandler">
               <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
           </div>
@@ -136,7 +141,9 @@
               id="room-number-search-input"
               type="text"
               placeholder="방 번호 검색"
-              @:keypress="searchRoomInputChangeHandler($event)"
+              v-model="inputRoomNo"
+              @keypress="searchRoomInputKeypressHandler($event)"
+              @input="searchRoomInputChangeHandler($event)"
             />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
@@ -154,7 +161,7 @@
             :class="{ 'page-disabled': roomPage == 0 }"
             class="pagenation-button"
             v-bind:disabled="roomPage == 0"
-            @:click="prevButtonClickHandler"
+            @click="prevButtonClickHandler"
           >
             ◀
           </button>
@@ -162,7 +169,7 @@
             :class="{ 'page-disabled': roomPage == totalPages - 1 }"
             class="pagenation-button"
             v-bind:disabled="roomPage == totalPages - 1"
-            @:click="nextButtonClickHandler"
+            @click="nextButtonClickHandler"
           >
             ▶
           </button>
@@ -186,13 +193,14 @@ export default {
       totalPages: 1,
       roomList: [],
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
-      memberAuthority: 'ROLE_ADMIN',
-      roomNumber: null,
-      roomStatus: null
+      inputRoomNo: null,
+      memberRankList: [],
+      memberAuthority: 'ROLE_ADMIN'
     }
   },
   methods: {
     refreshButtonClickHandler() {
+      this.inputRoomNo = null
       axios
         .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
         .then((response) => {
@@ -228,11 +236,11 @@ export default {
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
-      this.refreshButtonClickHandler()
+      this.searchRoomByRoomNo()
     },
     nextButtonClickHandler() {
       this.roomPage += 1
-      this.refreshButtonClickHandler()
+      this.searchRoomByRoomNo()
     },
     logoutButtonClickHandler() {
       console.log('Request sent')
@@ -253,13 +261,31 @@ export default {
           console.error('Error:', error)
         })
     },
-    searchRoomInputChangeHandler($event) {
+    searchRoomInputKeypressHandler($event) {
       let char = String.fromCharCode($event.keyCode)
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
         sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
         $event.preventDefault()
+      }
+    },
+    searchRoomInputChangeHandler($event) {
+      this.inputRoomNo = $event.target.value
+      this.searchRoomByRoomNo()
+    },
+    searchRoomByRoomNo() {
+      if (this.inputRoomNo == null) {
+        this.refreshButtonClickHandler()
+      } else {
+        axios
+          .get(
+            `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`
+          )
+          .then((response) => {
+            this.roomList = response.data.content
+            this.totalPages = response.data.totalPages
+          })
       }
     }
   },
@@ -549,11 +575,10 @@ li {
   padding-top: 32px;
 }
 #main-navigation {
-  margin-bottom: 24px;
+  margin-top: 12px;
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 #main-navigation-left,
 #main-navigation-right {
@@ -586,7 +611,8 @@ li {
   font-size: 1.25rem;
 }
 #main-room-containers {
-  margin-top: 48px;
+  margin-top: 24px;
+  padding-top: 12px;
 
   border-top: 3px solid var(--main5-color);
 }
