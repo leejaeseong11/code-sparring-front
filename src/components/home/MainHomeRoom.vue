@@ -62,6 +62,7 @@
 <script>
 import axios from 'axios'
 import ShowQuizSimply from './ShowQuizSimply.vue'
+import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHomeRoom',
@@ -75,11 +76,11 @@ export default {
     showQuizClickHandler() {
       this.modalCheck = !this.modalCheck
     },
-    enterButtonClickHandler() {
+    async enterButtonClickHandler() {
       let addMemberUrl
       if (this.roomInfo.roomPwd) {
-        const passwordInput = prompt('비밀번호를 입력하세요')
-        addMemberUrl = `${this.backURL}/room-member?roomPwd=${passwordInput}`
+        const passwordInput = await sweetAlert.prompt('비밀번호를 입력하세요', '')
+        addMemberUrl = `${this.backURL}/room-member?roomPwd=${passwordInput.value}`
       } else {
         addMemberUrl = `${this.backURL}/room-member`
       }
