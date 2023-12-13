@@ -34,7 +34,7 @@
                   <font-awesome-icon id="show-quiz-modal-house-icon" :icon="['fa', 'house']" />
                   <div>방 문제 확인</div>
                 </h5>
-                <ShowQuizSimply />
+                <ShowQuizSimply v-model:quizInfo="quizInfo" />
                 <button
                   id="modal-close-button"
                   class="btn-custom-primary"
@@ -69,7 +69,8 @@ export default {
   props: ['roomInfo'],
   data() {
     return {
-      modalCheck: false
+      modalCheck: false,
+      quizInfo: {}
     }
   },
   methods: {
@@ -97,6 +98,7 @@ export default {
   },
   mounted() {
     console.log(this.roomInfo)
+    this.quizInfo = this.roomInfo
   },
   components: { ShowQuizSimply }
 }
@@ -185,6 +187,7 @@ export default {
   background: rgba(0, 0, 0, 0.4);
 }
 .modal-container {
+  min-width: 480px;
   width: 50%;
   padding: 20px;
 
