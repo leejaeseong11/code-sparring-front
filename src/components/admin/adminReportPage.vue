@@ -1,36 +1,38 @@
 <template>
     <main>
         <div id="layout">
-            <div id="quiz-header">
-                <div id="quiz-filter">
-                    <button class="quiz-opt" id="quiz-all" @click="allquiz">전체</button>&nbsp;
-                    <button class="quiz-opt" id="quiz-urk" @click="urkquiz">UNRANKED</button>
+            <div id="report-header">
+                <div id="report-filter">
+                    <button class="report-opt" id="report-all" @:click="allReport">전체</button>&nbsp;
+                    <button class="report-opt" id="report-urk" @:click="urkReport">UNRANKED</button>
                 </div>
 
-                <div id="quiz-search-box">
-                    <input id="search-text" type="number" placeholder="문제 번호 검색" @focus="searchQuiz" />
-                    <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" @click="searchQuiz" />
+                <div id="report-search-box">
+                    <input id="search-text" type="number" placeholder="문제 번호 검색" @focus="searchReport" />
+                    <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" @click="searchReport" />
                 </div>
             </div>
 
-            <div class="quiz-content" v-if="!popup">
+            <div class="report-content" v-if="!popup">
                 <div v-for="report in reportList" :key="report.reportNo" class="report-object">
                     <span class="report-no">{{ report.reportNo }}</span>
                     <span class="report-Type">{{ formatReportType(report.reportType) }}</span>
                     <span class="report-Date">{{ formatDate(report.reportDate) }}</span>
                     <span class="report-memberName">{{ report.memberName }}</span>
-                    <button class="quiz-info-bt" :id="'' + report.reportNo" @click="quizView">조회</button>
+                    <button class="report-info-bt" :id="'' + report.reportNo" @click="reportView">조회</button>
                 </div>
             </div>
 
-            <div v-if="!popup" id="quiz-page">
+            {{ totalPage }} : {{ startPage }} : {{ endPage }}
+            <div v-if="!popup" id="report-page">
                 <button v-if="startPage > 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
-                <button v-for="pg in Math.min(endPage - startPage + 1, totalPage)" :key="pg"
-                    :class="['page-bt-num', { 'current-page': startPage + pg === currentPage }]"
-                    :id="'pg' + (startPage + pg)" @click="pgClick">
-                    {{ startPage + pg }}
+                <button v-for="pg in endPage-startPage+1"
+                    :key="pg"
+                    :class="['page-bt-num', { 'current-page': startPage + pg -1 == currentPage }]"
+                    :id="'pg' + (startPage + pg -1)" @click="pgClick">
+                    {{ startPage + pg -1 }}
                 </button>&nbsp;
-                <button v-if="endPage < totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+                <button v-if="endPage < totalPages" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
             </div>
 
 
@@ -54,9 +56,9 @@ export default {
     mounted() {
         const filter = this.$route.params.filter
         if (filter == 'all') {
-            const onBt = document.getElementById('quiz-all')
+            const onBt = document.getElementById('report-all')
             onBt.style.opacity = '100%'
-            const offBt = document.getElementById('quiz-urk')
+            const offBt = document.getElementById('report-urk')
             offBt.style.opacity = '50%'
 
             this.popup = false
@@ -65,26 +67,25 @@ export default {
             text.value = ''
 
             this.currentPage = this.$route.params.currentPage
-
             const url = `${this.backURL}/report/date?page=${this.currentPage - 1}`
             axios
                 .get(url)
                 .then((res) => {
-                    console.log(res.data.list)
-                    console.log('Response Status:', res.status);
-                    this.reportList = res.data.list
-                    this.startPage = res.data.startPage
-                    this.endPage = res.data.endPage
-                    this.totalPage = res.data.totalPage
+                    console.log(res.data)
+                    this.reportList = res.data.content 
+                    this.totalPage = res.data.totalPages
+                    alert(this.totalPage)
+                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
+                    this.endPage = Math.ceil(res.data.totalElements / 10);
                 })
                 .catch((error) => {
                     console.error('Error fetching reports:', error.message);
                     alert('신고목록을 조회할 수 없습니다')
                 })
         } else if (filter == 'UNRANKED') {
-            const onBt = document.getElementById('quiz-urk')
+            const onBt = document.getElementById('report-urk')
             onBt.style.opacity = '100%'
-            const offBt = document.getElementById('quiz-all')
+            const offBt = document.getElementById('report-all')
             offBt.style.opacity = '50%'
 
             this.popup = false
@@ -97,10 +98,11 @@ export default {
             axios
                 .get(url)
                 .then((res) => {
-                    this.reportList = res.data.list
-                    this.startPage = res.data.startPage
-                    this.endPage = res.data.endPage
-                    this.totalPage = res.data.totalPage
+                    this.reportList = res.data.content
+                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
+                    this.endPage = Math.ceil(res.data.totalElements / 10);
+                    this.totalPage = res.data.totalPages;
+
                 })
                 .catch(() => {
                     window.history.back()
@@ -108,13 +110,13 @@ export default {
         }
     },
     methods: {
-        allquiz() {
-            location.href = '/admin/report/all/1'
+        allReport() {
+            location.href = '/admin/report/date/1'
         },
-        urkquiz() {
+        urkReport() {
             location.href = '/admin/report/UNRANKED/1'
         },
-        searchQuiz(e) {
+        searchReport(e) {
             if (this.popup) {
                 if (e.target.id == 'search-icon') return
                 const onBt = document.getElementById('quiz-all')
@@ -130,36 +132,20 @@ export default {
                 }
             }
         },
-        // fetchReports() {
-        //     console.log('리포트를 불러오는 중...');
-        //     axios
-        //         .get(`${this.backURL}/report/date?page=${this.currentPage - 1}`)
-        //         .then((response) => {
-        //             console.log('데이터를 받았습니다:', response.data);
-        //             this.reportList = response.data;
-        //             this.updatePagination();
-        //         })
-        //         .catch((error) => {
-        //             console.error("Error fetching reports:", error);
-        //         });
-        // },
         pgClick(e) {
             const pg = parseInt(e.target.id.replace("pg", ""));
             this.currentPage = pg;
-            // location.href = '/admin/report/all/' + this.currentPage
             const filter = this.$route.params.filter
             location.href = '/admin/report/' + filter + '/' + this.currentPage
         },
         pgPrevClick() {
             this.currentPage = Math.floor(((this.currentPage - 1) / 5)) * 5
-            // location.href = '/admin/report/all/' + this.currentPage
             const filter = this.$route.params.filter
             location.href = '/admin/report/' + filter + '/' + this.currentPage
         },
         pgNextClick() {
             if (this.currentPage == 1) this.currentPage = 2
             this.currentPage = (Math.floor(((this.currentPage - 1) / 5)) + 1) * 5 + 1
-            // location.href = '/admin/report/all/' + this.currentPage
             const filter = this.$route.params.filter
             location.href = '/admin/report/' + filter + '/' + this.currentPage
         },
@@ -168,10 +154,6 @@ export default {
             location.href = '/report/' + e.target.id
         },
 
-        // updatePagination() {
-        //     this.startPage = Math.max(1, this.currentPage - 2);
-        //     this.endPage = Math.min(this.totalPage, this.currentPage + 2);
-        // },
         formatDate(reportDate) {
             const date = new Date(reportDate);
             const formattedDate = date.toLocaleDateString('ko-KR', {
@@ -201,17 +183,17 @@ export default {
     text-align: center;
 }
 
-#quiz-header {
+#report-header {
     display: flex;
     justify-content: space-between;
 }
 
-#quiz-filter {
+#report-filter {
     margin-left: 10px;
     margin-top: 8px;
 }
 
-.quiz-opt {
+.report-opt {
     padding: 4px;
     border: none;
     background-color: var(--main1-color);
@@ -223,11 +205,11 @@ export default {
     }
 }
 
-#quiz-urk {
+#report-urk {
     opacity: 50%;
 }
 
-#quiz-search-box {
+#report-search-box {
     margin-right: 8px;
     display: flex;
     align-items: center;
@@ -265,7 +247,7 @@ input[type='number']::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.quiz-content {
+.report-content {
     width: 100%;
     height: 77%;
     margin-top: 25px;
@@ -304,7 +286,7 @@ input[type='number']::-webkit-inner-spin-button {
     display: inline-block;
 }
 
-.quiz-info-bt {
+.report-info-bt {
     width: 10%;
     background-color: var(--main4-color);
     border: 2px solid var(--main4-color);
@@ -317,7 +299,7 @@ input[type='number']::-webkit-inner-spin-button {
     }
 }
 
-#quiz-page {
+#report-page {
     margin-top: 22px;
 }
 
