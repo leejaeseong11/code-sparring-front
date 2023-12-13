@@ -49,7 +49,7 @@
       <button id="room-out-button">방 나가기</button>
       <div id="room-quiz-containers">
         <div id="room-quiz-title">선택된 문제</div>
-        <ShowQuizSimply />
+        <ShowQuizSimply v-model:quizInfo="quizInfo" />
       </div>
       <div id="room-info-containers">
         <div id="room-info-title">
@@ -126,7 +126,8 @@ export default {
       logs: [],
       status: 'disconnected',
       chatMessage: '',
-      socket: null
+      socket: null,
+      quizInfo: ''
     }
   },
   methods: {

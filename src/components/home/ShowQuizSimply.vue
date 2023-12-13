@@ -6,27 +6,23 @@
       <div class="col-4">출제자</div>
     </div>
     <div id="quiz-info" class="row">
-      <div class="col-2">1.</div>
-      <div class="col-6">짝수와 홀수</div>
-      <div class="col-4">admin1</div>
+      <div class="col-2">{{ quizInfo.quizNo }}.</div>
+      <div class="col-6">{{ quizInfo.quizTitle }}</div>
+      <div class="col-4">{{ quizInfo.memberName }}</div>
     </div>
   </div>
   <div id="quiz-content-title">문제 설명</div>
   <div id="quiz-content-container">
     <div id="quiz-content">
-      정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 solution 함수를
-      완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 solution
-      함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
-      solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를
-      반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우
-      "Odd"를 반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인
-      경우 "Odd"를 반환하는 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
-      정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
+      {{ quizInfo.quizContent }}
     </div>
   </div>
 </template>
 <script>
-export default {}
+export default {
+  name: 'ShowQuizSimply',
+  props: ['quizInfo']
+}
 </script>
 <style scoped>
 #quiz-info-container {
