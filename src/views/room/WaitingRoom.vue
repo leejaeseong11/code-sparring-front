@@ -65,7 +65,7 @@
       </div>
     </div>
     <div id="room-info-layout" class="col">
-      <button id="room-out-button">방 나가기</button>
+      <button id="room-out-button" @click="roomOutButtonClickHandler">방 나가기</button>
       <div id="room-quiz-containers">
         <div id="room-quiz-title">선택된 문제</div>
         <ShowQuizSimply v-model:quizInfo="roomInfo" />
@@ -100,6 +100,8 @@
 import axios from 'axios'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
+import SweetAlert from '../../util/modal.js'
+
 export default {
   name: 'WaitingRoom',
   components: { RoomMember, ShowQuizSimply },
@@ -150,6 +152,9 @@ export default {
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `` })
+    },
+    roomOutButtonClickHandler() {
+      this.$router.push({ path: '/' })
     }
   },
   mounted() {
@@ -158,8 +163,11 @@ export default {
       .then((response) => {
         this.roomInfo = response.data
       })
-      .catch((error) => {
-        console.log(error.response.data.errors[0])
+      .catch(async (error) => {
+        const ok = await SweetAlert.error(error.response.data.errors[0])
+        if (ok) {
+          this.$router.go(-1)
+        }
       })
   }
 }
