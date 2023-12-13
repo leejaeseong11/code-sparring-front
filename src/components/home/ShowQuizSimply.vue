@@ -49,7 +49,7 @@ export default {}
   padding: 8px;
 
   font-size: 1.25rem;
-  color: var(--red-color);
+  color: var(--main5-color);
 }
 #quiz-content {
   padding: 8px;

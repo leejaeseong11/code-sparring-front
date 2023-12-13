@@ -288,7 +288,7 @@ export default {
 #room-quiz-title {
   font-size: 1.625rem;
   text-align: center;
-  color: var(--red-color);
+  color: var(--main5-color);
 }
 #room-info-containers {
   margin: 12px 0;
@@ -304,7 +304,7 @@ export default {
   font-size: 1.375rem;
   text-align: center;
 
-  color: var(--red-color);
+  color: var(--main5-color);
 }
 #room-info-title > span {
   margin-left: 12px;
