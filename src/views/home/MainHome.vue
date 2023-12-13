@@ -114,7 +114,13 @@
           >
             {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
-          <button id="logout-button" class="btn-custom-danger main-menu-button" @click="logoutButtonClickHandler">종료</button>
+          <button
+            id="logout-button"
+            class="btn-custom-danger main-menu-button"
+            @click="logoutButtonClickHandler"
+          >
+            종료
+          </button>
         </div>
       </div>
       <div id="main-room-containers">
@@ -126,7 +132,12 @@
             </button>
           </div>
           <div id="room-number-search-container">
-            <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+            <input
+              id="room-number-search-input"
+              type="text"
+              placeholder="방 번호 검색"
+              @:keypress="searchRoomInputChangeHandler($event)"
+            />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
         </div>
@@ -160,9 +171,10 @@
     </div>
   </div>
 </template>
-<script scoped>
+<script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
@@ -171,7 +183,7 @@ export default {
     return {
       roomPage: 0,
       roomSize: 8,
-      totalPages: 0,
+      totalPages: 1,
       roomList: [],
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
       memberAuthority: 'ROLE_ADMIN',
@@ -222,20 +234,33 @@ export default {
       this.roomPage += 1
       this.refreshButtonClickHandler()
     },
-    logoutButtonClickHandler(){
-      console.log('Request sent'); 
-      const url = `${this.backURL}/auth/logout`;
+    logoutButtonClickHandler() {
+      console.log('Request sent')
+      const url = `${this.backURL}/auth/logout`
       axios
-          .post(url, {}, {
-          withCredentials : true
+        .post(
+          url,
+          {},
+          {
+            withCredentials: true
+          }
+        )
+        .then(() => {
+          sessionStorage.removeItem('accessToken')
+          location.href = '/login'
         })
-          .then(res => {
-            sessionStorage.removeItem("accessToken");
-            location.href = '/login';
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+        .catch((error) => {
+          console.error('Error:', error)
+        })
+    },
+    searchRoomInputChangeHandler($event) {
+      let char = String.fromCharCode($event.keyCode)
+      if (/^[0-9]+$/.test(char)) {
+        return true
+      } else {
+        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        $event.preventDefault()
+      }
     }
   },
   mounted() {
@@ -668,3 +693,4 @@ input[type='number']::-webkit-inner-spin-button {
   border: none;
 }
 </style>
+../../components/modal/modal.js../../modal/AlertMessage.vue
