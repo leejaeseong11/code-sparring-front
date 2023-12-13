@@ -117,6 +117,7 @@
 <script>
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
+import axios from 'axios';
 export default {
   name: 'WaitingRoom',
   components: { RoomMember, ShowQuizSimply },
@@ -165,7 +166,7 @@ export default {
       this.socket.send(JSON.stringify(talkMessage))
     },
     gameStartButtonClickHandler() {
-      this.$router.push({ path: `` })
+      this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     }
   }
 }
