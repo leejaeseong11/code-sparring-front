@@ -208,7 +208,7 @@ export default {
   align-items: center;
   align-self: center;
 
-  color: var(--red-color);
+  color: var(--main5-color);
 }
 #show-quiz-modal-house-icon {
   margin-right: 4px;
