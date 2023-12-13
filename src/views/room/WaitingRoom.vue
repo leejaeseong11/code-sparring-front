@@ -191,17 +191,6 @@ export default {
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
-      // axios
-      //   .post(`${this.backURL}/room`, data, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   .then((res) => {
-      //     console.log(res)
-          
-          
-      //   })
     }
   }
 }

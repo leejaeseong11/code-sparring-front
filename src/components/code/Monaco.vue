@@ -1,16 +1,17 @@
 <template>
     <div class="monaco-editor-vue3" :style="style">
-        <div>결과창</div>
-        <div id="outputDiv"></div>
+        <div id="resuet">결과창</div>
+        <div id="outputDiv">
+          <span v-html="replaceNewlines(this.output)"></span>
+        </div>
         <button @click="_setValue(this.value)" class="button">리셋하기</button>
         <button @click="execution()" class="button">코드 실행하기</button>
         <button @click="submit()" class="button" id="submit">코드 제출하기</button>
+        <div style="display: inline;"> *주의! Main클래스를 변경하지 마세요! </div>
         <br>
     </div>
-    
   </template>
-  
-  
+
 
   <style>
   .monaco-editor-vue3{
@@ -24,9 +25,11 @@
     border: 3px solid var(--main5-color);
     border-radius: 10px;
     
+    padding: 8px;
+    font-size: 0.9rem;
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .button{
@@ -66,6 +69,9 @@
     data(){
         return{
             value: 'import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n      \n    }\n}',
+            quizNo: '',
+            memberNo: '',
+            output: '',
         };
     },
     props: {
@@ -113,14 +119,26 @@
         style,
       }
     },
+    created(){
+              // room에서 roomNo에 해당하는 quizNo 가져오기
+        // 문제내용 가져오기
+        // 테스트케이스 가져오기
+        const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
+
+        axios
+        .get(url)
+        .then((response) => {
+            this.quizNo = response.data.quizNo
+        })
+    },
     mounted() {
       this.initMonaco()
 
       // 붙여넣기 막기
-      this.editor.getDomNode().addEventListener('paste', (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-      }, true);
+      // this.editor.getDomNode().addEventListener('paste', (event) => {
+      //   event.stopPropagation();
+      //   event.preventDefault();
+      // }, true);
     },
     beforeUnmount() {
       this.editor && this.editor.dispose()
@@ -179,10 +197,15 @@
         const { original } = this.editor.getModel()
         original.setValue(this.original)
       },
+      // /n을 <br> 태그로 대체하는 메서드
+      replaceNewlines(text) {
+        return text.replace(/\n/g, '<br>');
+      },
       execution(){
-
-        const quizNo = 100;  // 퀴즈번호
+        
+        const quizNo = this.quizNo // 퀴즈번호
         const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
+
 
         // FormData 객체 생성
         const formData = new FormData();
@@ -198,15 +221,13 @@
         .post(url, formData, {
             withCredentials: true,
             headers: {
-            'Content-Type': 'multipart/form-data',
+             'Content-Type': 'multipart/form-data',
             },
-        })
+        }) 
         .then(response=>{
-            alert(response.data)
-            // alert(response.data.msg)
-            console.log(response.data)
-            const outputDiv = document.getElementById('outputDiv');
-            outputDiv.textContent = response.data;
+            this.output = response.data
+            // const outputDiv = document.getElementById('outputDiv');
+            // outputDiv.textContent = response.data;
             // id.div.setValue(response.data.msg);
         })
         //네트워크에 의한 요청 실패일 경우
@@ -218,32 +239,32 @@
       },
       submit(){
         
-        const quizNo = 100;  // 퀴즈번호
+        const quizNo = this.quizNo  // 퀴즈번호
         const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
 
         // FormData 객체 생성
         const formData = new FormData();
 
         // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-        const dto = { memberNo: 2, quizNo: 100};
+        const dto = { memberNo: 2, quizNo};
         formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
         // 파일 데이터 추가
         const mainFile = new Blob([fileContent], { type: 'text/plain' });
-        formData.append('Main', mainFile, 'hello.txt');
+        formData.append('Main', mainFile, 'Code.txt');
         
         const url = "http://192.168.1.112:8080/submit/normalMode"
         axios
         .post(url, formData, {
             withCredentials: true,
             headers: {
-            'Content-Type': 'multipart/form-data',
+              'Content-Type': 'multipart/form-data',
             },
         })
         .then(response=>{
-            alert(response.data)
-            const outputDiv = document.getElementById('outputDiv');
-            outputDiv.textContent = response.data;
+            this.output = response.data
+            // const outputDiv = document.getElementById('outputDiv');
+            // outputDiv.textContent = response.data;
             // id.div.setValue(response.data.msg);
         })
         //네트워크에 의한 요청 실패일 경우
