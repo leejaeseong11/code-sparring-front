@@ -1,9 +1,28 @@
 <template>
   <div id="room-layout" class="row">
     <div id="room-member-layout" class="col-6">
-      <div id="room-title-container">
-        <div id="room-number">No. 1000</div>
-        <div id="room-title">아무나 들어오세요</div>
+      <div>
+        <div id="room-title-containers">
+          <div class="room-title-container">
+            <div id="room-number">No. {{ roomInfo.roomNo }}</div>
+            <div id="room-title">{{ roomInfo.roomTitle }}</div>
+          </div>
+          <div class="room-title-container">
+            <div v-if="roomInfo.codeShare" class="custom-tooltip">
+              <font-awesome-icon :icon="['fas', 'eye']" />
+              <span class="custom-tooltiptext">코드 공개</span>
+            </div>
+            <div v-else-if="!roomInfo.codeShare" class="custom-tooltip">
+              <font-awesome-icon :icon="['fas', 'eye-slash']" />
+              <span class="custom-tooltiptext">코드 비공개</span>
+            </div>
+            <div v-if="roomInfo.roomPwd != null" id="code-share-icon" class="custom-tooltip">
+              <font-awesome-icon :icon="['fa', 'lock']" />
+              <span class="custom-tooltiptext">{{ roomInfo.roomPwd }}</span>
+            </div>
+          </div>
+        </div>
+        <div></div>
       </div>
       <div id="room-member-container">
         <RoomMember />
@@ -45,50 +64,13 @@
         <button id="chat-input-button" placeholder="채팅을 입력하세요.">입력</button>
       </div>
     </div>
-    <div id="room-info-layout" class="col-6">
-      <button id="room-out-button">방 나가기</button>
+    <div id="room-info-layout" class="col">
+      <button id="room-out-button" @click="roomOutButtonClickHandler">방 나가기</button>
       <div id="room-quiz-containers">
         <div id="room-quiz-title">선택된 문제</div>
-        <ShowQuizSimply />
+        <ShowQuizSimply v-model:quizInfo="roomInfo" />
       </div>
-      <div id="room-info-containers">
-        <div id="room-info-title">
-          <font-awesome-icon :icon="['fas', 'house']" />
-          <span>방 정보</span>
-        </div>
-        <div class="row">
-          <label for="inputRoomName" class="col-3">방 제목</label>
-          <div class="col-9">
-            <input type="text" id="inputRoomName" class="roomInfoInput" disabled />
-          </div>
-        </div>
-        <div class="row">
-          <label for="inputRoomPassword" class="col-3">비밀번호</label>
-          <div class="col-9">
-            <input type="text" id="inputRoomPassword" class="roomInfoInput" disabled />
-          </div>
-        </div>
-        <fieldset class="row">
-          <div class="col-3">코드공개여부</div>
-          <div id="room-radio-button" class="col-9">
-            <div class="room-info-code-open">
-              <input
-                type="radio"
-                name="gridRadios"
-                id="gridRadios1"
-                value="open"
-                checked
-                disabled
-              />
-              <label for="gridRadios1"> 공개 </label>
-            </div>
-            <div class="room-info-code-open">
-              <input type="radio" name="gridRadios" id="gridRadios2" value="close" disabled />
-              <label for="gridRadios2"> 비공개 </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
+
       <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
@@ -115,9 +97,12 @@
     </ul> -->
 </template>
 <script>
+import axios from 'axios'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
+import SweetAlert from '../../util/modal.js'
 import axios from 'axios';
+
 export default {
   name: 'WaitingRoom',
   components: { RoomMember, ShowQuizSimply },
@@ -127,7 +112,8 @@ export default {
       logs: [],
       status: 'disconnected',
       chatMessage: '',
-      socket: null
+      socket: null,
+      roomInfo: {}
     }
   },
   methods: {
@@ -167,7 +153,23 @@ export default {
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
+    },
+    roomOutButtonClickHandler() {
+      this.$router.push({ path: '/' })
     }
+  },
+  mounted() {
+    axios
+      .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`)
+      .then((response) => {
+        this.roomInfo = response.data
+      })
+      .catch(async (error) => {
+        const ok = await SweetAlert.error(error.response.data.errors[0])
+        if (ok) {
+          this.$router.go(-1)
+        }
+      })
   }
 }
 </script>
@@ -179,17 +181,49 @@ export default {
   display: flex;
   flex-direction: column;
 }
-#room-title-container {
+#room-title-containers {
   margin-top: 100px;
   padding: 16px;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   border: 3px solid var(--main5-color);
   border-bottom: none;
   border-radius: 10px 10px 0 0;
   background-color: var(--white-color);
+}
+.room-title-container {
+  display: flex;
+}
+.custom-tooltip {
+  position: relative;
+
+  cursor: pointer;
+}
+.custom-tooltip .custom-tooltiptext {
+  width: 110px;
+  padding: 8px 12px;
+
+  visibility: hidden;
+
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  left: 120%;
+
+  text-align: center;
+
+  border-radius: 6px;
+  color: var(--white-color);
+  background-color: var(--black-color);
+}
+.custom-tooltip:hover .custom-tooltiptext {
+  visibility: visible;
+}
+#code-share-icon {
+  margin-left: 4px;
 }
 #room-number {
   margin-right: 16px;
@@ -280,7 +314,7 @@ export default {
 #room-quiz-containers {
   margin-top: 24px;
   padding: 12px;
-  height: 52.725%;
+  height: 80%;
 
   background-color: var(--white-color);
   border: 3px solid var(--main5-color);
@@ -291,40 +325,12 @@ export default {
   text-align: center;
   color: var(--main5-color);
 }
-#room-info-containers {
-  margin: 12px 0;
-  padding: 12px;
 
-  background-color: var(--white-color);
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
-}
-#room-info-title {
-  padding-bottom: 12px;
-
-  font-size: 1.375rem;
-  text-align: center;
-
-  color: var(--main5-color);
-}
-#room-info-title > span {
-  margin-left: 12px;
-}
-
-.roomInfoInput {
-  padding: 4px;
-  color: var(--main5-color);
-  width: 100%;
-  margin-bottom: 12px;
-}
-#room-radio-button {
-  display: flex;
-  justify-content: space-evenly;
-}
 #game-start-button {
   padding: 8px;
+  margin-top: 20px;
 
-  font-size: 1.5rem;
+  font-size: 2rem;
 
   color: var(--main1-color);
   background-color: var(--main4-color);
