@@ -2,14 +2,25 @@
   <div id="room-layout" class="row">
     <div id="room-member-layout" class="col-6">
       <div>
-        <div id="room-title-container">
-          <div id="room-number">No. {{ roomInfo.roomNo }}</div>
-          <div id="room-title">{{ roomInfo.roomTitle }}</div>
-          <span
-            ><font-awesome-icon :icon="['fas', 'eye']" /><font-awesome-icon
-              :icon="['fas', 'eye-slash']"
-          /></span>
-          <span><font-awesome-icon :icon="['fa', 'lock']" /></span>
+        <div id="room-title-containers">
+          <div class="room-title-container">
+            <div id="room-number">No. {{ roomInfo.roomNo }}</div>
+            <div id="room-title">{{ roomInfo.roomTitle }}</div>
+          </div>
+          <div class="room-title-container">
+            <div v-if="roomInfo.codeShare" class="custom-tooltip">
+              <font-awesome-icon :icon="['fas', 'eye']" />
+              <span class="custom-tooltiptext">코드 공개</span>
+            </div>
+            <div v-else-if="!roomInfo.codeShare" class="custom-tooltip">
+              <font-awesome-icon :icon="['fas', 'eye-slash']" />
+              <span class="custom-tooltiptext">코드 비공개</span>
+            </div>
+            <div v-if="roomInfo.roomPwd != null" id="code-share-icon" class="custom-tooltip">
+              <font-awesome-icon :icon="['fa', 'lock']" />
+              <span class="custom-tooltiptext">{{ roomInfo.roomPwd }}</span>
+            </div>
+          </div>
         </div>
         <div></div>
       </div>
@@ -161,17 +172,49 @@ export default {
   display: flex;
   flex-direction: column;
 }
-#room-title-container {
+#room-title-containers {
   margin-top: 100px;
   padding: 16px;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   border: 3px solid var(--main5-color);
   border-bottom: none;
   border-radius: 10px 10px 0 0;
   background-color: var(--white-color);
+}
+.room-title-container {
+  display: flex;
+}
+.custom-tooltip {
+  position: relative;
+
+  cursor: pointer;
+}
+.custom-tooltip .custom-tooltiptext {
+  width: 110px;
+  padding: 8px 12px;
+
+  visibility: hidden;
+
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  left: 120%;
+
+  text-align: center;
+
+  border-radius: 6px;
+  color: var(--white-color);
+  background-color: var(--black-color);
+}
+.custom-tooltip:hover .custom-tooltiptext {
+  visibility: visible;
+}
+#code-share-icon {
+  margin-left: 4px;
 }
 #room-number {
   margin-right: 16px;
