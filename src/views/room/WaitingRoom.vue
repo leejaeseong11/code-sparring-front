@@ -101,7 +101,6 @@ import axios from 'axios'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
 import SweetAlert from '../../util/modal.js'
-import axios from 'axios';
 
 export default {
   name: 'WaitingRoom',
