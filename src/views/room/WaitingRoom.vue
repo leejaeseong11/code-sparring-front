@@ -49,32 +49,7 @@
       <button id="room-out-button">방 나가기</button>
       <div id="room-quiz-containers">
         <div id="room-quiz-title">선택된 문제</div>
-        <div id="quiz-info-container">
-          <div class="row">
-            <div class="col-2">번호</div>
-            <div class="col-6">제목</div>
-            <div class="col-4">출제자</div>
-          </div>
-          <div id="quiz-info" class="row">
-            <div class="col-2">1.</div>
-            <div class="col-6">짝수와 홀수</div>
-            <div class="col-4">admin1</div>
-          </div>
-        </div>
-        <div id="quiz-content-title">문제 설명</div>
-        <div id="quiz-content-container">
-          <div id="quiz-content">
-            정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 solution 함수를
-            완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
-            solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를
-            반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인
-            경우 "Odd"를 반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을
-            반환하고 홀수인 경우 "Odd"를 반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우
-            "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 정수 num이 짝수일 경우 "Even"을 반환하고
-            홀수인 경우 "Odd"를 반환하는 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우
-            "Odd"를 반환하는
-          </div>
-        </div>
+        <ShowQuizSimply />
       </div>
       <div id="room-info-containers">
         <div id="room-info-title">
@@ -140,11 +115,12 @@
     </ul> -->
 </template>
 <script>
+import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
 import axios from 'axios';
 export default {
   name: 'WaitingRoom',
-  components: { RoomMember },
+  components: { RoomMember, ShowQuizSimply },
   data() {
     return {
       message: '',
@@ -313,34 +289,7 @@ export default {
 #room-quiz-title {
   font-size: 1.625rem;
   text-align: center;
-  color: var(--red-color);
-}
-#quiz-info-container {
-  padding: 8px 12px;
-}
-#quiz-info {
-  padding: 4px;
-
-  border-top: 3px solid var(--main5-color);
-}
-#quiz-content-container {
-  height: 227px;
-
-  overflow-y: scroll;
-
-  border: 3px dashed var(--main5-color);
-}
-#quiz-content-title {
-  padding: 8px;
-
-  font-size: 1.25rem;
-  color: var(--red-color);
-}
-#quiz-content {
-  padding: 8px;
-
-  font-size: 1.125rem;
-  line-height: 1.5rem;
+  color: var(--main5-color);
 }
 #room-info-containers {
   margin: 12px 0;
@@ -356,7 +305,7 @@ export default {
   font-size: 1.375rem;
   text-align: center;
 
-  color: var(--red-color);
+  color: var(--main5-color);
 }
 #room-info-title > span {
   margin-left: 12px;

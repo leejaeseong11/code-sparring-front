@@ -2,11 +2,15 @@
   <main class="container">
     <img id="main-logo" src="/images/logo.gif" alt="logo" @click="goHome" />
     <router-view style="min-width: 1280px"></router-view>
+    <FooterBar />
   </main>
 </template>
 <script>
+import FooterBar from './components/footer/FooterBar.vue'
+
 export default {
   name: 'App',
+  components: { FooterBar },
   methods: {
     goHome(event) {
       if (!confirm('이 사이트에서 나가시겠습니까?')) return
