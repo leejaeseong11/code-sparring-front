@@ -9,6 +9,8 @@ export default {}
 </script>
 <style scoped>
 #footer-container {
+  min-width: 1280px;
+
   margin-top: 44px;
   height: 52px;
 
