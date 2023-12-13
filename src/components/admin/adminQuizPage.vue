@@ -36,11 +36,11 @@
           <button
             v-for="pg in endPage-startPage+1"
             :key="pg"
-            :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
-            :id="'pg'+(startPage+pg-1)"
+            :class="['page-bt-num', { 'current-page': startPage + pg == currentPage }]"
+            :id="'pg'+(startPage+pg)"
             @click="pgClick"
           >
-            {{ startPage+pg-1 }}</button
+            {{ startPage+pg}}</button
           >&nbsp;
           <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
         </div>
