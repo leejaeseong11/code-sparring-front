@@ -187,6 +187,7 @@ export default {
   background: rgba(0, 0, 0, 0.4);
 }
 .modal-container {
+  min-width: 480px;
   width: 50%;
   padding: 20px;
 

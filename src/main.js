@@ -14,13 +14,17 @@ import {
   faUser,
   faLock,
   faCrown,
-  faHouse
+  faHouse,
+  faEye,
+  faEyeSlash
 } from '@fortawesome/free-solid-svg-icons'
 library.add(faMagnifyingGlass)
 library.add(faUser)
 library.add(faLock)
 library.add(faCrown)
 library.add(faHouse)
+library.add(faEye)
+library.add(faEyeSlash)
 
 const app = createApp(App)
 app.use(router)
