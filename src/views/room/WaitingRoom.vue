@@ -39,8 +39,14 @@
         </div>
       </div>
       <div id="room-chat-input-container">
-        <input type="text" id="chat-input" />
-        <button id="chat-input-button" placeholder="채팅을 입력하세요.">입력</button>
+        <input type="text" id="chat-input" v-model="chatMessage" @keyup="chatInputKeyHandler" />
+        <button
+          id="chat-input-button"
+          placeholder="채팅을 입력하세요."
+          @click="sendMessage($event)"
+        >
+          입력
+        </button>
       </div>
     </div>
     <div id="room-info-layout" class="col">
@@ -53,27 +59,6 @@
       <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
-  <!-- <br />
-  <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
-  <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }}
-  <br />
-  <br />
-  <div v-if="status === 'connected'">
-    <input
-      type="text"
-      placeholder="보낼 메세지를 입력하세요."
-      class="content"
-      v-model="chatMessage"
-      onkeyup="() => {
-  if(window.event.keyCode==13) { sendMessage(); }
-}"
-    />
-
-    <button @click="sendMessage">메시지 전송</button>
-  </div>
-  <ul id="logs">
-    <li v-for="(log, index) in logs" :key="index" class="log">{{ log.event }}: {{ log.data }}</li>
-  </ul> -->
 </template>
 <script>
 import axios from 'axios'
@@ -91,7 +76,7 @@ export default {
       status: 'disconnected',
       chatMessage: '',
       socket: null,
-      chatContentList: ['a: aa', 'b: bb', 'a: ?zz'],
+      chatContentList: [],
       roomNo: '',
       roomInfo: {}
     }
@@ -109,11 +94,9 @@ export default {
         }
         this.socket.send(JSON.stringify(enterMessage))
 
-        this.socket.onclose = () => {
-          // alert(this.socket.readyState === WebSocket.OPEN)
-        }
+        this.socket.onclose = () => {}
         this.socket.onmessage = (e) => {
-          this.chatContentList.push(JSON.parse(e.data))
+          this.chatContentList.push(e.data)
           console.log(e.data)
         }
         this.status = 'connected'
@@ -127,10 +110,16 @@ export default {
       var talkMessage = {
         type: 'ROOM_TALK',
         roomNo: this.roomNo,
-        sender: 'me',
-        msg: this.chatMessage
+        sender: '닉네임',
+        message: this.chatMessage
       }
       this.socket.send(JSON.stringify(talkMessage))
+    },
+    chatInputKeyHandler($event) {
+      if ($event.keyCode == 13) {
+        this.sendMessage()
+        this.chatMessage = ''
+      }
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
