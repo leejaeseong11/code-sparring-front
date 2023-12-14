@@ -30,7 +30,7 @@
         <RoomMember />
         <RoomMember />
       </div>
-      <div id="room-chat">
+      <div id="room-chat" ref="roomChat">
         <div id="chat-title">채팅방</div>
         <div id="chat-content">
           <div v-for="(chatContent, index) in chatContentList" :key="'chat' + index">
@@ -39,7 +39,12 @@
         </div>
       </div>
       <div id="room-chat-input-container">
-        <input type="text" id="chat-input" v-model="chatMessage" @keyup="chatInputKeyHandler" />
+        <input
+          type="text"
+          id="chat-input"
+          v-model="chatMessage"
+          @keypress.enter="sendMessage($event)"
+        />
         <button
           id="chat-input-button"
           placeholder="채팅을 입력하세요."
@@ -73,7 +78,6 @@ export default {
     return {
       message: '',
       logs: [],
-      status: 'disconnected',
       chatMessage: '',
       socket: null,
       chatContentList: [],
@@ -86,25 +90,34 @@ export default {
       this.socket = new WebSocket(this.socketURL)
 
       this.socket.onopen = () => {
-        console.log('open server')
         const enterMessage = {
           type: 'ROOM_ENTER',
           roomNo: this.roomNo,
           sender: '닉네임'
         }
         this.socket.send(JSON.stringify(enterMessage))
+      }
 
-        this.socket.onclose = () => {}
-        this.socket.onmessage = (e) => {
+      this.socket.onclose = () => {}
+
+      this.socket.onerror = () => {}
+
+      this.socket.onmessage = (e) => {
+        if (this.socket.readyState === WebSocket.OPEN) {
           this.chatContentList.push(e.data)
-          console.log(e.data)
+          this.scrollToBottom()
+        } else if (
+          this.socket.readyState === WebSocket.CLOSING ||
+          this.socket.readyState === WebSocket.CLOSED
+        ) {
+          this.connect()
         }
-        this.status = 'connected'
       }
     },
     disconnect() {
-      this.socket.close()
-      this.status = 'disconnected'
+      if (this.socket.readyState === WebSocket.OPEN) {
+        this.socket.close()
+      }
     },
     sendMessage() {
       var talkMessage = {
@@ -114,32 +127,37 @@ export default {
         message: this.chatMessage
       }
       this.socket.send(JSON.stringify(talkMessage))
-    },
-    chatInputKeyHandler($event) {
-      if ($event.keyCode == 13) {
-        this.sendMessage()
-        this.chatMessage = ''
-      }
+      this.chatMessage = ''
+      this.scrollToBottom()
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     },
     roomOutButtonClickHandler() {
       this.$router.push({ path: '/' })
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const roomChat = this.$refs.roomChat
+        console.log(roomChat)
+        roomChat.scrollTop = roomChat.scrollHeight
+      })
+    },
+    unLoadEvent: function (event) {
+      const outMessage = {
+        type: 'ROOM_QUIT',
+        roomNo: this.roomNo,
+        sender: '닉네임'
+      }
+      this.socket.send(JSON.stringify(outMessage))
+
+      // WebSocket 세션을 닫는 로직 추가
+      if (this.socket.readyState === WebSocket.OPEN) {
+        this.socket.close()
+      }
+      event.preventDefault()
+      event.returnValue = ''
     }
-    // unLoadEvent: function (event) {
-    // console.log(event)
-    // console.log('1' + this.canLeaveSite)
-    // const outMessage = {
-    //   type: 'ROOM_QUIT',
-    //   roomNo: this.roomNo,
-    //   sender: '닉네임'
-    // }
-    // this.socket.send(JSON.stringify(outMessage))
-    // console.log('2' + this.canLeaveSite)
-    // event.preventDefault()
-    // event.returnValue = ''
-    // }
   },
   mounted() {
     axios
@@ -150,26 +168,21 @@ export default {
       .catch(async (error) => {
         const ok = await SweetAlert.error(error.response.data.errors[0])
         if (ok) {
-          this.$router.go(-1)
+          this.$router.push({ path: '/' })
         }
       })
     window.addEventListener('beforeunload', this.unLoadEvent)
-    console.log('?')
     this.roomNo = this.$router.currentRoute.value.params.roomNo
     this.connect()
   },
   beforeUnmount() {
-    // window.removeEventListener('beforeunload', this.unLoadEvent)
-    // const outMessage = {
-    //   type: 'ROOM_QUIT',
-    //   roomNo: this.roomNo,
-    //   sender: '닉네임'
-    // }
-    // this.socket.send(JSON.stringify(outMessage))
-    // this.disconnect()
-
-    console.log(this.status)
-    // confirm('realrrrearly???')
+    const outMessage = {
+      type: 'ROOM_QUIT',
+      roomNo: this.roomNo,
+      sender: '닉네임'
+    }
+    this.socket.send(JSON.stringify(outMessage))
+    this.disconnect()
   }
 }
 </script>
@@ -276,6 +289,8 @@ export default {
   margin-right: 8px;
 
   flex: 1;
+
+  color: var(--main5-color);
 }
 #chat-input-button {
   padding: 8px 16px;

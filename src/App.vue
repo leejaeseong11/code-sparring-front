@@ -12,27 +12,10 @@ export default {
   name: 'App',
   components: { FooterBar },
   methods: {
-    goHome(event) {
-      if (!confirm('이 사이트에서 나가시겠습니까?')) return
-      else {
-        event.preventDefault()
-        event.returnValue = ''
-      }
+    goHome() {
       this.$router.push({ path: `/` })
-    },
-    unLoadEvent: function (event) {
-      if (this.isLeaveSite) return
-
-      event.preventDefault()
-      event.returnValue = ''
     }
   }
-  // mounted() {
-  //   window.addEventListener('beforeunload', this.unLoadEvent)
-  // },
-  // beforeUnmount() {
-  //   window.removeEventListener('beforeunload', this.unLoadEvent)
-  // }
 }
 </script>
 <style>
