@@ -63,46 +63,37 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
-          <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
-            <div v-if="i == 1" class="rank-number" style="color: var(--yellow-rank-color)">
-              {{ i + 1 }}위
+          <li
+            v-for="(memberRank, index) in memberRankList"
+            :key="'memberRank' + index"
+            @click="viewProfileDetailClickHandler(memberRank.memberNo)"
+          >
+            <div v-if="index + 1 == 1" class="rank-number" style="color: var(--yellow-rank-color)">
+              {{ index + 1 }}위
             </div>
-            <div v-else-if="i == 2" class="rank-number" style="color: var(--red-rank-color)">
-              {{ i + 1 }}위
+            <div
+              v-else-if="index + 1 == 2"
+              class="rank-number"
+              style="color: var(--red-rank-color)"
+            >
+              {{ index + 1 }}위
             </div>
-            <div v-else-if="i == 3" class="rank-number" style="color: var(--blue-rank-color)">
-              {{ i + 1 }}위
+            <div
+              v-else-if="index + 1 == 3"
+              class="rank-number"
+              style="color: var(--blue-rank-color)"
+            >
+              {{ index + 1 }}위
             </div>
-            <div v-else class="rank-number" style="color: var(--main1-color)">{{ i + 1 }}위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--main1-color)">4위</div>
-            <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--main1-color)">5위</div>
-            <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
-            <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
-              아주아주긴닉네임이지요너무길어서안보일지경이에요
+            <div v-else class="rank-number" style="color: var(--main1-color)">
+              {{ index + 1 }}위
             </div>
+            <img
+              class="rank-tier-icon"
+              :src="'/images/rank/' + memberRank.memberTier.toLowerCase() + '.png'"
+              alt="rank-tier"
+            />
+            <div class="rank-nickname" title="닉네임">{{ memberRank.memberName }}</div>
           </li>
         </ol>
       </div>
@@ -346,10 +337,21 @@ export default {
         memberTier: 'Bronze'
       }
       this.socket.send(JSON.stringify(sendMatching))
+    },
+    viewProfileDetailClickHandler(memberNo) {
+      axios.get(`${this.backURL}/member/${memberNo}`).then((response) => {
+        console.log(response)
+      })
     }
   },
   mounted() {
     this.refreshButtonClickHandler()
+    axios.get(`${this.backURL}/member/ranking`).then((response) => {
+      console.log(response.data)
+      this.memberRankList = response.data
+        .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
+        .slice(0, 5)
+    })
   }
 }
 </script>
@@ -610,9 +612,13 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+
+  cursor: pointer;
 }
 #rank-list > li > * {
   margin: 4px;
+
+  cursor: pointer;
 }
 .rank-number {
   width: 24px;
