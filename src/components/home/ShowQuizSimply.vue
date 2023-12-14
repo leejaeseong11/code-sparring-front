@@ -1,32 +1,38 @@
 <template>
   <div id="quiz-info-container">
     <div class="row">
-      <div class="col-2">번호</div>
-      <div class="col-6">제목</div>
-      <div class="col-4">출제자</div>
+      <div class="col-3">티어</div>
+      <div class="col-5">제목</div>
+      <div class="col-2">정답률</div>
+      <div class="col-2">출제자</div>
     </div>
     <div id="quiz-info" class="row">
-      <div class="col-2">1.</div>
-      <div class="col-6">짝수와 홀수</div>
-      <div class="col-4">admin1</div>
+      <div class="col-3">{{ quizInfo.quizTier }}</div>
+      <div class="col-5">{{ quizInfo.quizTitle }}</div>
+      <div class="col-2">
+        {{
+          quizInfo.quizSubmitCnt == 0
+            ? 0
+            : Math.round(
+                (quizInfo.quizSuccessCnt / quizInfo.quizSubmitCnt + Number.EPSILON) * 10000
+              ) / 100
+        }}%
+      </div>
+      <div class="col-2">{{ quizInfo.memberName }}</div>
     </div>
   </div>
   <div id="quiz-content-title">문제 설명</div>
   <div id="quiz-content-container">
     <div id="quiz-content">
-      정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 solution 함수를
-      완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는 solution
-      함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
-      solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를
-      반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우
-      "Odd"를 반환하는 solution 함수를 완성하세요. 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인
-      경우 "Odd"를 반환하는 정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
-      정수 num이 짝수일 경우 "Even"을 반환하고 홀수인 경우 "Odd"를 반환하는
+      {{ quizInfo.quizContent }}
     </div>
   </div>
 </template>
 <script>
-export default {}
+export default {
+  name: 'ShowQuizSimply',
+  props: ['quizInfo']
+}
 </script>
 <style scoped>
 #quiz-info-container {
@@ -38,7 +44,7 @@ export default {}
   border-top: 3px solid var(--main5-color);
 }
 #quiz-content-container {
-  height: 227px;
+  height: 412px;
 
   white-space: wrap;
   overflow: scroll;
