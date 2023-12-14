@@ -28,6 +28,3 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
 app.config.globalProperties.backURL = 'http://192.168.1.116:8881/codesparring'
 app.config.globalProperties.socketURL = 'ws://192.168.1.116:8881/codesparring/ws/session'
-
-// app.config.globalProperties.backURL = 'http://192.168.0.25:8881/codesparring'
-// app.config.globalProperties.socketURL = 'ws://192.168.0.25:8881/codesparring/ws/session'
