@@ -99,6 +99,7 @@ export default {
   methods: {
     connect() {
       this.socket = new WebSocket(this.socketURL)
+
       this.socket.onopen = () => {
         console.log('open server')
         const enterMessage = {
@@ -113,6 +114,7 @@ export default {
         }
         this.socket.onmessage = (e) => {
           this.chatContentList.push(JSON.parse(e.data))
+          console.log(e.data)
         }
         this.status = 'connected'
       }
@@ -135,20 +137,20 @@ export default {
     },
     roomOutButtonClickHandler() {
       this.$router.push({ path: '/' })
-    },
-    unLoadEvent: function (event) {
-      console.log(event)
-      console.log('1' + this.canLeaveSite)
-      const outMessage = {
-        type: 'ROOM_QUIT',
-        roomNo: this.roomNo,
-        sender: '닉네임'
-      }
-      this.socket.send(JSON.stringify(outMessage))
-      console.log('2' + this.canLeaveSite)
-      event.preventDefault()
-      event.returnValue = ''
     }
+    // unLoadEvent: function (event) {
+    // console.log(event)
+    // console.log('1' + this.canLeaveSite)
+    // const outMessage = {
+    //   type: 'ROOM_QUIT',
+    //   roomNo: this.roomNo,
+    //   sender: '닉네임'
+    // }
+    // this.socket.send(JSON.stringify(outMessage))
+    // console.log('2' + this.canLeaveSite)
+    // event.preventDefault()
+    // event.returnValue = ''
+    // }
   },
   mounted() {
     axios
@@ -168,17 +170,17 @@ export default {
     this.connect()
   },
   beforeUnmount() {
-    window.removeEventListener('beforeunload', this.unLoadEvent)
-    const outMessage = {
-      type: 'ROOM_QUIT',
-      roomNo: this.roomNo,
-      sender: '닉네임'
-    }
-    this.socket.send(JSON.stringify(outMessage))
-    this.disconnect()
+    // window.removeEventListener('beforeunload', this.unLoadEvent)
+    // const outMessage = {
+    //   type: 'ROOM_QUIT',
+    //   roomNo: this.roomNo,
+    //   sender: '닉네임'
+    // }
+    // this.socket.send(JSON.stringify(outMessage))
+    // this.disconnect()
 
     console.log(this.status)
-    confirm('realrrrearly???')
+    // confirm('realrrrearly???')
   }
 }
 </script>

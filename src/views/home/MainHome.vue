@@ -54,7 +54,11 @@
           <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <button id="rank-matching-button" class="btn-custom-danger room-menu-button">
+      <button
+        id="rank-matching-button"
+        class="btn-custom-danger room-menu-button"
+        @click="rankMatchingButtonClickHandler"
+      >
         랭 크
         <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
         매 칭
@@ -199,7 +203,8 @@ export default {
       inputRoomNo: null,
       memberRankList: [],
       memberAuthority: 'ROLE_ADMIN',
-      addRoomPopup: false
+      addRoomPopup: false,
+      socket: null
     }
   },
   methods: {
@@ -269,7 +274,7 @@ export default {
     },
     searchRoomInputKeypressHandler($event) {
       let char = String.fromCharCode($event.keyCode)
-      if (/^[0-9]+$/.test(char)) {
+      if (/^[0-9]$/.test(char)) {
         return true
       } else {
         sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
@@ -296,6 +301,37 @@ export default {
     },
     backOff() {
       this.addRoomPopup = false
+    },
+    rankMatchingButtonClickHandler() {
+      this.connect()
+    },
+    connect() {
+      this.socket = new WebSocket(this.socketURL)
+
+      this.socket.onopen = () => {
+        // const enterMessage = {
+        //   type: 'RANK_ENTER',
+        //   memberNo: Math.floor(Math.random() * 2),
+        //   memberTier: 'Bronze'
+        // }
+        // this.socket.send(JSON.stringify(enterMessage))
+        this.sendMatching()
+        this.socket.onclose = () => {}
+        this.socket.onmessage = (e) => {
+          console.log(e.data)
+        }
+      }
+    },
+    disconnect() {
+      this.socket.close()
+    },
+    sendMatching() {
+      const sendMatching = {
+        type: 'RANK_MATCHING',
+        memberNo: Math.floor(Math.random() * 2),
+        memberTier: 'Bronze'
+      }
+      this.socket.send(JSON.stringify(sendMatching))
     }
   },
   mounted() {
@@ -617,6 +653,8 @@ li {
   margin: 0 4px;
 }
 #create-problem-button {
+  cursor: pointer;
+
   color: var(--main1-color) !important;
 }
 .main-menu-button {
