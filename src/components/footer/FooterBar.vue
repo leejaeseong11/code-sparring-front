@@ -8,6 +8,9 @@
 export default {}
 </script>
 <style scoped>
+* {
+  cursor: default;
+}
 #footer-container {
   min-width: 1280px;
 

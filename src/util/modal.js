@@ -37,13 +37,22 @@ const sweetAlert = {
       cancelButtonText
     })
   },
-  prompt(title, text, input = 'text', inputPlaceholder = '', confirmButtonText = '확인') {
+  prompt(
+    title,
+    text,
+    input = 'text',
+    inputPlaceholder = '',
+    confirmButtonText = '확인',
+    cancelButtonText = '취소'
+  ) {
     return swalButton.fire({
       title,
       text,
       input,
       inputPlaceholder,
-      confirmButtonText
+      showCancelButton: true,
+      confirmButtonText,
+      cancelButtonText
     })
   }
 }

@@ -199,7 +199,7 @@ export default {
       inputRoomNo: null,
       memberRankList: [],
       memberAuthority: 'ROLE_ADMIN',
-      addRoomPopup: false,
+      addRoomPopup: false
     }
   },
   methods: {
@@ -234,7 +234,7 @@ export default {
       //     this.$router.push({ path: `/room/${res.data}` })
       //   })
 
-      this.addRoomPopup=true
+      this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
@@ -295,7 +295,7 @@ export default {
       }
     },
     backOff() {
-      this.addRoomPopup=false
+      this.addRoomPopup = false
     }
   },
   mounted() {
@@ -304,6 +304,9 @@ export default {
 }
 </script>
 <style scoped>
+* {
+  cursor: default;
+}
 #main-layout {
   min-width: 1280px;
 
@@ -650,6 +653,8 @@ li {
 
   text-indent: 14px;
 
+  cursor: auto;
+
   border: none;
   border-radius: 20px;
 }
@@ -682,6 +687,9 @@ input[type='number']::-webkit-inner-spin-button {
   &:active {
     border: none;
   }
+}
+#room-refresh-button > img {
+  cursor: pointer;
 }
 #room-list-container {
   width: 100%;

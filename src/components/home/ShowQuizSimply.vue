@@ -23,9 +23,7 @@
   </div>
   <div id="quiz-content-title">문제 설명</div>
   <div id="quiz-content-container">
-    <div id="quiz-content">
-      {{ quizInfo.quizContent }}
-    </div>
+    <pre id="quiz-content">{{ quizInfo.quizContent }}</pre>
   </div>
 </template>
 <script>
@@ -35,6 +33,9 @@ export default {
 }
 </script>
 <style scoped>
+* {
+  cursor: default;
+}
 #quiz-info-container {
   padding: 8px 12px;
 }
@@ -59,6 +60,8 @@ export default {
 }
 #quiz-content {
   padding: 8px;
+
+  font-family: 'DNFBitBitv2';
 
   word-wrap: break-word;
   font-size: 1.125rem;
