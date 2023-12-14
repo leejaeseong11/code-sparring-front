@@ -25,17 +25,20 @@
         <div></div>
       </div>
       <div id="room-member-container">
-        <RoomMember />
-        <RoomMember />
-        <RoomMember />
-        <RoomMember />
+        <template v-for="index in 4" :key="'member' + index">
+          <RoomMember
+            v-if="index <= roomMemberList.length"
+            v-model:member="roomMemberList[index - 1]"
+          />
+          <RoomMember v-else v-model:member="nullMember" />
+        </template>
       </div>
       <div id="room-chat" ref="roomChat">
         <div id="chat-title">채팅방</div>
         <div id="chat-content">
-          <div v-for="(chatContent, index) in chatContentList" :key="'chat' + index">
-            {{ chatContent }}
-          </div>
+          <template v-for="(chatContent, index) in chatContentList" :key="'chat' + index">
+            <pre>{{ chatContent }}</pre>
+          </template>
         </div>
       </div>
       <div id="room-chat-input-container">
@@ -82,7 +85,9 @@ export default {
       socket: null,
       chatContentList: [],
       roomNo: '',
-      roomInfo: {}
+      roomInfo: {},
+      roomMemberList: [],
+      nullMember: null
     }
   },
   methods: {
@@ -116,10 +121,18 @@ export default {
     },
     disconnect() {
       if (this.socket.readyState === WebSocket.OPEN) {
+        const outMessage = {
+          type: 'ROOM_QUIT',
+          roomNo: this.roomNo,
+          sender: '닉네임'
+        }
+        this.socket.send(JSON.stringify(outMessage))
         this.socket.close()
       }
     },
     sendMessage() {
+      if (this.chatMessage == '') return
+
       var talkMessage = {
         type: 'ROOM_TALK',
         roomNo: this.roomNo,
@@ -134,6 +147,7 @@ export default {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     },
     roomOutButtonClickHandler() {
+      this.disconnect()
       this.$router.push({ path: '/' })
     },
     scrollToBottom() {
@@ -151,7 +165,6 @@ export default {
       }
       this.socket.send(JSON.stringify(outMessage))
 
-      // WebSocket 세션을 닫는 로직 추가
       if (this.socket.readyState === WebSocket.OPEN) {
         this.socket.close()
       }
@@ -164,6 +177,8 @@ export default {
       .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`)
       .then((response) => {
         this.roomInfo = response.data
+        this.roomMemberList = response.data.roomMemberList
+        console.log(this.roomMemberList[0])
       })
       .catch(async (error) => {
         const ok = await SweetAlert.error(error.response.data.errors[0])
@@ -187,6 +202,12 @@ export default {
 }
 </script>
 <style scoped>
+pre {
+  margin: 0;
+
+  font-size: 1.125rem;
+  font-family: 'DNFBitBitv2';
+}
 #room-layout {
   color: var(--main5-color);
 }
@@ -248,6 +269,9 @@ export default {
   border-collapse: collapse;
 
   border: 3px solid var(--main5-color);
+}
+#room-member-container > * {
+  width: 25%;
 }
 #room-chat {
   width: 100%;

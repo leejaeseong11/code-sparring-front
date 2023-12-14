@@ -1,20 +1,34 @@
 <template>
-  <div class="room-member-profile-container">
+  <div v-if="member != null" class="room-member-profile-container">
     <div class="room-member-profile">
       <font-awesome-icon v-if="!isRoomManager" id="room-manager-icon" :icon="['fas', 'crown']" />
       <button v-if="isRoomManager" class="room-resign-button">x</button>
-      <img class="profile-image" src="/images/tmp_profile.png" alt="profile" />
+      <img
+        class="profile-image"
+        :src="'/images/icon/' + member.memberProfileImg + '.png'"
+        alt="profile"
+      />
     </div>
     <div class="member-info-container">
-      <div>Lv.5</div>
-      <div class="member-nickname">닉네임</div>
-      <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+      <div>Lv.{{ member.memberLevel }}</div>
+      <div class="member-nickname">{{ member.memberName }}</div>
+      <img
+        class="rank-tier-icon"
+        :src="'/images/rank/' + member.memberTier.toLowerCase() + '.png'"
+        alt="my-tier"
+      />
     </div>
   </div>
+  <div
+    v-else
+    class="room-member-profile-container"
+    style="background: var(--yellow-rank-color)"
+  ></div>
 </template>
 <script>
 export default {
   name: 'RoomMember',
+  props: ['member'],
   data() {
     return {
       isRoomManager: false
@@ -53,10 +67,8 @@ export default {
   background-color: var(--red-rank-color);
 }
 .profile-image {
-  width: 50%;
-  margin: 12px;
-
-  border-radius: 50%;
+  width: 60%;
+  margin-bottom: 12px;
 }
 .member-info-container {
   width: 100%;
