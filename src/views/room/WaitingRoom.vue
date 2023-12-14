@@ -14,30 +14,9 @@
       <div id="room-chat">
         <div id="chat-title">채팅방</div>
         <div id="chat-content">
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇa</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇb</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇz</div>
+          <div v-for="(chatContent, index) in chatContentList" :key="'chat' + index">
+            {{ chatContent }}
+          </div>
         </div>
       </div>
       <div id="room-chat-input-container">
@@ -93,26 +72,26 @@
     </div>
   </div>
   <!-- <br />
-    <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
-    <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }}
-    <br />
-    <br />
-    <div v-if="status === 'connected'">
-      <input
-        type="text"
-        placeholder="보낼 메세지를 입력하세요."
-        class="content"
-        v-model="chatMessage"
-        onkeyup="() => {
+  <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
+  <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }}
+  <br />
+  <br />
+  <div v-if="status === 'connected'">
+    <input
+      type="text"
+      placeholder="보낼 메세지를 입력하세요."
+      class="content"
+      v-model="chatMessage"
+      onkeyup="() => {
   if(window.event.keyCode==13) { sendMessage(); }
 }"
-      />
+    />
 
-      <button @click="sendMessage">메시지 전송</button>
-    </div>
-    <ul id="logs">
-      <li v-for="(log, index) in logs" :key="index" class="log">{{ log.event }}: {{ log.data }}</li>
-    </ul> -->
+    <button @click="sendMessage">메시지 전송</button>
+  </div>
+  <ul id="logs">
+    <li v-for="(log, index) in logs" :key="index" class="log">{{ log.event }}: {{ log.data }}</li>
+  </ul> -->
 </template>
 <script>
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
@@ -126,7 +105,9 @@ export default {
       logs: [],
       status: 'disconnected',
       chatMessage: '',
-      socket: null
+      socket: null,
+      chatContentList: ['a: aa', 'b: bb', 'a: ?zz'],
+      roomNo: ''
     }
   },
   methods: {
@@ -134,31 +115,30 @@ export default {
       this.socket = new WebSocket(this.socketURL)
       this.socket.onopen = () => {
         console.log('open server')
-        let enterMessage = {
+        const enterMessage = {
           type: 'ROOM_ENTER',
-          roomNo: this.$router.currentRoute.value.params.roomNo,
-          sender: 'me'
+          roomNo: this.roomNo,
+          sender: '닉네임'
         }
         this.socket.send(JSON.stringify(enterMessage))
 
         this.socket.onclose = () => {
-          console.log('disconnet')
+          // alert(this.socket.readyState === WebSocket.OPEN)
         }
         this.socket.onmessage = (e) => {
-          console.log(e.data)
+          this.chatContentList.push(JSON.parse(e.data))
         }
         this.status = 'connected'
       }
     },
     disconnect() {
-      console.log('close server')
       this.socket.close()
       this.status = 'disconnected'
     },
     sendMessage() {
       var talkMessage = {
         type: 'ROOM_TALK',
-        roomNo: this.$router.currentRoute.value.params.roomNo,
+        roomNo: this.roomNo,
         sender: 'me',
         msg: this.chatMessage
       }
@@ -166,7 +146,39 @@ export default {
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `` })
+    },
+    unLoadEvent: function (event) {
+      console.log(event)
+      console.log('1' + this.canLeaveSite)
+      const outMessage = {
+        type: 'ROOM_QUIT',
+        roomNo: this.roomNo,
+        sender: '닉네임'
+      }
+      this.socket.send(JSON.stringify(outMessage))
+      console.log('2' + this.canLeaveSite)
+      event.preventDefault()
+      event.returnValue = ''
     }
+  },
+  mounted() {
+    window.addEventListener('beforeunload', this.unLoadEvent)
+    console.log('?')
+    this.roomNo = this.$router.currentRoute.value.params.roomNo
+    this.connect()
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.unLoadEvent)
+    const outMessage = {
+      type: 'ROOM_QUIT',
+      roomNo: this.roomNo,
+      sender: '닉네임'
+    }
+    this.socket.send(JSON.stringify(outMessage))
+    this.disconnect()
+
+    console.log(this.status)
+    confirm('realrrrearly???')
   }
 }
 </script>
