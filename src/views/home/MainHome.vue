@@ -12,20 +12,17 @@
                 ?<span class="custom-tooltiptext"
                   >티어는 랭크 모드 결과를 통해 정해집니다. <br />
                   티어의 종류는 다음과 같습니다.<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/bronze.png"
-                    alt="my-tier" />브론즈<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/silver.png"
-                    alt="my-tier" />실버<br />
-                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />골드<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/platinum.png"
-                    alt="my-tier" />플래티넘<br
-                /></span>
+                  <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+                  <span>브론즈</span>
+                  <br />
+                  <img class="rank-tier-icon" src="/images/rank/silver.png" alt="my-tier" />
+                  <span>실버</span><br />
+                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />
+                  <span>골드</span><br />
+                  <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="my-tier" />
+                  <span>플래티넘</span>
+                  <br />
+                </span>
               </div>
               <img
                 id="my-rank-tier"
@@ -67,7 +64,16 @@
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
           <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
-            <div class="rank-number" style="color: var(--yellow-rank-color)">{{ i + 1 }}위</div>
+            <div v-if="i == 1" class="rank-number" style="color: var(--yellow-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else-if="i == 2" class="rank-number" style="color: var(--red-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else-if="i == 3" class="rank-number" style="color: var(--blue-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else class="rank-number" style="color: var(--main1-color)">{{ i + 1 }}위</div>
             <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
             <div class="rank-nickname" title="닉네임">닉네임</div>
           </li>
@@ -148,7 +154,6 @@
               type="text"
               placeholder="방 번호 검색"
               v-model="inputRoomNo"
-              @keypress="searchRoomInputKeypressHandler($event)"
               @input="searchRoomInputChangeHandler($event)"
             />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
@@ -273,8 +278,10 @@ export default {
         })
     },
     searchRoomInputKeypressHandler($event) {
+      console.log($event)
       let char = String.fromCharCode($event.keyCode)
-      if (/^[0-9]$/.test(char)) {
+      console.log(char)
+      if (/^[0-9]+$/.test(char)) {
         return true
       } else {
         sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
@@ -282,8 +289,15 @@ export default {
       }
     },
     searchRoomInputChangeHandler($event) {
-      this.inputRoomNo = $event.target.value
-      this.searchRoomByRoomNo()
+      const inputValue = $event.target.value
+      if (inputValue == '') return
+      if (!/^[0-9]+$/.test(inputValue)) {
+        $event.target.value = this.inputRoomNo
+        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+      } else {
+        this.inputRoomNo = inputValue
+        this.searchRoomByRoomNo()
+      }
     },
     searchRoomByRoomNo() {
       if (this.inputRoomNo == null) {
@@ -701,8 +715,6 @@ li {
   padding: 8px 12px 8px 0;
 
   font-size: 1.5rem;
-
-  cursor: pointer;
 
   color: var(--black-color);
   opacity: 50%;

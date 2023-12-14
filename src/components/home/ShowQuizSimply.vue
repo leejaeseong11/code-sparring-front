@@ -7,7 +7,29 @@
       <div class="col-2">출제자</div>
     </div>
     <div id="quiz-info" class="row">
-      <div class="col-3">{{ quizInfo.quizTier }}</div>
+      <div class="col-3" v-if="quizInfo.quizTier == 'BRONZE'" style="color: var(--bronze-color)">
+        {{ quizInfo.quizTier }}
+      </div>
+      <div
+        class="col-3"
+        v-else-if="quizInfo.quizTier == 'SILVER'"
+        style="color: var(--silver-color)"
+      >
+        {{ quizInfo.quizTier }}
+      </div>
+      <div class="col-3" v-else-if="quizInfo.quizTier == 'GOLD'" style="color: var(--silver-color)">
+        {{ quizInfo.quizTier }}
+      </div>
+      <div
+        class="col-3"
+        v-else-if="quizInfo.quizTier == 'PLATINUM'"
+        style="color: var(--platinum-color)"
+      >
+        {{ quizInfo.quizTier }}
+      </div>
+      <div class="col-3" v-else>
+        {{ quizInfo.quizTier }}
+      </div>
       <div class="col-5">{{ quizInfo.quizTitle }}</div>
       <div class="col-2">
         {{
