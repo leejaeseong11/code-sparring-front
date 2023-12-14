@@ -31,6 +31,6 @@ app.use(router)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
 
-app.config.globalProperties.backURL = 'http://192.168.1.112:8080'
+app.config.globalProperties.backURL = 'http://192.168.1.112:8080/codesparring'
 app.config.globalProperties.socketURL = 'ws://192.168.3.113:8881/codesparring/ws/session'
 

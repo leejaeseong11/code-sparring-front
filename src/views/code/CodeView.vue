@@ -90,7 +90,8 @@
 
         <div id="code-area">
           <div class="index-name">제출한 코드</div>
-          <textarea class="readonlyTextarea" id="quiz-code" readonly></textarea>
+          <textarea class="readonlyTextarea" id="quiz-code"
+          readonly>{{fileContent}}</textarea>
 
           <div id="button-area">
             <div></div>
@@ -123,7 +124,10 @@ export default {
       outputInfo: '',
       reportList: [],
       rptOkCnt: 0,
-      reportPopup: false
+      reportPopup: false,
+      memberNo: '',
+      quizUrl: '',
+      fileContent: '',
     }
   },
   methods: {
@@ -144,6 +148,9 @@ export default {
     closePage() {
       const memberNo = this.$route.params.memberNo
       location.href = '/profile/code/' + memberNo
+    },
+    objectUrlGet(){
+      
     }
   },
   created() {
@@ -166,6 +173,28 @@ export default {
       .catch(() => {
         alert('문제 조회에 실패하였습니다')
       })
+      this.memberNo = this.$route.params.memberNo
+      const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
+      axios
+      .get(url2)
+      .then((res)=>{
+        this.quizUrl = res.data
+      })
+  },
+  mounted(){
+        // S3 객체의 URL 사용 (직접 접근)
+    const s3ObjectUrl = 'https://s3.ap-northeast-2.amazonaws.com/codesparring/1/1_101.java';
+
+    // 파일 내용을 가져오기
+    fetch(s3ObjectUrl)
+      .then(response => response.text())
+      .then(data => {
+        // 파일 내용을 화면에 출력
+        this.fileContent = data;
+      })
+      .catch(error => {
+        console.error('Error fetching file from S3:', error);
+      });
   }
 }
 </script>
