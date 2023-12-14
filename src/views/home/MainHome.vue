@@ -60,8 +60,13 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
+          <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
+            <div class="rank-number" style="color: var(--yellow-rank-color)">{{ i + 1 }}위</div>
+            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
+            <div class="rank-nickname" title="닉네임">닉네임</div>
+          </li>
           <li>
-            <div class="rank-number" style="color: var(--yellow-rank-color)">1위</div>
+            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
             <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
             <div class="rank-nickname" title="닉네임">닉네임</div>
           </li>
@@ -110,23 +115,36 @@
           <button
             id="mypage-button"
             class="btn-custom main-menu-button"
-            @:click="mypageButtonClickHandler"
+            @click="mypageButtonClickHandler"
           >
             {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
-          <button id="logout-button" class="btn-custom-danger main-menu-button" @click="logoutButtonClickHandler">종료</button>
+          <button
+            id="logout-button"
+            class="btn-custom-danger main-menu-button"
+            @click="logoutButtonClickHandler"
+          >
+            종료
+          </button>
         </div>
       </div>
       <div id="main-room-containers">
         <div id="room-navigation">
           <div id="all-room-title">
             전체 게임방
-            <button class="btn-custom" id="room-refresh-button" @:click="refreshButtonClickHandler">
+            <button class="btn-custom" id="room-refresh-button" @click="refreshButtonClickHandler">
               <img src="/images/refresh.png" style="width: 40px" alt="" />
             </button>
           </div>
           <div id="room-number-search-container">
-            <input id="room-number-search-input" type="number" placeholder="방 번호 검색" />
+            <input
+              id="room-number-search-input"
+              type="text"
+              placeholder="방 번호 검색"
+              v-model="inputRoomNo"
+              @keypress="searchRoomInputKeypressHandler($event)"
+              @input="searchRoomInputChangeHandler($event)"
+            />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
         </div>
@@ -143,7 +161,7 @@
             :class="{ 'page-disabled': roomPage == 0 }"
             class="pagenation-button"
             v-bind:disabled="roomPage == 0"
-            @:click="prevButtonClickHandler"
+            @click="prevButtonClickHandler"
           >
             ◀
           </button>
@@ -151,7 +169,7 @@
             :class="{ 'page-disabled': roomPage == totalPages - 1 }"
             class="pagenation-button"
             v-bind:disabled="roomPage == totalPages - 1"
-            @:click="nextButtonClickHandler"
+            @click="nextButtonClickHandler"
           >
             ▶
           </button>
@@ -160,9 +178,10 @@
     </div>
   </div>
 </template>
-<script scoped>
+<script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
@@ -171,16 +190,17 @@ export default {
     return {
       roomPage: 0,
       roomSize: 8,
-      totalPages: 0,
+      totalPages: 1,
       roomList: [],
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
-      memberAuthority: 'ROLE_ADMIN',
-      roomNumber: null,
-      roomStatus: null
+      inputRoomNo: null,
+      memberRankList: [],
+      memberAuthority: 'ROLE_ADMIN'
     }
   },
   methods: {
     refreshButtonClickHandler() {
+      this.inputRoomNo = null
       axios
         .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
         .then((response) => {
@@ -216,26 +236,57 @@ export default {
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
-      this.refreshButtonClickHandler()
+      this.searchRoomByRoomNo()
     },
     nextButtonClickHandler() {
       this.roomPage += 1
-      this.refreshButtonClickHandler()
+      this.searchRoomByRoomNo()
     },
-    logoutButtonClickHandler(){
-      console.log('Request sent'); 
-      const url = `${this.backURL}/auth/logout`;
+    logoutButtonClickHandler() {
+      console.log('Request sent')
+      const url = `${this.backURL}/auth/logout`
       axios
-          .post(url, {}, {
-          withCredentials : true
+        .post(
+          url,
+          {},
+          {
+            withCredentials: true
+          }
+        )
+        .then(() => {
+          sessionStorage.removeItem('accessToken')
+          location.href = '/login'
         })
-          .then(res => {
-            sessionStorage.removeItem("accessToken");
-            location.href = '/login';
+        .catch((error) => {
+          console.error('Error:', error)
+        })
+    },
+    searchRoomInputKeypressHandler($event) {
+      let char = String.fromCharCode($event.keyCode)
+      if (/^[0-9]+$/.test(char)) {
+        return true
+      } else {
+        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        $event.preventDefault()
+      }
+    },
+    searchRoomInputChangeHandler($event) {
+      this.inputRoomNo = $event.target.value
+      this.searchRoomByRoomNo()
+    },
+    searchRoomByRoomNo() {
+      if (this.inputRoomNo == null) {
+        this.refreshButtonClickHandler()
+      } else {
+        axios
+          .get(
+            `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`
+          )
+          .then((response) => {
+            this.roomList = response.data.content
+            this.totalPages = response.data.totalPages
           })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+      }
     }
   },
   mounted() {
@@ -524,11 +575,10 @@ li {
   padding-top: 32px;
 }
 #main-navigation {
-  margin-bottom: 24px;
+  margin-top: 12px;
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 #main-navigation-left,
 #main-navigation-right {
@@ -561,7 +611,8 @@ li {
   font-size: 1.25rem;
 }
 #main-room-containers {
-  margin-top: 48px;
+  margin-top: 24px;
+  padding-top: 12px;
 
   border-top: 3px solid var(--main5-color);
 }
@@ -668,3 +719,4 @@ input[type='number']::-webkit-inner-spin-button {
   border: none;
 }
 </style>
+../../components/modal/modal.js../../modal/AlertMessage.vue

@@ -9,6 +9,9 @@ import Login from '@/views/member/Login.vue'
 import AdminPage from '@/views/admin/AdminPage.vue'
 import QuizView from '@/views/quiz/QuizView.vue'
 
+import CodeView from '@/views/code/CodeView.vue'
+import Normal from '@/views/code/Normal.vue'
+
 import MyPage from '@/views/member/MyPage.vue'
 
 
@@ -54,9 +57,19 @@ const router = createRouter({
       component: QuizView
     },
     {
+      path: '/normal/:roomNo',
+      name: 'Normal',
+      component: Normal
+    },
+    {
       path: '/profile/:viewName/:memberNo',
       name: 'MyPage',
       component: MyPage
+    },
+    {
+      path: '/code/:memberNo/:quizNo',
+      name: 'CodeView',
+      component: CodeView
     }
   ]
 })
