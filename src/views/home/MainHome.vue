@@ -739,12 +739,15 @@ input[type='number']::-webkit-inner-spin-button {
 #back-off {
   width: 100%;
   height: 100%;
+
   display: fixed;
   position: fixed;
   top: 0%;
   left: 0%;
-  cursor: pointer;
   z-index: 1;
+
+  cursor: pointer;
+
   background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -760,4 +763,3 @@ input[type='number']::-webkit-inner-spin-button {
   z-index: 2;
 }
 </style>
-../../components/modal/modal.js../../modal/AlertMessage.vue
