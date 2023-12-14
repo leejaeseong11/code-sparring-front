@@ -60,7 +60,8 @@
   </style>
   
   <script>
-  import axios from 'axios';
+  // import axios from 'axios';
+  import {apiClient} from '@/axios-interceptor'
   import { defineComponent, computed, toRefs } from 'vue'
   import * as monaco from 'monaco-editor'
   
@@ -125,7 +126,7 @@
         // 테스트케이스 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
 
-        axios
+        apiClient
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
@@ -217,7 +218,7 @@
         const mainFile = new Blob([fileContent], { type: 'text/plain' });
         formData.append('Main', mainFile, 'hello.txt');
         const url = "http://192.168.1.112:8080/code/executeCode"
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {
@@ -254,7 +255,7 @@
         formData.append('Main', mainFile, 'Code.txt');
         
         const url = "http://192.168.1.112:8080/submit/normalMode"
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {

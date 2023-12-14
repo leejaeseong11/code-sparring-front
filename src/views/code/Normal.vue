@@ -54,7 +54,8 @@
 
 <script>
 import Monaco from '../../components/code/Monaco.vue'
-import axios from 'axios';
+// import axios from 'axios';
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'normal',
     components: {Monaco},
@@ -114,7 +115,7 @@ export default {
 
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
-        axios
+        apiClient
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
@@ -122,7 +123,7 @@ export default {
 
             const url2 = `${this.backURL}/submit/${this.quizNo}`
 
-            axios
+            apiClient
             .get(url2)
             .then((response) => {
                 this.testcaseList = response.data

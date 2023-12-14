@@ -98,8 +98,8 @@
 
 <script>
 import ProfileImgPopup from './ProfileImgPopup.vue';
-import axios from 'axios'
-
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: "Signup",
     components: { ProfileImgPopup },
@@ -212,7 +212,7 @@ export default {
         btIdDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
             console.log(url)
-            axios
+            apiClient
                 .post(url)
                 .then(response => {
                     const isDuplicate = response.data;
@@ -289,7 +289,7 @@ export default {
 
         btNickDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupName`
-            axios.post(url, `memberName=${this.c.nick}`)
+            apiClient.post(url, `memberName=${this.c.nick}`)
                 .then(response => {
                     const isDuplicate = response.data;
                     console.log(response)
@@ -342,7 +342,7 @@ export default {
                 memberProfileImg:this.memberProfileImg
                 }
                 // JSON.stringify(data)
-            axios
+            apiClient
                 .post(`${this.backURL}/auth/signup`, data, {
                     headers:{
                         'Content-Type': 'application/json'       

@@ -76,7 +76,8 @@
   </ul> -->
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
 import SweetAlert from '../../util/modal.js'
@@ -153,7 +154,7 @@ export default {
     // }
   },
   mounted() {
-    axios
+    apiClient
       .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`)
       .then((response) => {
         this.roomInfo = response.data
