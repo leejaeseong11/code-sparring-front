@@ -1,5 +1,7 @@
 <template>
   <div id="main-layout" class="row">
+    <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
+    <AddRoom v-if="addRoomPopup" id="addRoom-popup"></AddRoom>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -181,11 +183,12 @@
 <script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import AddRoom from '../../components/room/AddRoom.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom },
+  components: { MainHomeRoom, AddRoom },
   data() {
     return {
       roomPage: 0,
@@ -195,7 +198,8 @@ export default {
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
       inputRoomNo: null,
       memberRankList: [],
-      memberAuthority: 'ROLE_ADMIN'
+      memberAuthority: 'ROLE_ADMIN',
+      addRoomPopup: false,
     }
   },
   methods: {
@@ -209,26 +213,28 @@ export default {
         })
     },
     createWaitingRoomclickHandler() {
-      let data = {
-        quiz: {
-          quizNo: 1
-        },
-        // "roomPwd": "1234",
-        codeShare: 0,
-        roomTitle: '테스트방 in vue',
-        roomDt: new Date().toJSON()
-      }
-      data = JSON.stringify(data)
-      axios
-        .post(`${this.backURL}/room`, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((res) => {
-          console.log(res)
-          this.$router.push({ path: `/room/${res.data}` })
-        })
+      // let data = {
+      //   quiz: {
+      //     quizNo: 1
+      //   },
+      //   // "roomPwd": "1234",
+      //   codeShare: 0,
+      //   roomTitle: '테스트방 in vue',
+      //   roomDt: new Date().toJSON()
+      // }
+      // data = JSON.stringify(data)
+      // axios
+      //   .post(`${this.backURL}/room`, data, {
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     }
+      //   })
+      //   .then((res) => {
+      //     console.log(res)
+      //     this.$router.push({ path: `/room/${res.data}` })
+      //   })
+
+      this.addRoomPopup=true
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
@@ -287,6 +293,9 @@ export default {
             this.totalPages = response.data.totalPages
           })
       }
+    },
+    backOff() {
+      this.addRoomPopup=false
     }
   },
   mounted() {
@@ -717,6 +726,30 @@ input[type='number']::-webkit-inner-spin-button {
 
   background-color: var(--main4-hover-color);
   border: none;
+}
+
+#back-off {
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  cursor: pointer;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#addRoom-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main1-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 90%;
+  height: 700px;
+  margin-top: 50px;
+  z-index: 2;
 }
 </style>
 ../../components/modal/modal.js../../modal/AlertMessage.vue
