@@ -25,43 +25,36 @@
         <div></div>
       </div>
       <div id="room-member-container">
-        <RoomMember />
-        <RoomMember />
-        <RoomMember />
-        <RoomMember />
+        <template v-for="index in 4" :key="'member' + index">
+          <RoomMember
+            v-if="index <= roomMemberList.length"
+            v-model:member="roomMemberList[index - 1]"
+          />
+          <RoomMember v-else v-model:member="nullMember" />
+        </template>
       </div>
-      <div id="room-chat">
+      <div id="room-chat" ref="roomChat">
         <div id="chat-title">채팅방</div>
         <div id="chat-content">
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇa</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇb</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇ</div>
-          <div>누구: 불라불라</div>
-          <div>누구2: 불라불라?</div>
-          <div>누구: ㅇㅇz</div>
+          <template v-for="(chatContent, index) in chatContentList" :key="'chat' + index">
+            <pre>{{ chatContent }}</pre>
+          </template>
         </div>
       </div>
       <div id="room-chat-input-container">
-        <input type="text" id="chat-input" />
-        <button id="chat-input-button" placeholder="채팅을 입력하세요.">입력</button>
+        <input
+          type="text"
+          id="chat-input"
+          v-model="chatMessage"
+          @keypress.enter="sendMessage($event)"
+        />
+        <button
+          id="chat-input-button"
+          placeholder="채팅을 입력하세요."
+          @click="sendMessage($event)"
+        >
+          입력
+        </button>
       </div>
     </div>
     <div id="room-info-layout" class="col">
@@ -74,27 +67,6 @@
       <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
-  <!-- <br />
-    <button @click="disconnect" v-if="status === 'connected'">연결끊기</button>
-    <button @click="connect" v-if="status === 'disconnected'">연결</button> {{ status }}
-    <br />
-    <br />
-    <div v-if="status === 'connected'">
-      <input
-        type="text"
-        placeholder="보낼 메세지를 입력하세요."
-        class="content"
-        v-model="chatMessage"
-        onkeyup="() => {
-  if(window.event.keyCode==13) { sendMessage(); }
-}"
-      />
-
-      <button @click="sendMessage">메시지 전송</button>
-    </div>
-    <ul id="logs">
-      <li v-for="(log, index) in logs" :key="index" class="log">{{ log.event }}: {{ log.data }}</li>
-    </ul> -->
 </template>
 <script>
 import axios from 'axios'
@@ -109,52 +81,95 @@ export default {
     return {
       message: '',
       logs: [],
-      status: 'disconnected',
       chatMessage: '',
       socket: null,
-      roomInfo: {}
+      chatContentList: [],
+      roomNo: '',
+      roomInfo: {},
+      roomMemberList: [],
+      nullMember: null
     }
   },
   methods: {
     connect() {
       this.socket = new WebSocket(this.socketURL)
+
       this.socket.onopen = () => {
-        console.log('open server')
-        let enterMessage = {
+        const enterMessage = {
           type: 'ROOM_ENTER',
-          roomNo: this.$router.currentRoute.value.params.roomNo,
-          sender: 'me'
+          roomNo: this.roomNo,
+          sender: '닉네임'
         }
         this.socket.send(JSON.stringify(enterMessage))
+      }
 
-        this.socket.onclose = () => {
-          console.log('disconnet')
+      this.socket.onclose = () => {}
+
+      this.socket.onerror = () => {}
+
+      this.socket.onmessage = (e) => {
+        if (this.socket.readyState === WebSocket.OPEN) {
+          this.chatContentList.push(e.data)
+          this.scrollToBottom()
+        } else if (
+          this.socket.readyState === WebSocket.CLOSING ||
+          this.socket.readyState === WebSocket.CLOSED
+        ) {
+          this.connect()
         }
-        this.socket.onmessage = (e) => {
-          console.log(e.data)
-        }
-        this.status = 'connected'
       }
     },
     disconnect() {
-      console.log('close server')
-      this.socket.close()
-      this.status = 'disconnected'
+      if (this.socket.readyState === WebSocket.OPEN) {
+        const outMessage = {
+          type: 'ROOM_QUIT',
+          roomNo: this.roomNo,
+          sender: '닉네임'
+        }
+        this.socket.send(JSON.stringify(outMessage))
+        this.socket.close()
+      }
     },
     sendMessage() {
+      if (this.chatMessage == '') return
+
       var talkMessage = {
         type: 'ROOM_TALK',
-        roomNo: this.$router.currentRoute.value.params.roomNo,
-        sender: 'me',
-        msg: this.chatMessage
+        roomNo: this.roomNo,
+        sender: '닉네임',
+        message: this.chatMessage
       }
       this.socket.send(JSON.stringify(talkMessage))
+      this.chatMessage = ''
+      this.scrollToBottom()
     },
     gameStartButtonClickHandler() {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     },
     roomOutButtonClickHandler() {
+      this.disconnect()
       this.$router.push({ path: '/' })
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const roomChat = this.$refs.roomChat
+        console.log(roomChat)
+        roomChat.scrollTop = roomChat.scrollHeight
+      })
+    },
+    unLoadEvent: function (event) {
+      const outMessage = {
+        type: 'ROOM_QUIT',
+        roomNo: this.roomNo,
+        sender: '닉네임'
+      }
+      this.socket.send(JSON.stringify(outMessage))
+
+      if (this.socket.readyState === WebSocket.OPEN) {
+        this.socket.close()
+      }
+      event.preventDefault()
+      event.returnValue = ''
     }
   },
   mounted() {
@@ -162,17 +177,37 @@ export default {
       .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`)
       .then((response) => {
         this.roomInfo = response.data
+        this.roomMemberList = response.data.roomMemberList
+        console.log(this.roomMemberList[0])
       })
       .catch(async (error) => {
         const ok = await SweetAlert.error(error.response.data.errors[0])
         if (ok) {
-          this.$router.go(-1)
+          this.$router.push({ path: '/' })
         }
       })
+    window.addEventListener('beforeunload', this.unLoadEvent)
+    this.roomNo = this.$router.currentRoute.value.params.roomNo
+    this.connect()
+  },
+  beforeUnmount() {
+    const outMessage = {
+      type: 'ROOM_QUIT',
+      roomNo: this.roomNo,
+      sender: '닉네임'
+    }
+    this.socket.send(JSON.stringify(outMessage))
+    this.disconnect()
   }
 }
 </script>
 <style scoped>
+pre {
+  margin: 0;
+
+  font-size: 1.125rem;
+  font-family: 'DNFBitBitv2';
+}
 #room-layout {
   color: var(--main5-color);
 }
@@ -235,6 +270,9 @@ export default {
 
   border: 3px solid var(--main5-color);
 }
+#room-member-container > * {
+  width: 25%;
+}
 #room-chat {
   width: 100%;
   height: 400px;
@@ -275,6 +313,8 @@ export default {
   margin-right: 8px;
 
   flex: 1;
+
+  color: var(--main5-color);
 }
 #chat-input-button {
   padding: 8px 16px;

@@ -1,5 +1,7 @@
 <template>
   <div id="main-layout" class="row">
+    <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
+    <AddRoom v-if="addRoomPopup" id="addRoom-popup"></AddRoom>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -10,20 +12,17 @@
                 ?<span class="custom-tooltiptext"
                   >티어는 랭크 모드 결과를 통해 정해집니다. <br />
                   티어의 종류는 다음과 같습니다.<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/bronze.png"
-                    alt="my-tier" />브론즈<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/silver.png"
-                    alt="my-tier" />실버<br />
-                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />골드<br />
-                  <img
-                    class="rank-tier-icon"
-                    src="/images/rank/platinum.png"
-                    alt="my-tier" />플래티넘<br
-                /></span>
+                  <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+                  <span>브론즈</span>
+                  <br />
+                  <img class="rank-tier-icon" src="/images/rank/silver.png" alt="my-tier" />
+                  <span>실버</span><br />
+                  <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />
+                  <span>골드</span><br />
+                  <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="my-tier" />
+                  <span>플래티넘</span>
+                  <br />
+                </span>
               </div>
               <img
                 id="my-rank-tier"
@@ -52,7 +51,11 @@
           <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <button id="rank-matching-button" class="btn-custom-danger room-menu-button">
+      <button
+        id="rank-matching-button"
+        class="btn-custom-danger room-menu-button"
+        @click="rankMatchingButtonClickHandler"
+      >
         랭 크
         <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
         매 칭
@@ -61,7 +64,16 @@
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
           <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
-            <div class="rank-number" style="color: var(--yellow-rank-color)">{{ i + 1 }}위</div>
+            <div v-if="i == 1" class="rank-number" style="color: var(--yellow-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else-if="i == 2" class="rank-number" style="color: var(--red-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else-if="i == 3" class="rank-number" style="color: var(--blue-rank-color)">
+              {{ i + 1 }}위
+            </div>
+            <div v-else class="rank-number" style="color: var(--main1-color)">{{ i + 1 }}위</div>
             <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
             <div class="rank-nickname" title="닉네임">닉네임</div>
           </li>
@@ -142,7 +154,6 @@
               type="text"
               placeholder="방 번호 검색"
               v-model="inputRoomNo"
-              @keypress="searchRoomInputKeypressHandler($event)"
               @input="searchRoomInputChangeHandler($event)"
             />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
@@ -181,11 +192,12 @@
 <script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import AddRoom from '../../components/room/AddRoom.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom },
+  components: { MainHomeRoom, AddRoom },
   data() {
     return {
       roomPage: 0,
@@ -195,7 +207,9 @@ export default {
       nullRoom: { roomNo: null, roomStatus: null, roomTitle: null },
       inputRoomNo: null,
       memberRankList: [],
-      memberAuthority: 'ROLE_ADMIN'
+      memberAuthority: 'ROLE_ADMIN',
+      addRoomPopup: false,
+      socket: null
     }
   },
   methods: {
@@ -209,26 +223,28 @@ export default {
         })
     },
     createWaitingRoomclickHandler() {
-      let data = {
-        quiz: {
-          quizNo: 1
-        },
-        // "roomPwd": "1234",
-        codeShare: 0,
-        roomTitle: '테스트방 in vue',
-        roomDt: new Date().toJSON()
-      }
-      data = JSON.stringify(data)
-      axios
-        .post(`${this.backURL}/room`, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((res) => {
-          console.log(res)
-          this.$router.push({ path: `/room/${res.data}` })
-        })
+      // let data = {
+      //   quiz: {
+      //     quizNo: 1
+      //   },
+      //   // "roomPwd": "1234",
+      //   codeShare: 0,
+      //   roomTitle: '테스트방 in vue',
+      //   roomDt: new Date().toJSON()
+      // }
+      // data = JSON.stringify(data)
+      // axios
+      //   .post(`${this.backURL}/room`, data, {
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     }
+      //   })
+      //   .then((res) => {
+      //     console.log(res)
+      //     this.$router.push({ path: `/room/${res.data}` })
+      //   })
+
+      this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
@@ -262,7 +278,9 @@ export default {
         })
     },
     searchRoomInputKeypressHandler($event) {
+      console.log($event)
       let char = String.fromCharCode($event.keyCode)
+      console.log(char)
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
@@ -271,8 +289,15 @@ export default {
       }
     },
     searchRoomInputChangeHandler($event) {
-      this.inputRoomNo = $event.target.value
-      this.searchRoomByRoomNo()
+      const inputValue = $event.target.value
+      if (inputValue == '') return
+      if (!/^[0-9]+$/.test(inputValue)) {
+        $event.target.value = this.inputRoomNo
+        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+      } else {
+        this.inputRoomNo = inputValue
+        this.searchRoomByRoomNo()
+      }
     },
     searchRoomByRoomNo() {
       if (this.inputRoomNo == null) {
@@ -287,6 +312,40 @@ export default {
             this.totalPages = response.data.totalPages
           })
       }
+    },
+    backOff() {
+      this.addRoomPopup = false
+    },
+    rankMatchingButtonClickHandler() {
+      this.connect()
+    },
+    connect() {
+      this.socket = new WebSocket(this.socketURL)
+
+      this.socket.onopen = () => {
+        // const enterMessage = {
+        //   type: 'RANK_ENTER',
+        //   memberNo: Math.floor(Math.random() * 2),
+        //   memberTier: 'Bronze'
+        // }
+        // this.socket.send(JSON.stringify(enterMessage))
+        this.sendMatching()
+        this.socket.onclose = () => {}
+        this.socket.onmessage = (e) => {
+          console.log(e.data)
+        }
+      }
+    },
+    disconnect() {
+      this.socket.close()
+    },
+    sendMatching() {
+      const sendMatching = {
+        type: 'RANK_MATCHING',
+        memberNo: Math.floor(Math.random() * 2),
+        memberTier: 'Bronze'
+      }
+      this.socket.send(JSON.stringify(sendMatching))
     }
   },
   mounted() {
@@ -295,6 +354,9 @@ export default {
 }
 </script>
 <style scoped>
+* {
+  cursor: default;
+}
 #main-layout {
   min-width: 1280px;
 
@@ -605,6 +667,8 @@ li {
   margin: 0 4px;
 }
 #create-problem-button {
+  cursor: pointer;
+
   color: var(--main1-color) !important;
 }
 .main-menu-button {
@@ -641,6 +705,8 @@ li {
 
   text-indent: 14px;
 
+  cursor: auto;
+
   border: none;
   border-radius: 20px;
 }
@@ -648,8 +714,6 @@ li {
   padding: 8px 12px 8px 0;
 
   font-size: 1.5rem;
-
-  cursor: pointer;
 
   color: var(--black-color);
   opacity: 50%;
@@ -673,6 +737,9 @@ input[type='number']::-webkit-inner-spin-button {
   &:active {
     border: none;
   }
+}
+#room-refresh-button > img {
+  cursor: pointer;
 }
 #room-list-container {
   width: 100%;
@@ -718,5 +785,31 @@ input[type='number']::-webkit-inner-spin-button {
   background-color: var(--main4-hover-color);
   border: none;
 }
+
+#back-off {
+  width: 100%;
+  height: 100%;
+
+  display: fixed;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  z-index: 1;
+
+  cursor: pointer;
+
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#addRoom-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main1-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 90%;
+  height: 700px;
+  margin-top: 50px;
+  z-index: 2;
+}
 </style>
-../../components/modal/modal.js../../modal/AlertMessage.vue

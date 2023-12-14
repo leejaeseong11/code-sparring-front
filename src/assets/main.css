@@ -1,7 +1,7 @@
 body {
   --main1-color: #eaebfe;
   --main2-color: #b0b8ce;
-  --main2-hover-color: #8c93a4; /* 이건 더 밝아지기 vs 어두워지기 (난 상관노) 투표 ㄱㄱ */
+  --main2-hover-color: #8c93a4;
   --main3-color: #505a74;
   --main3-hover-color: #727a8f;
   --main4-color: #354c7c;
@@ -14,10 +14,9 @@ body {
   --red-rank-color: #ff7d97;
   --blue-rank-color: #33d6f5;
 
-
   --black-color: #000000;
   --white-color: #ffffff;
-  --green-color:#4c7c35;
+  --green-color: #4c7c35;
   --green-hover-color: #6f965d;
 
   --bronze-color: #846353;

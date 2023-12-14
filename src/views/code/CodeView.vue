@@ -413,7 +413,6 @@ textarea {
   position: fixed;
   top: 0%;
   left: 0%;
-  cursor: pointer;
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.5);
 }
