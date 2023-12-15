@@ -1,7 +1,8 @@
 <template>
   <div id="main-layout" class="row">
-    <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
+    <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
     <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
+    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -193,11 +194,12 @@
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
+import RankMatching from '../../components/rank/RankMatching.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom, AddRoom },
+  components: { MainHomeRoom, AddRoom, RankMatching },
   data() {
     return {
       roomPage: 0,
@@ -209,6 +211,7 @@ export default {
       memberRankList: [],
       memberAuthority: 'ROLE_ADMIN',
       addRoomPopup: false,
+      rankMatching: false,
       socket: null
     }
   },
@@ -315,9 +318,12 @@ export default {
     },
     backOff() {
       this.addRoomPopup = false
+      this.rankMatching = false
       document.body.style.overflow = 'auto'
     },
     rankMatchingButtonClickHandler() {
+      document.body.style.overflow = 'hidden'
+      this.rankMatching = true
       this.connect()
     },
     connect() {
@@ -798,12 +804,11 @@ input[type='number']::-webkit-inner-spin-button {
   left: 0%;
   z-index: 1;
 
-  cursor: pointer;
-
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#addRoom-popup {
+#addRoom-popup,
+#matching-popup {
   padding: 10px;
   position: absolute;
   background-color: var(--main1-color);

@@ -75,6 +75,8 @@ export default {
   },
   methods: {
     showQuizClickHandler() {
+      if(this.modalCheck) document.body.style.overflow='auto'
+      else document.body.style.overflow='hidden'
       this.modalCheck = !this.modalCheck
     },
     async enterButtonClickHandler() {
