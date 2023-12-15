@@ -1,7 +1,8 @@
 <template>
   <div id="main-layout" class="row">
-    <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
-    <AddRoom v-if="addRoomPopup" id="addRoom-popup"></AddRoom>
+    <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
+    <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
+    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -63,50 +64,47 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
-          <li v-for="(memberRank, i) in memberRankList" :key="'room' + memberRank">
-            <div v-if="i == 1" class="rank-number" style="color: var(--yellow-rank-color)">
-              {{ i + 1 }}위
+          <li
+            v-for="(memberRank, index) in memberRankList"
+            :key="'memberRank' + index"
+            @click="showProfileDetailClickHandler(memberRank.memberNo)"
+          >
+            <div v-if="index + 1 == 1" class="rank-number" style="color: var(--yellow-rank-color)">
+              {{ index + 1 }}위
             </div>
-            <div v-else-if="i == 2" class="rank-number" style="color: var(--red-rank-color)">
-              {{ i + 1 }}위
+            <div
+              v-else-if="index + 1 == 2"
+              class="rank-number"
+              style="color: var(--red-rank-color)"
+            >
+              {{ index + 1 }}위
             </div>
-            <div v-else-if="i == 3" class="rank-number" style="color: var(--blue-rank-color)">
-              {{ i + 1 }}위
+            <div
+              v-else-if="index + 1 == 3"
+              class="rank-number"
+              style="color: var(--blue-rank-color)"
+            >
+              {{ index + 1 }}위
             </div>
-            <div v-else class="rank-number" style="color: var(--main1-color)">{{ i + 1 }}위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--red-rank-color)">2위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--blue-rank-color)">3위</div>
-            <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--main1-color)">4위</div>
-            <img class="rank-tier-icon" src="/images/rank/gold.png" alt="rank-tier" />
-            <div class="rank-nickname" title="닉네임">닉네임</div>
-          </li>
-          <li>
-            <div class="rank-number" style="color: var(--main1-color)">5위</div>
-            <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="rank-tier" />
-            <div class="rank-nickname" title="아주아주긴닉네임이지요너무길어서안보일지경이에요">
-              아주아주긴닉네임이지요너무길어서안보일지경이에요
+            <div v-else class="rank-number" style="color: var(--main1-color)">
+              {{ index + 1 }}위
             </div>
+            <img
+              class="rank-tier-icon"
+              :src="'/images/rank/' + memberRank.memberTier.toLowerCase() + '.png'"
+              alt="rank-tier"
+            />
+            <div class="rank-nickname" title="닉네임">{{ memberRank.memberName }}</div>
           </li>
         </ol>
       </div>
     </div>
+    <div class="modal-wrap" v-show="memberProfilePopup" @click="showQuizClickHandler">
+      <div class="modal-container" @click.stop="">
+        <MemberProfile v-model:memberProfile="rankMember" @showQuiz="showQuizClickHandler" />
+      </div>
+    </div>
+
     <div id="room-layout" class="col-9">
       <div id="main-navigation">
         <div id="main-navigation-left">
@@ -190,14 +188,17 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
+import RankMatching from '../../components/rank/RankMatching.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom, AddRoom },
+  components: { MainHomeRoom, AddRoom, RankMatching, MemberProfile },
   data() {
     return {
       roomPage: 0,
@@ -208,14 +209,28 @@ export default {
       inputRoomNo: null,
       memberRankList: [],
       memberAuthority: 'ROLE_ADMIN',
+      rankMember: {
+        memberProfileImg: 0,
+        memberTier: '',
+        memberName: '',
+        winCnt: 0,
+        drawCnt: 0,
+        loseCnt: 0,
+        memberLevel: 0,
+        memberExp: 0,
+        tierPoint: 0,
+        memberInfo: ''
+      },
       addRoomPopup: false,
+      rankMatching: false,
+      memberProfilePopup: false,
       socket: null
     }
   },
   methods: {
     refreshButtonClickHandler() {
       this.inputRoomNo = null
-      axios
+      apiClient
         .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
         .then((response) => {
           this.roomList = response.data.content
@@ -243,7 +258,7 @@ export default {
       //     console.log(res)
       //     this.$router.push({ path: `/room/${res.data}` })
       //   })
-
+      document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
@@ -261,7 +276,7 @@ export default {
     logoutButtonClickHandler() {
       console.log('Request sent')
       const url = `${this.backURL}/auth/logout`
-      axios
+      apiClient
         .post(
           url,
           {},
@@ -278,9 +293,7 @@ export default {
         })
     },
     searchRoomInputKeypressHandler($event) {
-      console.log($event)
       let char = String.fromCharCode($event.keyCode)
-      console.log(char)
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
@@ -303,7 +316,7 @@ export default {
       if (this.inputRoomNo == null) {
         this.refreshButtonClickHandler()
       } else {
-        axios
+        apiClient
           .get(
             `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`
           )
@@ -315,9 +328,24 @@ export default {
     },
     backOff() {
       this.addRoomPopup = false
+      this.rankMatching = false
+      document.body.style.overflow = 'auto'
     },
     rankMatchingButtonClickHandler() {
+      document.body.style.overflow = 'hidden'
+      this.rankMatching = true
       this.connect()
+    },
+    showQuizClickHandler() {
+      this.memberProfilePopup = !this.memberProfilePopup
+      this.preventScroll()
+    },
+    preventScroll() {
+      if (this.memberProfilePopup === true) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
     },
     connect() {
       this.socket = new WebSocket(this.socketURL)
@@ -346,10 +374,24 @@ export default {
         memberTier: 'Bronze'
       }
       this.socket.send(JSON.stringify(sendMatching))
+    },
+    showProfileDetailClickHandler(memberNo) {
+      this.memberProfilePopup = !this.memberProfilePopup
+      if (this.memberProfilePopup) {
+        axios.get(`${this.backURL}/member/${memberNo}`).then((response) => {
+          this.rankMember = response.data
+        })
+      }
+      this.preventScroll()
     }
   },
   mounted() {
     this.refreshButtonClickHandler()
+    axios.get(`${this.backURL}/member/ranking`).then((response) => {
+      this.memberRankList = response.data
+        .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
+        .slice(0, 5)
+    })
   }
 }
 </script>
@@ -576,6 +618,7 @@ export default {
 
 #rank-title-icon {
   width: 2rem;
+  cursor: pointer;
 }
 #rank-container {
   width: 100%;
@@ -610,9 +653,43 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+
+  cursor: pointer;
 }
 #rank-list > li > * {
   margin: 4px;
+
+  cursor: pointer;
+}
+.modal-wrap {
+  width: 100%;
+  height: 100%;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal-container {
+  min-width: 550px;
+  width: 50%;
+  height: 440px;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  top: 400px;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 .rank-number {
   width: 24px;
@@ -796,20 +873,27 @@ input[type='number']::-webkit-inner-spin-button {
   left: 0%;
   z-index: 1;
 
-  cursor: pointer;
-
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#addRoom-popup {
+#addRoom-popup,
+#matching-popup {
   padding: 10px;
   position: absolute;
   background-color: var(--main1-color);
   border: 8px solid var(--main5-color);
   border-radius: 10px;
-  width: 90%;
+  width: 1300px;
+  min-width: 1000px;
   height: 700px;
   margin-top: 50px;
   z-index: 2;
+  overflow: auto;
+}
+
+#matching-popup {
+  width: 1000px;
+  background-color: var(--main5-color);
+  border-color: var(--main1-color);
 }
 </style>

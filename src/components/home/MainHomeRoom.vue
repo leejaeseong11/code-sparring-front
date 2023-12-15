@@ -60,7 +60,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import ShowQuizSimply from './ShowQuizSimply.vue'
 import sweetAlert from '../../util/modal.js'
 
@@ -75,6 +76,8 @@ export default {
   },
   methods: {
     showQuizClickHandler() {
+      if(this.modalCheck) document.body.style.overflow='auto'
+      else document.body.style.overflow='hidden'
       this.modalCheck = !this.modalCheck
     },
     async enterButtonClickHandler() {
@@ -85,7 +88,7 @@ export default {
       } else {
         addMemberUrl = `${this.backURL}/room-member`
       }
-      axios
+      apiClient
         .post(addMemberUrl, {})
         .then((response) => {
           console.log(response)
@@ -97,7 +100,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.roomInfo)
     this.quizInfo = this.roomInfo
   },
   components: { ShowQuizSimply }

@@ -23,8 +23,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
   name: 'RankHistory',
   data() {
@@ -60,7 +60,7 @@ export default {
     handleScrollEnd() {
       this.currentPage++
       const url = `${this.backURL}/rankgame/` + this.memberNo + `/` + this.currentPage
-      axios.get(url).then((res) => {
+      apiClient.get(url).then((res) => {
         this.tmpList = res.data.list
         this.rankList.push(...this.tmpList)
         this.tmpList = []
@@ -71,7 +71,7 @@ export default {
     this.memberNo = this.$route.params.memberNo
 
     const url = `${this.backURL}/rankgame/` + this.memberNo + `/` + this.currentPage
-    axios.get(url).then((res) => {
+    apiClient.get(url).then((res) => {
       this.rankList = res.data.list
       this.memberName = res.data.list[0].memberName
       this.memberTier = res.data.list[0].myTier

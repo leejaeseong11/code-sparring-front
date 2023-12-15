@@ -6,7 +6,7 @@
       <div class="col-2">정답률</div>
       <div class="col-2">출제자</div>
     </div>
-    <div id="quiz-info" class="row">
+    <div class="tier-info-container">
       <div class="col-3" v-if="quizInfo.quizTier == 'BRONZE'" style="color: var(--bronze-color)">
         {{ quizInfo.quizTier }}
       </div>

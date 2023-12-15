@@ -114,7 +114,8 @@
   </main>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import AddTestcase from '../../components/quiz/AddTestcase.vue'
 
 export default {
@@ -159,7 +160,7 @@ export default {
           quizTier: this.quizTier
         }
         const url = `${this.backURL}/quiz/` + this.quizNo
-        axios
+        apiClient
           .put(url, JSON.stringify(data), {
             headers: {
               'Content-Type': 'application/json'
@@ -194,7 +195,7 @@ export default {
       if (result) {
         const tcNo = e.target.id
         const url = `${this.backURL}/testcase/` + tcNo
-        axios
+        apiClient
           .delete(url)
           .then(() => {
             alert('테스트케이스가 삭제되었습니다')
@@ -209,7 +210,7 @@ export default {
       var result = confirm('문제를 삭제하시겠습니까?')
       if (!result) return
       const url = `${this.backURL}/quiz/` + this.quizNo
-      axios
+      apiClient
         .delete(url)
         .then(() => {
           alert('문제가 삭제되었습니다')
@@ -223,7 +224,7 @@ export default {
   created() {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
-    axios
+    apiClient
       .get(url)
       .then((res) => {
         this.quizTitle = res.data.quizTitle
