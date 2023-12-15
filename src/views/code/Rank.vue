@@ -7,7 +7,11 @@
                 <div id="problem-des-title" class="title">문제설명</div>
                 <div id="problem-des-container">
                     <div id="problem-des-content">
-                        <span v-html="replaceNewlines(this.quizContent)"></span>
+                        <textarea
+                        class="readonlyTextarea"
+                        id="quiz-input"
+                        :value="this.quizContent"
+                        readonly></textarea>
                     </div>
                 </div>
     
@@ -26,7 +30,6 @@
                         <hr id="testcase-hr">
                     </div>
                 </div>
-                <button class="button" @:click="reportButtonClickHandler">문제신고하기</button>
                 
                 <div id="timer-title" class="title">제한시간</div>
                 <div id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</div>
@@ -77,9 +80,6 @@
         },
         
         methods: {
-            reportButtonClickHandler(){
-                //신고팝업창
-            },
             exitButtonClickHandler(){
                 this.$router.push({ path: `/` })
             },
@@ -118,18 +118,27 @@
             //타이머 시작
             this.updateTimer();
     
-            // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
-            const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.rankNo}`
+        
+            const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
             axios
             .get(url)
             .then((response) => {
                 this.quizNo = response.data.quizNo
-                this.quizContent = response.data.quizContent
-    
-                const url2 = `${this.backURL}/submit/${this.quizNo}`
-    
+                
+                const url2 = `${this.backURL}/quiz/${this.quizNo}`
                 axios
                 .get(url2)
+                .then((response) => {
+                    this.quizContent = response.data.quizContent
+                })
+                .catch(()=>{
+                    alert('문제 조회에 실패하였습니다')
+                })
+
+    
+                const url3 = `${this.backURL}/submit/${this.quizNo}`
+                axios
+                .get(url3)
                 .then((response) => {
                     this.testcaseList = response.data
                 })
@@ -313,4 +322,20 @@
         margin:16px 0px 0px
     }
     
+
+    #quiz-input,
+#quiz-output {
+  width: 98%;
+  line-height: 30px;
+  /* overflow: auto; */
+  cursor: default;
+}
+
+.readonlyTextarea {
+  background-color: var(--main1-color);
+  color: var(--main5-color);
+  border: none;
+  cursor: default;
+}
+
     </style>

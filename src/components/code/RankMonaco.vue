@@ -73,6 +73,7 @@
             memberNo: '',
             output: '',
             rankNo: '',
+            gameResult: '',
         };
     },
     props: {
@@ -111,9 +112,6 @@
           'text-align': 'left',
           'align-items': 'center',
           'margin-left': '15px',
-          // 'background-color': 'black',
-          // 'border': '3px solid var(--main5-color)',
-          // 'border-radius': '10px'
         }
       })
       return {
@@ -121,16 +119,13 @@
       }
     },
     created(){
-        // room에서 roomNo에 해당하는 quizNo 가져오기
-        // 문제내용 가져오기
-        // 테스트케이스 가져오기
-        const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
-
+      this.rankNo = this.$router.currentRoute.value.params.rankNo
+      const url = `${this.backURL}/rankgame/${this.rankNo}`
+        
         axios
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
-            this.rankNo = response.data.rankNo
         })
 
 
@@ -252,7 +247,7 @@
         const formData = new FormData();
 
         // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-        const dto = { memberNo, quizNo, rankNo};
+        const dto = { memberNo: 1, quizNo, rankNo};
         formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
         // 파일 데이터 추가
@@ -268,13 +263,33 @@
             },
         })
         .then(response=>{
-            this.output = response.data
+            this.output = response.data.result
+            this.gameResult = response.data.gameResult
+
+            //게임 결과 update
+            const data ={
+              gameResult : this.gameResult
+            }
+            const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+            axios
+            .put(url2, JSON.stringify(data), {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => {
+              console.log(response.data)
+              console.log(response.data.msg)
+            })
+
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
             console.log(error)
             alert(error.message)
         })
+
+
       }
     },
     watch: {  
