@@ -20,12 +20,8 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span
-                v-if="!modifyBt"
-                class="info-span"
-                :id="'quiz-tier-' + this.quizTier"
-                >{{ this.quizTier }}</span
-              >
+              <span class="info-text">티어</span>:<span v-if="!modifyBt" class="info-span"
+                :id="'quiz-tier-' + this.quizTier">{{ this.quizTier }}</span>
               <input v-if="modifyBt" id="quiz-tier-input" v-model="this.quizTier" />
             </div>
             <div class="info-div" id="author">
@@ -34,18 +30,12 @@
               }}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span
-                class="info-span"
-                id="quiz-submit-cnt"
-                >{{ this.quizSubmitCnt }}회</span
-              >
+              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{ this.quizSubmitCnt
+              }}회</span>
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span
-                class="info-span"
-                id="quiz-success-cnt"
-                >{{ this.quizSuccessCnt }}회</span
-              >
+              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{ this.quizSuccessCnt
+              }}회</span>
             </div>
             <div class="info-div" id="correct">
               <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{
@@ -60,22 +50,20 @@
               <div v-if="testcaseCnt == 0 && !modifyBt">존재하지 않습니다</div>
               <div class="testcase-box-for" v-for="(tc, index) in testcaseList" :key="tc">
                 <div class="testcase-no">
-                  [{{ index + 1 }}]&nbsp;&nbsp;&nbsp;<button
-                    v-if="!modifyBt"
-                    class="delete-tc-button"
-                    :id="tc.testcaseNo"
-                    @click="deleteTc"
-                  >
+                  [{{ index + 1 }}]&nbsp;&nbsp;&nbsp;<button v-if="!modifyBt" class="delete-tc-button" :id="tc.testcaseNo"
+                    @click="deleteTc">
                     삭제
                   </button>
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">입력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput" readonly />
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput"
+                    readonly />
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">출력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput" readonly />
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput"
+                    readonly />
                 </div>
                 <br />
               </div>
@@ -85,15 +73,18 @@
 
         <div id="content">
           <div class="index-name">문제 내용</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent"
+            readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-content" v-model="this.quizContent"></textarea>
 
           <div class="index-name">입력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input" :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input"
+            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-input" v-model="this.inputInfo"></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output" :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output"
+            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-output" v-model="this.outputInfo"></textarea>
 
           <div id="button-area">
@@ -114,8 +105,7 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import AddTestcase from '../../components/quiz/AddTestcase.vue'
 
 export default {
@@ -196,7 +186,11 @@ export default {
         const tcNo = e.target.id
         const url = `${this.backURL}/testcase/` + tcNo
         apiClient
-          .delete(url)
+          .delete(url, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
           .then(() => {
             alert('테스트케이스가 삭제되었습니다')
             window.history.go(0)
@@ -211,7 +205,11 @@ export default {
       if (!result) return
       const url = `${this.backURL}/quiz/` + this.quizNo
       apiClient
-        .delete(url)
+        .delete(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then(() => {
           alert('문제가 삭제되었습니다')
           location.href = '/admin/quiz/all/1'
@@ -225,7 +223,11 @@ export default {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
     apiClient
-      .get(url)
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then((res) => {
         this.quizTitle = res.data.quizTitle
         this.quizContent = res.data.quizContent
@@ -261,7 +263,7 @@ textarea {
   color: var(--main3-hover-color);
   padding: 5px;
   resize: none;
-  
+
   &:focus {
     outline: none;
   }
@@ -519,7 +521,8 @@ textarea {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.readonlyTextarea, .readonlyTextareaTc {
+.readonlyTextarea,
+.readonlyTextareaTc {
   background-color: var(--main1-color);
   color: var(--main5-color);
   border: none;

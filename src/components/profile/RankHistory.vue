@@ -10,7 +10,9 @@
       </div>
       <div>
         <div id="rank-cnt">총 랭크 게임 {{ this.win + this.lose + this.draw }}회</div>
-        <div id="rank-result"><span style="color: var(--main4-color)">{{ this.win }}</span>승 <span style="color: var(--red-color)">{{ this.lose }}</span>패 <span style="color: var(--green-color);">{{ this.draw }}</span>무</div>
+        <div id="rank-result"><span style="color: var(--main4-color)">{{ this.win }}</span>승 <span
+            style="color: var(--red-color)">{{ this.lose }}</span>패 <span style="color: var(--green-color);">{{ this.draw
+            }}</span>무</div>
       </div>
     </div>
 
@@ -23,8 +25,7 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
   name: 'RankHistory',
   data() {
@@ -60,32 +61,44 @@ export default {
     handleScrollEnd() {
       this.currentPage++
       const url = `${this.backURL}/rankgame/` + this.memberNo + `/` + this.currentPage
-      apiClient.get(url).then((res) => {
-        this.tmpList = res.data.list
-        this.rankList.push(...this.tmpList)
-        this.tmpList = []
-      })
+      apiClient
+        .get(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          this.tmpList = res.data.list
+          this.rankList.push(...this.tmpList)
+          this.tmpList = []
+        })
     }
   },
   mounted() {
     this.memberNo = this.$route.params.memberNo
 
     const url = `${this.backURL}/rankgame/` + this.memberNo + `/` + this.currentPage
-    apiClient.get(url).then((res) => {
-      this.rankList = res.data.list
-      this.memberName = res.data.list[0].memberName
-      this.memberTier = res.data.list[0].myTier
-      this.memberPoint = res.data.list[0].myPoint
-      this.nextPoint = res.data.list[0].nextPoint - this.memberPoint
-      this.win = res.data.list[0].win
-      this.lose = res.data.list[0].lose
-      this.draw = res.data.list[0].draw
+    apiClient
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
+        this.rankList = res.data.list
+        this.memberName = res.data.list[0].memberName
+        this.memberTier = res.data.list[0].myTier
+        this.memberPoint = res.data.list[0].myPoint
+        this.nextPoint = res.data.list[0].nextPoint - this.memberPoint
+        this.win = res.data.list[0].win
+        this.lose = res.data.list[0].lose
+        this.draw = res.data.list[0].draw
 
-      if (this.memberTier == 'BRONZE') this.imgTier = 'bronze.png'
-      else if (this.memberTier == 'SILVER') this.imgTier = 'silver.png'
-      else if (this.memberTier == 'GOLD') this.imgTier = 'gold.png'
-      else if (this.memberTier == 'PLATINUM') this.imgTier = 'platinum.png'
-    })
+        if (this.memberTier == 'BRONZE') this.imgTier = 'bronze.png'
+        else if (this.memberTier == 'SILVER') this.imgTier = 'silver.png'
+        else if (this.memberTier == 'GOLD') this.imgTier = 'gold.png'
+        else if (this.memberTier == 'PLATINUM') this.imgTier = 'platinum.png'
+      })
   }
 }
 </script>
@@ -142,62 +155,56 @@ export default {
 
 .rank-obj-WIN {
   border: 5px double var(--main1-color);
-  background: linear-gradient(
-    40deg,
-    var(--main4-hover-color) 5%,
-    var(--main4-color) 5%,
-    var(--main4-color) 20%,
-    var(--main4-hover-color) 20%,
-    var(--main4-hover-color) 40%,
-    var(--main4-color) 40%,
-    var(--main4-color) 60%,
-    var(--main4-hover-color) 60%,
-    var(--main4-hover-color) 80%,
-    var(--main4-hover-color) 80%,
-    var(--main4-color) 80%,
-    var(--main4-color) 95%,
-    var(--main4-hover-color) 95%
-  );
+  background: linear-gradient(40deg,
+      var(--main4-hover-color) 5%,
+      var(--main4-color) 5%,
+      var(--main4-color) 20%,
+      var(--main4-hover-color) 20%,
+      var(--main4-hover-color) 40%,
+      var(--main4-color) 40%,
+      var(--main4-color) 60%,
+      var(--main4-hover-color) 60%,
+      var(--main4-hover-color) 80%,
+      var(--main4-hover-color) 80%,
+      var(--main4-color) 80%,
+      var(--main4-color) 95%,
+      var(--main4-hover-color) 95%);
 }
 
 .rank-obj-LOSE {
   border: 5px double var(--main1-color);
-  background: linear-gradient(
-    40deg,
-    var(--red-hover-color) 5%,
-    var(--red-color) 5%,
-    var(--red-color) 20%,
-    var(--red-hover-color) 20%,
-    var(--red-hover-color) 40%,
-    var(--red-color) 40%,
-    var(--red-color) 60%,
-    var(--red-hover-color) 60%,
-    var(--red-hover-color) 80%,
-    var(--red-hover-color) 80%,
-    var(--red-color) 80%,
-    var(--red-color) 95%,
-    var(--red-hover-color) 95%
-  );
+  background: linear-gradient(40deg,
+      var(--red-hover-color) 5%,
+      var(--red-color) 5%,
+      var(--red-color) 20%,
+      var(--red-hover-color) 20%,
+      var(--red-hover-color) 40%,
+      var(--red-color) 40%,
+      var(--red-color) 60%,
+      var(--red-hover-color) 60%,
+      var(--red-hover-color) 80%,
+      var(--red-hover-color) 80%,
+      var(--red-color) 80%,
+      var(--red-color) 95%,
+      var(--red-hover-color) 95%);
 }
 
 .rank-obj-DRAW {
   border: 5px double var(--main1-color);
-  background: linear-gradient(
-    40deg,
-    var(--green-hover-color) 5%,
-    var(--green-color) 5%,
-    var(--green-color) 20%,
-    var(--green-hover-color) 20%,
-    var(--green-hover-color) 40%,
-    var(--green-color) 40%,
-    var(--green-color) 60%,
-    var(--green-hover-color) 60%,
-    var(--green-hover-color) 80%,
-    var(--green-hover-color) 80%,
-    var(--green-color) 80%,
-    var(--green-color) 95%,
-    var(--green-hover-color) 95%
-  );
+  background: linear-gradient(40deg,
+      var(--green-hover-color) 5%,
+      var(--green-color) 5%,
+      var(--green-color) 20%,
+      var(--green-hover-color) 20%,
+      var(--green-hover-color) 40%,
+      var(--green-color) 40%,
+      var(--green-color) 60%,
+      var(--green-hover-color) 60%,
+      var(--green-hover-color) 80%,
+      var(--green-hover-color) 80%,
+      var(--green-color) 80%,
+      var(--green-color) 95%,
+      var(--green-hover-color) 95%);
 }
 
 .opposing-name {
@@ -234,11 +241,11 @@ export default {
 }
 
 #rank-cnt {
-    margin-right: 15px;
+  margin-right: 15px;
 }
 
 #rank-result {
-    margin-left: 45px;
-    font-size: 18px;
+  margin-left: 45px;
+  font-size: 18px;
 }
 </style>

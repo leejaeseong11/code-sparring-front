@@ -1,50 +1,55 @@
 <template>
-    <div v-if="this.status" class="quiz-object">
-        <span class="quiz-no">{{ this.quizNo }}</span>
-        <span :class="'quiz-tier-' + this.quizTier">{{ this.quizTier }}</span>
-        <span class="quiz-title">{{ this.quizTitle }}</span>
-        <span class="quiz-correct">{{ this.quizCorrectPercent }}</span>
-        <button class="quiz-info-bt" @click="quizView">조회</button>
-    </div>
+  <div v-if="this.status" class="quiz-object">
+    <span class="quiz-no">{{ this.quizNo }}</span>
+    <span :class="'quiz-tier-' + this.quizTier">{{ this.quizTier }}</span>
+    <span class="quiz-title">{{ this.quizTitle }}</span>
+    <span class="quiz-correct">{{ this.quizCorrectPercent }}</span>
+    <button class="quiz-info-bt" @click="quizView">조회</button>
+  </div>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
-    name: 'AdminQuizPopup',
-    data() {
-        return {
-            quizNo: '',
-            quizTitle: '',
-            quizAuthor: '',
-            quizContent: '',
-            quizReportCnt: '',
-            quizCorrect: '',
-            quizTier: '',
-            status: false
-        }
-    },
-    methods: {
-      quizView() {
-        location.href='/quiz/'+this.quizNo
-      }
-    },
-    created() {
-        const quizNo=document.getElementById('search-text').value
-        const url = `${this.backURL}/quiz/${quizNo}`
-        apiClient.get(url).then((res) => {
-            this.quizNo=res.data.quizNo
-            this.quizTitle=res.data.quizTitle
-            this.quizAuthor=res.data.memberName
-            this.quizContent=res.data.quizContent
-            this.quizCorrect=res.data.quizCorrectPercent
-            this.quizTier=res.data.quizTier
-            this.status=true
-        }).catch(()=>{
-            alert('존재하지 않는 번호입니다')
-            window.history.go(0)
-        })
+  name: 'AdminQuizPopup',
+  data() {
+    return {
+      quizNo: '',
+      quizTitle: '',
+      quizAuthor: '',
+      quizContent: '',
+      quizReportCnt: '',
+      quizCorrect: '',
+      quizTier: '',
+      status: false
     }
+  },
+  methods: {
+    quizView() {
+      location.href = '/quiz/' + this.quizNo
+    }
+  },
+  created() {
+    const quizNo = document.getElementById('search-text').value
+    const url = `${this.backURL}/quiz/${quizNo}`
+    apiClient
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
+        this.quizNo = res.data.quizNo
+        this.quizTitle = res.data.quizTitle
+        this.quizAuthor = res.data.memberName
+        this.quizContent = res.data.quizContent
+        this.quizCorrect = res.data.quizCorrectPercent
+        this.quizTier = res.data.quizTier
+        this.status = true
+      }).catch(() => {
+        alert('존재하지 않는 번호입니다')
+        window.history.go(0)
+      })
+  }
 }
 </script>
 <style scoped>

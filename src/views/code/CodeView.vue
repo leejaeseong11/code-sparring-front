@@ -12,11 +12,8 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span
-                class="info-span"
-                :id="'quiz-tier-' + this.quizTier"
-                >{{ this.quizTier }}</span
-              >
+              <span class="info-text">티어</span>:<span class="info-span" :id="'quiz-tier-' + this.quizTier">{{
+                this.quizTier }}</span>
             </div>
             <div class="info-div" id="author">
               <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">{{
@@ -24,18 +21,12 @@
               }}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span
-                class="info-span"
-                id="quiz-submit-cnt"
-                >{{ this.quizSubmitCnt }}회</span
-              >
+              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{ this.quizSubmitCnt
+              }}회</span>
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span
-                class="info-span"
-                id="quiz-success-cnt"
-                >{{ this.quizSuccessCnt }}회</span
-              >
+              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{ this.quizSuccessCnt
+              }}회</span>
             </div>
             <div class="info-div" id="correct">
               <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{
@@ -45,20 +36,12 @@
           </div>
 
           <div class="index-name">입력값 설명</div>
-          <textarea
-            class="readonlyTextarea"
-            id="quiz-input"
-            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo"
-            readonly
-          ></textarea>
+          <textarea class="readonlyTextarea" id="quiz-input"
+            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <textarea
-            class="readonlyTextarea"
-            id="quiz-output"
-            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo"
-            readonly
-          ></textarea>
+          <textarea class="readonlyTextarea" id="quiz-output"
+            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
         </div>
 
         <div id="content">
@@ -70,7 +53,7 @@
                   {{ report.reportComment == null ? '' : '[' + report.reportDate + ']' }}&nbsp;
                 </span>
                 <span class="report-span" id="report-com">
-                    {{ commentNotNull(report.reportComment) }}&nbsp;
+                  {{ commentNotNull(report.reportComment) }}&nbsp;
                 </span>
                 <span class="report-span" id="report-id">
                   {{ report.reportComment == null ? '' : '-' + report.memberName + '님 신고' }}
@@ -79,19 +62,15 @@
               </div>
             </div>
           </div>
-          <div v-if="this.rptOkCnt!=0"><hr></div>
-          <textarea
-            class="readonlyTextarea"
-            id="quiz-content"
-            v-model="this.quizContent"
-            readonly
-          ></textarea>
+          <div v-if="this.rptOkCnt != 0">
+            <hr>
+          </div>
+          <textarea class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
         </div>
 
         <div id="code-area">
           <div class="index-name">제출한 코드</div>
-          <textarea class="readonlyTextarea" id="quiz-code"
-          readonly>{{fileContent}}</textarea>
+          <textarea class="readonlyTextarea" id="quiz-code" readonly>{{ fileContent }}</textarea>
 
           <div id="button-area">
             <div></div>
@@ -106,8 +85,7 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 
 export default {
   name: 'CodeView',
@@ -133,12 +111,12 @@ export default {
   },
   methods: {
     commentNotNull(obj) {
-        if(obj!=null) {
-            this.rptOkCnt++
-            return obj
-        } else {
-            return null
-        }
+      if (obj != null) {
+        this.rptOkCnt++
+        return obj
+      } else {
+        return null
+      }
     },
     rptQuiz() {
       this.reportPopup = true
@@ -150,15 +128,19 @@ export default {
       const memberNo = this.$route.params.memberNo
       location.href = '/profile/code/' + memberNo
     },
-    objectUrlGet(){
-      
+    objectUrlGet() {
+
     }
   },
   created() {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
     apiClient
-      .get(url)
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then((res) => {
         this.quizTitle = res.data.quizTitle
         this.quizContent = res.data.quizContent
@@ -174,16 +156,20 @@ export default {
       .catch(() => {
         alert('문제 조회에 실패하였습니다')
       })
-      this.memberNo = this.$route.params.memberNo
-      const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
-      apiClient
-      .get(url2)
-      .then((res)=>{
+    this.memberNo = this.$route.params.memberNo
+    const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
+    apiClient
+      .get(url2, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
         this.quizUrl = res.data
       })
   },
-  mounted(){
-        // S3 객체의 URL 사용 (직접 접근)
+  mounted() {
+    // S3 객체의 URL 사용 (직접 접근)
     const s3ObjectUrl = 'https://s3.ap-northeast-2.amazonaws.com/codesparring/1/1_101.java';
 
     // 파일 내용을 가져오기
@@ -214,7 +200,7 @@ button {
 }
 
 hr {
-    width: 470px;
+  width: 470px;
 }
 
 input,

@@ -9,11 +9,7 @@
 
         <div id="quiz-search-box">
           <input id="search-text" type="number" placeholder="문제 번호 검색" @focus="searchQuiz" />
-          <font-awesome-icon
-            id="search-icon"
-            :icon="['fa', 'magnifying-glass']"
-            @click="searchQuiz"
-          />
+          <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" @click="searchQuiz" />
         </div>
       </div>
 
@@ -32,24 +28,18 @@
       </div>
 
       <div v-if="!popup" id="quiz-page">
-        <button v-if="startPage!==1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
-        <button
-          v-for="pg in endPage-startPage+1"
-          :key="pg"
+        <button v-if="startPage !== 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button v-for="pg in endPage - startPage + 1" :key="pg"
           :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
-          :id="'pg'+(startPage+pg-1)"
-          @click="pgClick"
-        >
-          {{ startPage+pg-1 }}</button
-        >&nbsp;
-        <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+          :id="'pg' + (startPage + pg - 1)" @click="pgClick">
+          {{ startPage + pg - 1 }}</button>&nbsp;
+        <button v-if="endPage != totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
       </div>
     </div>
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
@@ -100,8 +90,8 @@ export default {
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     pgClick(e) {
-      const pg=parseInt(e.target.id.replace("pg", ""));
-      this.currentPage=pg
+      const pg = parseInt(e.target.id.replace("pg", ""));
+      this.currentPage = pg
       const filter = this.$route.params.filter
 
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
@@ -127,12 +117,16 @@ export default {
 
       const url = `${this.backURL}/admin/quiz/list/${this.currentPage}`
       apiClient
-        .get(url)
+        .get(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((res) => {
           this.quizList = res.data.list
           this.startPage = res.data.startPage
           this.endPage = res.data.endPage
-          this.totalPage=res.data.totalPage
+          this.totalPage = res.data.totalPage
         })
         .catch(() => {
           // alert('관리자 페이지를 조회할 수 없습니다')
@@ -153,12 +147,16 @@ export default {
 
       const url = `${this.backURL}/admin/quiz/tier/UNRANKED/${this.currentPage}`
       apiClient
-        .get(url)
+        .get(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((res) => {
           this.quizList = res.data.list
           this.startPage = res.data.startPage
           this.endPage = res.data.endPage
-          this.totalPage=res.data.totalPage
+          this.totalPage = res.data.totalPage
         })
         .catch(() => {
           window.history.back()

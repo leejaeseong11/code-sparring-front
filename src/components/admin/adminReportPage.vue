@@ -27,11 +27,10 @@
             {{ totalPage }} : {{ startPage }} : {{ endPage }}
             <div v-if="!popup" id="report-page">
                 <button v-if="startPage > 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
-                <button v-for="pg in endPage-startPage+1"
-                    :key="pg"
-                    :class="['page-bt-num', { 'current-page': startPage + pg -1 == currentPage }]"
-                    :id="'pg' + (startPage + pg -1)" @click="pgClick">
-                    {{ startPage + pg -1 }}
+                <button v-for="pg in endPage - startPage + 1" :key="pg"
+                    :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
+                    :id="'pg' + (startPage + pg - 1)" @click="pgClick">
+                    {{ startPage + pg - 1 }}
                 </button>&nbsp;
                 <button v-if="endPage < totalPages" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
             </div>
@@ -41,8 +40,7 @@
     </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
     name: 'AdminReportPage',
     data() {
@@ -71,10 +69,14 @@ export default {
             this.currentPage = this.$route.params.currentPage
             const url = `${this.backURL}/admin/report/all?page=${this.currentPage - 1}`
             apiClient
-                .get(url)
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then((res) => {
                     console.log(res.data)
-                    this.reportList = res.data.content 
+                    this.reportList = res.data.content
                     this.totalPage = res.data.totalPages
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
                     this.endPage = Math.ceil(res.data.totalElements / 10);
@@ -97,7 +99,11 @@ export default {
             this.currentPage = this.$route.params.currentPage
             const url = `${this.backURL}/admin/report/commentNull?page=${this.currentPage - 1}`
             apiClient
-                .get(url)
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then((res) => {
                     this.reportList = res.data.content
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;

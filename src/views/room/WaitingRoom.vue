@@ -26,10 +26,7 @@
       </div>
       <div id="room-member-container">
         <template v-for="index in 4" :key="'member' + index">
-          <RoomMember
-            v-if="index <= roomMemberList.length"
-            v-model:member="roomMemberList[index - 1]"
-          />
+          <RoomMember v-if="index <= roomMemberList.length" v-model:member="roomMemberList[index - 1]" />
           <RoomMember v-else v-model:member="nullMember" />
         </template>
       </div>
@@ -42,17 +39,8 @@
         </div>
       </div>
       <div id="room-chat-input-container">
-        <input
-          type="text"
-          id="chat-input"
-          v-model="chatMessage"
-          @keypress.enter="sendMessage($event)"
-        />
-        <button
-          id="chat-input-button"
-          placeholder="채팅을 입력하세요."
-          @click="sendMessage($event)"
-        >
+        <input type="text" id="chat-input" v-model="chatMessage" @keypress.enter="sendMessage($event)" />
+        <button id="chat-input-button" placeholder="채팅을 입력하세요." @click="sendMessage($event)">
           입력
         </button>
       </div>
@@ -69,8 +57,7 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
 import SweetAlert from '../../util/modal.js'
@@ -104,9 +91,9 @@ export default {
         this.socket.send(JSON.stringify(enterMessage))
       }
 
-      this.socket.onclose = () => {}
+      this.socket.onclose = () => { }
 
-      this.socket.onerror = () => {}
+      this.socket.onerror = () => { }
 
       this.socket.onmessage = (e) => {
         if (this.socket.readyState === WebSocket.OPEN) {
@@ -175,7 +162,11 @@ export default {
   },
   mounted() {
     apiClient
-      .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`)
+      .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then((response) => {
         this.roomInfo = response.data
         this.roomMemberList = response.data.roomMemberList
@@ -209,13 +200,16 @@ pre {
   font-size: 1.125rem;
   font-family: 'DNFBitBitv2';
 }
+
 #room-layout {
   color: var(--main5-color);
 }
+
 #room-member-layout {
   display: flex;
   flex-direction: column;
 }
+
 #room-title-containers {
   margin-top: 100px;
   padding: 16px;
@@ -229,14 +223,17 @@ pre {
   border-radius: 10px 10px 0 0;
   background-color: var(--white-color);
 }
+
 .room-title-container {
   display: flex;
 }
+
 .custom-tooltip {
   position: relative;
 
   cursor: pointer;
 }
+
 .custom-tooltip .custom-tooltiptext {
   width: 110px;
   padding: 8px 12px;
@@ -254,12 +251,15 @@ pre {
   color: var(--white-color);
   background-color: var(--black-color);
 }
+
 .custom-tooltip:hover .custom-tooltiptext {
   visibility: visible;
 }
+
 #code-share-icon {
   margin-left: 4px;
 }
+
 #room-number {
   margin-right: 16px;
 }
@@ -271,9 +271,11 @@ pre {
 
   border: 3px solid var(--main5-color);
 }
-#room-member-container > * {
+
+#room-member-container>* {
   width: 25%;
 }
+
 #room-chat {
   width: 100%;
   height: 400px;
@@ -287,11 +289,13 @@ pre {
   border-right: 3px solid var(--main5-color);
   border-left: 3px solid var(--main5-color);
 }
+
 #chat-title {
   padding: 8px 0 8px 12px;
 
   font-size: 1.5rem;
 }
+
 #chat-content {
   padding: 8px;
 
@@ -299,6 +303,7 @@ pre {
   flex-direction: column;
   justify-content: flex-end;
 }
+
 #room-chat-input-container {
   padding: 8px;
 
@@ -308,6 +313,7 @@ pre {
   border: 3px solid var(--main5-color);
   border-radius: 0 0 10px 10px;
 }
+
 #chat-input {
   width: 89%;
   padding: 8px;
@@ -317,6 +323,7 @@ pre {
 
   color: var(--main5-color);
 }
+
 #chat-input-button {
   padding: 8px 16px;
 
@@ -331,10 +338,12 @@ pre {
     background-color: var(--main3-hover-color);
   }
 }
+
 #room-info-layout {
   display: flex;
   flex-direction: column;
 }
+
 #room-out-button {
   margin-top: 28px;
   padding: 6px 12px;
@@ -351,6 +360,7 @@ pre {
     background-color: var(--red-hover-color);
   }
 }
+
 #room-quiz-containers {
   margin-top: 24px;
   padding: 12px;
@@ -360,6 +370,7 @@ pre {
   border: 3px solid var(--main5-color);
   border-radius: 10px;
 }
+
 #room-quiz-title {
   font-size: 1.625rem;
   text-align: center;
@@ -381,18 +392,21 @@ pre {
     background-color: var(--main4-hover-color);
   }
 }
+
 .room-info-code-open {
   display: flex;
   align-items: center;
 }
-.room-info-code-open > input {
+
+.room-info-code-open>input {
   margin-right: 4px;
 
   border: 0;
   width: 1.125rem;
   height: 1.125em;
 }
-.room-info-code-open > label {
+
+.room-info-code-open>label {
   opacity: 50%;
 }
 </style>
