@@ -162,6 +162,7 @@
 <script>
 import axios from 'axios'
 import GameEnd from '../../components/game/GameEnd.vue'
+
 export default {
   name: 'addQuiz',
   components: {GameEnd},
@@ -406,6 +407,7 @@ export default {
       this.consoleCode = html
     },
     addQuizBtClick() {
+
       this.gameEnd=true
     },
     onTcHelp() {

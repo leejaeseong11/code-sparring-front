@@ -14,7 +14,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 
 export default {
   name: 'AddTestcase',
@@ -32,7 +33,7 @@ export default {
             testcaseInput: this.inputValue,
             testcaseOutput: this.outputValue
         }
-        axios
+        apiClient
         .post(url, JSON.stringify(data), {
           headers: {
             'Content-Type': 'application/json'

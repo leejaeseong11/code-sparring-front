@@ -60,7 +60,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import ShowQuizSimply from './ShowQuizSimply.vue'
 import sweetAlert from '../../util/modal.js'
 
@@ -87,7 +88,7 @@ export default {
       } else {
         addMemberUrl = `${this.backURL}/room-member`
       }
-      axios
+      apiClient
         .post(addMemberUrl, {})
         .then((response) => {
           console.log(response)
