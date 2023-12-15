@@ -33,3 +33,4 @@ app.mount('#app')
 
 app.config.globalProperties.backURL = import.meta.env.VITE_BACK_URL
 app.config.globalProperties.socketURL = import.meta.env.VITE_SOCKET_URL
+
