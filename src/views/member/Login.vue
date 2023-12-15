@@ -87,7 +87,6 @@ export default {
                 .catch(error => {
                     console.error('Error:', error);
                 });
-            alert("end loginFormSubmitHandler")
         }
     },
 

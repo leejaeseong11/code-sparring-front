@@ -106,7 +106,8 @@
   </main>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 
 export default {
   name: 'CodeView',
@@ -156,7 +157,7 @@ export default {
   created() {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
-    axios
+    apiClient
       .get(url)
       .then((res) => {
         this.quizTitle = res.data.quizTitle

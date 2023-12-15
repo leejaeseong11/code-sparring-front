@@ -17,7 +17,8 @@
                 <div v-for="report in reportList" :key="report.reportNo" class="report-object">
                     <span class="report-no">{{ report.reportNo }}</span>
                     <span class="report-Type">{{ formatReportType(report.reportType) }}</span>
-                    <span class="report-Date">{{ formatDate(report.reportDate) }}</span>
+                    <span class="report-Date">{{ report.reportDate }}</span>
+                    <!-- <span class="report-Date">{{ formatDate(report.reportDate) }}</span> -->
                     <span class="report-memberName">{{ report.memberName }}</span>
                     <button class="report-info-bt" :id="'' + report.reportNo" @click="reportView">조회</button>
                 </div>
@@ -40,7 +41,8 @@
     </main>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'AdminReportPage',
     data() {
@@ -67,20 +69,19 @@ export default {
             text.value = ''
 
             this.currentPage = this.$route.params.currentPage
-            const url = `${this.backURL}/report/date?page=${this.currentPage - 1}`
-            axios
+            const url = `${this.backURL}/admin/report/all?page=${this.currentPage - 1}`
+            apiClient
                 .get(url)
                 .then((res) => {
                     console.log(res.data)
                     this.reportList = res.data.content 
                     this.totalPage = res.data.totalPages
-                    alert(this.totalPage)
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
                     this.endPage = Math.ceil(res.data.totalElements / 10);
                 })
                 .catch((error) => {
                     console.error('Error fetching reports:', error.message);
-                    alert('신고목록을 조회할 수 없습니다')
+                    // alert('신고목록을 조회할 수 없습니다')
                 })
         } else if (filter == 'UNRANKED') {
             const onBt = document.getElementById('report-urk')
@@ -94,8 +95,8 @@ export default {
             text.value = ''
 
             this.currentPage = this.$route.params.currentPage
-            const url = `${this.backURL}/report/commentNull?page=${this.currentPage - 1}`
-            axios
+            const url = `${this.backURL}/admin/report/commentNull?page=${this.currentPage - 1}`
+            apiClient
                 .get(url)
                 .then((res) => {
                     this.reportList = res.data.content
@@ -111,7 +112,7 @@ export default {
     },
     methods: {
         allReport() {
-            location.href = '/admin/report/date/1'
+            location.href = '/admin/report/all/1'
         },
         urkReport() {
             location.href = '/admin/report/UNRANKED/1'
@@ -151,18 +152,18 @@ export default {
         },
 
         quizView(e) {
-            location.href = '/report/' + e.target.id
+            location.href = '/admin/report/' + e.target.id
         },
 
-        formatDate(reportDate) {
-            const date = new Date(reportDate);
-            const formattedDate = date.toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            });
-            return formattedDate;
-        },
+        // formatDate(reportDate) {
+        //     const date = new Date(reportDate);
+        //     const formattedDate = date.toLocaleDateString('ko-KR', {
+        //         year: 'numeric',
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //     });
+        //     return formattedDate;
+        // },
         formatReportType(reportType) {
             switch (reportType) {
                 case 1:

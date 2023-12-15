@@ -48,7 +48,8 @@
   </main>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
@@ -124,8 +125,8 @@ export default {
 
       this.currentPage = this.$route.params.currentPage
 
-      const url = `${this.backURL}/quiz/list/${this.currentPage}`
-      axios
+      const url = `${this.backURL}/admin/quiz/list/${this.currentPage}`
+      apiClient
         .get(url)
         .then((res) => {
           this.quizList = res.data.list
@@ -134,7 +135,8 @@ export default {
           this.totalPage=res.data.totalPage
         })
         .catch(() => {
-          alert('관리자 페이지를 조회할 수 없습니다')
+          // alert('관리자 페이지를 조회할 수 없습니다')
+          console.error('Error fetching reports:', error.message);
         })
     } else if (filter == 'UNRANKED') {
       const onBt = document.getElementById('quiz-urk')
@@ -149,8 +151,8 @@ export default {
 
       this.currentPage = this.$route.params.currentPage
 
-      const url = `${this.backURL}/quiz/tier/UNRANKED/${this.currentPage}`
-      axios
+      const url = `${this.backURL}/admin/quiz/tier/UNRANKED/${this.currentPage}`
+      apiClient
         .get(url)
         .then((res) => {
           this.quizList = res.data.list

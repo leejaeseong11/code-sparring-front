@@ -188,7 +188,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
@@ -229,7 +230,7 @@ export default {
   methods: {
     refreshButtonClickHandler() {
       this.inputRoomNo = null
-      axios
+      apiClient
         .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
         .then((response) => {
           this.roomList = response.data.content
@@ -275,7 +276,7 @@ export default {
     logoutButtonClickHandler() {
       console.log('Request sent')
       const url = `${this.backURL}/auth/logout`
-      axios
+      apiClient
         .post(
           url,
           {},
@@ -315,7 +316,7 @@ export default {
       if (this.inputRoomNo == null) {
         this.refreshButtonClickHandler()
       } else {
-        axios
+        apiClient
           .get(
             `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`
           )

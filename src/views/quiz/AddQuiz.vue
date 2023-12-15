@@ -158,7 +158,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
   name: 'addQuiz',
   data() {
@@ -438,7 +439,7 @@ export default {
         ]
       }
 
-      axios
+      apiClient
         .post('http://192.168.1.67:8080/codesparring/quiz', JSON.stringify(data), {
           headers: {
             'Content-Type': 'application/json'

@@ -8,8 +8,8 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
-
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'AdminQuizPopup',
     data() {
@@ -32,7 +32,7 @@ export default {
     created() {
         const quizNo=document.getElementById('search-text').value
         const url = `${this.backURL}/quiz/${quizNo}`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
             this.quizNo=res.data.quizNo
             this.quizTitle=res.data.quizTitle
             this.quizAuthor=res.data.memberName
