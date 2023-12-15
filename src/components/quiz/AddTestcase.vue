@@ -14,7 +14,6 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
 import {apiClient} from '@/axios-interceptor'
 
 export default {
@@ -34,17 +33,17 @@ export default {
             testcaseOutput: this.outputValue
         }
         apiClient
-        .post(url, JSON.stringify(data), {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(() => {
-          alert('테스트케이스가 추가되었습니다')
-          window.history.go(0)
-        }).catch(()=>{
-            alert('테스트케이스 추가에 실패하였습니다')
-        })
+          .post(url, JSON.stringify(data), {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(() => {
+            alert('테스트케이스가 추가되었습니다')
+            window.history.go(0)
+          }).catch(()=>{
+             alert('테스트케이스 추가에 실패하였습니다')
+          })
     }
   }
 }
