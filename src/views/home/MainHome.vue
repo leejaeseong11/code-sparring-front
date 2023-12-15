@@ -66,7 +66,7 @@
           <li
             v-for="(memberRank, index) in memberRankList"
             :key="'memberRank' + index"
-            @click="viewProfileDetailClickHandler(memberRank.memberNo)"
+            @click="showProfileDetailClickHandler(memberRank.memberNo)"
           >
             <div v-if="index + 1 == 1" class="rank-number" style="color: var(--yellow-rank-color)">
               {{ index + 1 }}위
@@ -98,6 +98,12 @@
         </ol>
       </div>
     </div>
+    <div class="modal-wrap" v-show="memberProfilePopup" @click="showQuizClickHandler">
+      <div class="modal-container" @click.stop="">
+        <MemberProfile v-model:memberProfile="rankMember" @showQuiz="showQuizClickHandler" />
+      </div>
+    </div>
+
     <div id="room-layout" class="col-9">
       <div id="main-navigation">
         <div id="main-navigation-left">
@@ -183,12 +189,13 @@
 <script>
 import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
+import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom, AddRoom },
+  components: { MainHomeRoom, AddRoom, MemberProfile },
   data() {
     return {
       roomPage: 0,
@@ -199,7 +206,20 @@ export default {
       inputRoomNo: null,
       memberRankList: [],
       memberAuthority: 'ROLE_ADMIN',
+      rankMember: {
+        memberProfileImg: 0,
+        memberTier: '',
+        memberName: '',
+        winCnt: 0,
+        drawCnt: 0,
+        loseCnt: 0,
+        memberLevel: 0,
+        memberExp: 0,
+        tierPoint: 0,
+        memberInfo: ''
+      },
       addRoomPopup: false,
+      memberProfilePopup: false,
       socket: null
     }
   },
@@ -269,9 +289,7 @@ export default {
         })
     },
     searchRoomInputKeypressHandler($event) {
-      console.log($event)
       let char = String.fromCharCode($event.keyCode)
-      console.log(char)
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
@@ -310,6 +328,17 @@ export default {
     rankMatchingButtonClickHandler() {
       this.connect()
     },
+    showQuizClickHandler() {
+      this.memberProfilePopup = !this.memberProfilePopup
+      this.preventScroll()
+    },
+    preventScroll() {
+      if (this.memberProfilePopup === true) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
+    },
     connect() {
       this.socket = new WebSocket(this.socketURL)
 
@@ -338,16 +367,19 @@ export default {
       }
       this.socket.send(JSON.stringify(sendMatching))
     },
-    viewProfileDetailClickHandler(memberNo) {
-      axios.get(`${this.backURL}/member/${memberNo}`).then((response) => {
-        console.log(response)
-      })
+    showProfileDetailClickHandler(memberNo) {
+      this.memberProfilePopup = !this.memberProfilePopup
+      if (this.memberProfilePopup) {
+        axios.get(`${this.backURL}/member/${memberNo}`).then((response) => {
+          this.rankMember = response.data
+        })
+      }
+      this.preventScroll()
     }
   },
   mounted() {
     this.refreshButtonClickHandler()
     axios.get(`${this.backURL}/member/ranking`).then((response) => {
-      console.log(response.data)
       this.memberRankList = response.data
         .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
         .slice(0, 5)
@@ -619,6 +651,35 @@ export default {
   margin: 4px;
 
   cursor: pointer;
+}
+.modal-wrap {
+  width: 100%;
+  height: 100%;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal-container {
+  min-width: 550px;
+  width: 50%;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  top: 400px;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 .rank-number {
   width: 24px;
