@@ -1,7 +1,7 @@
 <template>
   <div id="main-layout" class="row">
     <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
-    <AddRoom v-if="addRoomPopup" id="addRoom-popup"></AddRoom>
+    <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -244,7 +244,7 @@ export default {
       //     console.log(res)
       //     this.$router.push({ path: `/room/${res.data}` })
       //   })
-
+      document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
@@ -316,6 +316,7 @@ export default {
     },
     backOff() {
       this.addRoomPopup = false
+      document.body.style.overflow = 'auto'
     },
     rankMatchingButtonClickHandler() {
       this.connect()

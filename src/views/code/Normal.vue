@@ -53,9 +53,8 @@
 </template>
 
 <script>
-import Monaco from '../../components/code/Monaco.vue'
-// import axios from 'axios';
-import {apiClient} from '@/axios-interceptor'
+import Monaco from '../../components/code/NormalMonaco.vue'
+import axios from 'axios';
 export default {
     name: 'normal',
     components: {Monaco},
@@ -66,7 +65,7 @@ export default {
             testcaseList: [],
             quizContent: '',
             timerRunning: true,
-            minutes: 1,
+            minutes: 60,
             seconds: 0,
             
         }
@@ -99,8 +98,14 @@ export default {
 
             if (this.timerRunning) {
                 setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
-                
-            }  
+
+            }
+            if(this.seconds === 0 && this.minutes === 0){
+                if(confirm("시간이 초과되어 메인으로 이동합니다")){
+                    this.$router.push({ path: `/` })
+
+                }
+            }
         },
         // /n을 <br> 태그로 대체하는 메서드
         replaceNewlines(text) {
@@ -115,7 +120,7 @@ export default {
 
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
-        apiClient
+        axios
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
@@ -123,7 +128,7 @@ export default {
 
             const url2 = `${this.backURL}/submit/${this.quizNo}`
 
-            apiClient
+            axios
             .get(url2)
             .then((response) => {
                 this.testcaseList = response.data
@@ -155,9 +160,6 @@ export default {
 
   overflow: visible;
   white-space: nowrap;
-
-  color: var(--main5-color);
-  border: 3px solid var(--main5-color);
 }
 
 body.flex-container{
@@ -165,8 +167,6 @@ body.flex-container{
     justify-content: center; 
     height: 792px;
     padding-bottom: 10px;
-    
-    /* align-items: center; */
 }
 
 
@@ -285,7 +285,6 @@ body.flex-container{
     
     
 }
-
 #relative-code-content{
     width: 200px;
     height: 22vh;

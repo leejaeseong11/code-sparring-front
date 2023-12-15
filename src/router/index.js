@@ -11,6 +11,7 @@ import QuizView from '@/views/quiz/QuizView.vue'
 
 import CodeView from '@/views/code/CodeView.vue'
 import Normal from '@/views/code/Normal.vue'
+import Rank from '@/views/code/Rank.vue'
 
 import MyPage from '@/views/member/MyPage.vue'
 
@@ -60,6 +61,11 @@ const router = createRouter({
       path: '/normal/:roomNo',
       name: 'Normal',
       component: Normal
+    },
+    {
+      path: '/rank/:rankNo',
+      name: 'Rank',
+      component: Rank
     },
     {
       path: '/profile/:viewName/:memberNo',
