@@ -11,56 +11,10 @@
         <br>
     </div>
   </template>
-
-
-  <style>
-  .monaco-editor-vue3{
-    overflow: hidden;
-    margin-top: 5px; 
-  }
-  #outputDiv{
-    background-color: var(--white-color); 
-    height: 200px; 
-
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-    
-    padding: 8px;
-    font-size: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  .button{
-    padding: 8px;
-    margin: 5px;
-    font-size: 1.0rem;
-
-    color: var(--main1-color);
-    background-color: var(--main4-color);
-    border: none;
-    border-radius: 6px;
-
-    &:hover {
-        background-color: var(--main4-hover-color);
-    }
-  }
-
-  #submit{
-      color: var(--main1-color);
-      background-color: var(--red-color);
-      border: none;
-      border-radius: 6px;
-
-      &:hover {
-          background-color: var(--red-hover-color);
-      }
-    }
-  </style>
   
   <script>
-  import axios from 'axios';
+  import {apiClient} from '@/axios-interceptor'
+  // import axios from 'axios';
   import { defineComponent, computed, toRefs } from 'vue'
   import * as monaco from 'monaco-editor'
   
@@ -126,7 +80,7 @@
         // 테스트케이스 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
 
-        axios
+        apiClient
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
@@ -219,7 +173,7 @@
         formData.append('Main', mainFile, 'hello.txt');
         
         const url = `${this.backURL}/code/executeCode`
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {
@@ -227,10 +181,12 @@
             },
         }) 
         .then(response=>{
+          console.log('여기?111')
             this.output = response.data
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
+          console.log('여기?')
             console.log(error)
             alert(error.message)
         })
@@ -252,7 +208,7 @@
         formData.append('Main', mainFile, 'Code.txt');
 
         const url = `${this.backURL}/submit/normalMode` 
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {
@@ -298,3 +254,49 @@
     },
   })
   </script>
+
+<style>
+.monaco-editor-vue3{
+  overflow: hidden;
+  margin-top: 5px; 
+}
+#outputDiv{
+  background-color: var(--white-color); 
+  height: 200px; 
+
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
+  
+  padding: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.button{
+  padding: 8px;
+  margin: 5px;
+  font-size: 1.0rem;
+
+  color: var(--main1-color);
+  background-color: var(--main4-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+      background-color: var(--main4-hover-color);
+  }
+}
+
+#submit{
+    color: var(--main1-color);
+    background-color: var(--red-color);
+    border: none;
+    border-radius: 6px;
+
+    &:hover {
+        background-color: var(--red-hover-color);
+    }
+  }
+</style>

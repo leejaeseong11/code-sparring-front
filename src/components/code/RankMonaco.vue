@@ -60,7 +60,7 @@
   </style>
   
   <script>
-  import axios from 'axios';
+  import {apiClient} from '@/axios-interceptor'
   import { defineComponent, computed, toRefs } from 'vue'
   import * as monaco from 'monaco-editor'
   
@@ -122,7 +122,7 @@
       this.rankNo = this.$router.currentRoute.value.params.rankNo
       const url = `${this.backURL}/rankgame/${this.rankNo}`
         
-        axios
+        apiClient
         .get(url)
         .then((response) => {
             this.quizNo = response.data.quizNo
@@ -220,7 +220,7 @@
         formData.append('Main', mainFile, 'hello.txt');
 
         const url = `${this.backURL}/code/executeCode`
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {
@@ -255,7 +255,7 @@
         formData.append('Main', mainFile, 'Code.txt');
         
         const url = `${this.backURL}/submit/rankMode`
-        axios
+        apiClient
         .post(url, formData, {
             withCredentials: true,
             headers: {
@@ -271,7 +271,7 @@
               gameResult : this.gameResult
             }
             const url2 = `${this.backURL}/rankgame/${this.rankNo}`
-            axios
+            apiClient
             .put(url2, JSON.stringify(data), {
               headers: {
                 'Content-Type': 'application/json'
@@ -281,7 +281,6 @@
               console.log(response.data)
               console.log(response.data.msg)
             })
-
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
