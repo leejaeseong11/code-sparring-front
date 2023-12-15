@@ -819,4 +819,9 @@ input[type='number']::-webkit-inner-spin-button {
   margin-top: 50px;
   z-index: 2;
 }
+
+#matching-popup {
+  background-color: var(--main5-color);
+  border-color: var(--main1-color);
+}
 </style>
