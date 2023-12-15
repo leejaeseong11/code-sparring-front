@@ -814,10 +814,11 @@ input[type='number']::-webkit-inner-spin-button {
   background-color: var(--main1-color);
   border: 8px solid var(--main5-color);
   border-radius: 10px;
-  width: 90%;
+  width: 1300px;
   height: 700px;
   margin-top: 50px;
   z-index: 2;
+  overflow: auto;
 }
 
 #matching-popup {
