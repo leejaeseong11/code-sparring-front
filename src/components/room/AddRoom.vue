@@ -79,7 +79,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 
 export default {
   name: 'AddRoom',
@@ -102,12 +103,12 @@ export default {
 
       if (this.tier == 'ALL') {
         const url = `${this.backURL}/quiz/list`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       } else {
         const url = `${this.backURL}/quiz/tier/` + this.tier
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       }
@@ -116,12 +117,12 @@ export default {
     changeAsc() {
       if (this.tier == 'ALL') {
         const url = `${this.backURL}/quiz/list/asc`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       } else {
         const url = `${this.backURL}/quiz/tier/` + this.tier+`/asc`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       }
@@ -129,12 +130,12 @@ export default {
     changeDesc() {
       if (this.tier == 'ALL') {
         const url = `${this.backURL}/quiz/list/desc`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       } else {
         const url = `${this.backURL}/quiz/tier/` + this.tier+`/desc`
-        axios.get(url).then((res) => {
+        apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       }
@@ -144,7 +145,7 @@ export default {
       // const sortBt=document.querySelectorAll('.sort-obj')
       
       const url=`${this.backURL}/quiz/`+this.quizNo
-      axios.get(url)
+      apiClient.get(url)
       .then(res=>{
         this.quiz=res.data
       })
@@ -167,7 +168,7 @@ export default {
   },
   mounted() {
     const url = `${this.backURL}/quiz/list`
-    axios.get(url).then((res) => {
+    apiClient.get(url).then((res) => {
       this.quizList = res.data
     })
   }

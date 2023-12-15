@@ -159,7 +159,7 @@ export default {
           quizOutput: this.outputInfo,
           quizTier: this.quizTier
         }
-        const url = `${this.backURL}/quiz/` + this.quizNo
+        const url = `${this.backURL}/admin/quiz/` + this.quizNo
         apiClient
           .put(url, JSON.stringify(data), {
             headers: {
@@ -209,7 +209,7 @@ export default {
     deleteQuiz() {
       var result = confirm('문제를 삭제하시겠습니까?')
       if (!result) return
-      const url = `${this.backURL}/quiz/` + this.quizNo
+      const url = `${this.backURL}/admin/quiz/` + this.quizNo
       apiClient
         .delete(url)
         .then(() => {
@@ -223,7 +223,7 @@ export default {
   },
   created() {
     this.quizNo = this.$route.params.quizNo
-    const url = `${this.backURL}/quiz/${this.quizNo}`
+    const url = `${this.backURL}/admin/quiz/${this.quizNo}`
     apiClient
       .get(url)
       .then((res) => {

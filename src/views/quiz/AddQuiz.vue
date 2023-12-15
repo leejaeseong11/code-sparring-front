@@ -160,7 +160,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import GameEnd from '../../components/game/GameEnd.vue'
 
 export default {
