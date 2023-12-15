@@ -822,6 +822,7 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 #matching-popup {
+  width: 1000px;
   background-color: var(--main5-color);
   border-color: var(--main1-color);
 }
