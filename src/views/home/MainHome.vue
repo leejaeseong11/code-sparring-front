@@ -882,6 +882,7 @@ input[type='number']::-webkit-inner-spin-button {
   border: 8px solid var(--main5-color);
   border-radius: 10px;
   width: 1300px;
+  min-width: 1000px;
   height: 700px;
   margin-top: 50px;
   z-index: 2;
