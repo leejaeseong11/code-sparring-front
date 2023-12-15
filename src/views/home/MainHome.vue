@@ -1,7 +1,8 @@
 <template>
   <div id="main-layout" class="row">
-    <div v-if="addRoomPopup" id="back-off" @click="backOff"></div>
+    <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
     <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
+    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -191,11 +192,12 @@ import axios from 'axios'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
+import RankMatching from '../../components/rank/RankMatching.vue'
 import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
-  components: { MainHomeRoom, AddRoom, MemberProfile },
+  components: { MainHomeRoom, AddRoom, RankMatching, MemberProfile },
   data() {
     return {
       roomPage: 0,
@@ -219,6 +221,7 @@ export default {
         memberInfo: ''
       },
       addRoomPopup: false,
+      rankMatching: false,
       memberProfilePopup: false,
       socket: null
     }
@@ -324,9 +327,12 @@ export default {
     },
     backOff() {
       this.addRoomPopup = false
+      this.rankMatching = false
       document.body.style.overflow = 'auto'
     },
     rankMatchingButtonClickHandler() {
+      document.body.style.overflow = 'hidden'
+      this.rankMatching = true
       this.connect()
     },
     showQuizClickHandler() {
@@ -611,6 +617,7 @@ export default {
 
 #rank-title-icon {
   width: 2rem;
+  cursor: pointer;
 }
 #rank-container {
   width: 100%;
@@ -864,20 +871,26 @@ input[type='number']::-webkit-inner-spin-button {
   left: 0%;
   z-index: 1;
 
-  cursor: pointer;
-
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-#addRoom-popup {
+#addRoom-popup,
+#matching-popup {
   padding: 10px;
   position: absolute;
   background-color: var(--main1-color);
   border: 8px solid var(--main5-color);
   border-radius: 10px;
-  width: 90%;
+  width: 1300px;
   height: 700px;
   margin-top: 50px;
   z-index: 2;
+  overflow: auto;
+}
+
+#matching-popup {
+  width: 1000px;
+  background-color: var(--main5-color);
+  border-color: var(--main1-color);
 }
 </style>
