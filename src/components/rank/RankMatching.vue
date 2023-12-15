@@ -61,7 +61,6 @@ export default {
         }
     },
     created(){
-        //타이머 시작
         this.updateTimer();
     }
 }
