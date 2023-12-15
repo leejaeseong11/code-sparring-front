@@ -577,6 +577,7 @@ export default {
 
 #rank-title-icon {
   width: 2rem;
+  cursor: pointer;
 }
 #rank-container {
   width: 100%;
