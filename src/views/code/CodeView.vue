@@ -176,7 +176,7 @@ export default {
       })
       this.memberNo = this.$route.params.memberNo
       const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
-      axios
+      apiClient
       .get(url2)
       .then((res)=>{
         this.quizUrl = res.data

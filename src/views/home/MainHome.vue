@@ -378,7 +378,7 @@ export default {
     showProfileDetailClickHandler(memberNo) {
       this.memberProfilePopup = !this.memberProfilePopup
       if (this.memberProfilePopup) {
-        axios.get(`${this.backURL}/member/${memberNo}`).then((response) => {
+        apiClient.get(`${this.backURL}/member/${memberNo}`).then((response) => {
           this.rankMember = response.data
         })
       }
@@ -387,7 +387,7 @@ export default {
   },
   mounted() {
     this.refreshButtonClickHandler()
-    axios.get(`${this.backURL}/member/ranking`).then((response) => {
+    apiClient.get(`${this.backURL}/member/ranking`).then((response) => {
       this.memberRankList = response.data
         .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
         .slice(0, 5)

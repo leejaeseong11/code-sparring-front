@@ -7,7 +7,11 @@
                 <div id="problem-des-title" class="title">문제설명</div>
                 <div id="problem-des-container">
                     <div id="problem-des-content">
-                        <span v-html="replaceNewlines(this.quizContent)"></span>
+                        <textarea
+                        class="readonlyTextarea"
+                        id="quiz-input"
+                        :value="this.quizContent"
+                        readonly></textarea>
                     </div>
                 </div>
     
@@ -26,7 +30,6 @@
                         <hr id="testcase-hr">
                     </div>
                 </div>
-                <button class="button" @:click="reportButtonClickHandler">문제신고하기</button>
                 
                 <div id="timer-title" class="title">제한시간</div>
                 <div id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</div>
@@ -54,7 +57,7 @@
     
     <script>
     import Monaco from '../../components/code/RankMonaco.vue'
-    import axios from 'axios';
+    import {apiClient} from '@/axios-interceptor'
     export default {
         name: 'rank',
         components: {Monaco},
@@ -77,9 +80,6 @@
         },
         
         methods: {
-            reportButtonClickHandler(){
-                //신고팝업창
-            },
             exitButtonClickHandler(){
                 this.$router.push({ path: `/` })
             },
@@ -111,25 +111,47 @@
             replaceNewlines(text) {
                 return text.replace(/\n/g, '<br>');
             },
+            // beforeunload 이벤트 핸들러
+            beforeUnloadHandler(event) {
+                // 여기에 알림창을 띄우는 로직 추가
+                const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+                event.returnValue = confirmationMessage; // Standard for most browsers
+                // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+                const shouldNavigateHome = window.confirm(confirmationMessage);
+                if (shouldNavigateHome) {
+                    this.$router.push({ path: `/` });
+                }
+                return confirmationMessage; // For some older browsers
+            },
     
             
         },
         created(){
+            window.addEventListener('beforeunload', this.beforeUnloadHandler);
             //타이머 시작
             this.updateTimer();
     
-            // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
-            const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.rankNo}`
-            axios
+        
+            const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
+            apiClient
             .get(url)
             .then((response) => {
                 this.quizNo = response.data.quizNo
-                this.quizContent = response.data.quizContent
-    
-                const url2 = `${this.backURL}/submit/${this.quizNo}`
-    
-                axios
+                
+                const url2 = `${this.backURL}/quiz/${this.quizNo}`
+                apiClient
                 .get(url2)
+                .then((response) => {
+                    this.quizContent = response.data.quizContent
+                })
+                .catch(()=>{
+                    alert('문제 조회에 실패하였습니다')
+                })
+
+    
+                const url3 = `${this.backURL}/submit/${this.quizNo}`
+                apiClient
+                .get(url3)
                 .then((response) => {
                     this.testcaseList = response.data
                 })
@@ -141,6 +163,10 @@
                 alert('문제 정보 조회에 실패하였습니다')
             })
     
+        },
+        beforeDestroy() {
+        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
         },
     }
     
@@ -313,4 +339,22 @@
         margin:16px 0px 0px
     }
     
+
+    #quiz-input,
+#quiz-output {
+  width: 98%;
+  height: 100%;
+  line-height: 30px;
+  /* overflow: auto; */
+  cursor: default;
+  border: none;
+}
+/* 
+.readonlyTextarea {
+  background-color: var(--main1-color);
+  color: var(--main5-color);
+  
+  cursor: default;
+} */
+
     </style>

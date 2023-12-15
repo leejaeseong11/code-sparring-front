@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'MyCode',
     data(){
@@ -47,12 +47,12 @@ export default {
         },
         handleScrollEnd() {
             const url = `${this.backURL}/mycode/${this.memberNo}`;
-            axios.get(url).then((response) => {
+            apiClient.get(url).then((response) => {
                 this.tmpList = response.data;
                 this.tmpList.forEach((code) => {
     
                     const quizUrl = `${this.backURL}/quiz/${code.quizNo}`;
-                    axios.get(quizUrl).then((quizResponse) => {
+                    apiClient.get(quizUrl).then((quizResponse) => {
                         code.quizTitle = quizResponse.data.quizTitle;
                     });
                 });
@@ -76,13 +76,13 @@ export default {
         this.memberNo = this.$route.params.memberNo;
 
         const url = `${this.backURL}/mycode/${this.memberNo}`;
-        axios
+        apiClient
         .get(url)
         .then((response) => {
             this.codeList = response.data;
             this.codeList.forEach((code) => {
                 const quizUrl = `${this.backURL}/quiz/${code.quizNo}`;
-                axios.get(quizUrl).then((quizResponse) => {
+                apiClient.get(quizUrl).then((quizResponse) => {
                     code.quizTitle = quizResponse.data.quizTitle;
                 });
             });
