@@ -97,7 +97,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.roomInfo)
     this.quizInfo = this.roomInfo
   },
   components: { ShowQuizSimply }
