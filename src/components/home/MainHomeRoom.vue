@@ -44,8 +44,12 @@
                 </button>
               </div>
             </div>
-            <button :class="{ 'button-disabled': roomInfo.roomStatus == 0 }" class="btn-custom-primary enter-button"
-              v-bind:disabled="roomInfo.roomStatus == 0" @:click="enterButtonClickHandler">
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary enter-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+              @:click="enterButtonClickHandler"
+            >
               <div v-if="roomInfo.roomPwd == null">입장</div>
               <font-awesome-icon v-else :icon="['fa', 'lock']" />
             </button>

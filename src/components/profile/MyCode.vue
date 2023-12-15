@@ -195,12 +195,9 @@ export default {
   color: var(--main1-color);
   font-size: 20px;
   text-align: center;
-  white-space: nowrap;
-  /* 텍스트를 한 줄에 나타내기 위해 */
-  overflow: hidden;
-  /* 넘치는 텍스트를 숨김 */
-  text-overflow: ellipsis;
-  /* 넘치는 텍스트에 "..." 추가 */
+  white-space: nowrap; /* 텍스트를 한 줄에 나타내기 위해 */
+  overflow: hidden;    /* 넘치는 텍스트를 숨김 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 추가 */
 }
 
 .game-result {
