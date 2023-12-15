@@ -87,10 +87,12 @@ export default {
 }
 .member-profile-detail-layout {
   padding: 40px 0 20px 0;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 
   background-color: var(--main5-color);
 }
@@ -169,7 +171,7 @@ export default {
   margin-right: 20px;
 }
 textarea {
-  margin: 0 24px 8px 0;
+  margin-right: 24px;
   padding: 12px;
   height: 100%;
 
@@ -203,5 +205,8 @@ textarea {
     background-color: var(--main2-hover-color);
     border: none;
   }
+}
+#modal-close-button {
+  margin-top: 40px;
 }
 </style>

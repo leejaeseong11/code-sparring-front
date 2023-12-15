@@ -667,6 +667,7 @@ export default {
 .modal-container {
   min-width: 550px;
   width: 50%;
+  height: 440px;
   padding: 10px;
 
   display: flex;
