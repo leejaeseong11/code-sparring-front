@@ -135,10 +135,10 @@
       this.initMonaco()
 
       // 붙여넣기 막기
-      // this.editor.getDomNode().addEventListener('paste', (event) => {
-      //   event.stopPropagation();
-      //   event.preventDefault();
-      // }, true);
+      this.editor.getDomNode().addEventListener('paste', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+      }, true);
     },
     beforeUnmount() {
       this.editor && this.editor.dispose()
@@ -216,7 +216,8 @@
         // 파일 데이터 추가
         const mainFile = new Blob([fileContent], { type: 'text/plain' });
         formData.append('Main', mainFile, 'hello.txt');
-        const url = "http://192.168.1.112:8080/code/executeCode"
+        
+        const url = `${this.backURL}/code/executeCode`
         axios
         .post(url, formData, {
             withCredentials: true,
@@ -226,15 +227,11 @@
         }) 
         .then(response=>{
             this.output = response.data
-            // const outputDiv = document.getElementById('outputDiv');
-            // outputDiv.textContent = response.data;
-            // id.div.setValue(response.data.msg);
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
             console.log(error)
             alert(error.message)
-            // this.error = error.response.data.error
         })
       },
       submit(){
@@ -246,14 +243,14 @@
         const formData = new FormData();
 
         // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-        const dto = { memberNo: 2, quizNo};
+        const dto = { memberNo: 1, quizNo};
         formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
         // 파일 데이터 추가
         const mainFile = new Blob([fileContent], { type: 'text/plain' });
         formData.append('Main', mainFile, 'Code.txt');
-        
-        const url = "http://192.168.1.112:8080/submit/normalMode"
+
+        const url = `${this.backURL}/submit/normalMode` 
         axios
         .post(url, formData, {
             withCredentials: true,
@@ -263,15 +260,11 @@
         })
         .then(response=>{
             this.output = response.data
-            // const outputDiv = document.getElementById('outputDiv');
-            // outputDiv.textContent = response.data;
-            // id.div.setValue(response.data.msg);
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
             console.log(error)
             alert(error.message)
-            // this.error = error.response.data.error
         })
       }
     },
