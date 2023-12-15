@@ -1,5 +1,7 @@
 <template>
   <div class="layout">
+    <div v-if="this.gameEnd" id="back-off" @click="backOff"></div>
+    <GameEnd id="end-popup" v-if="this.gameEnd" @close-popup="backOff"></GameEnd>
     <header>
       <div id="popup" class="popup">
         <div class="popup-content"></div>
@@ -159,8 +161,10 @@
 </template>
 <script>
 import axios from 'axios'
+import GameEnd from '../../components/game/GameEnd.vue'
 export default {
   name: 'addQuiz',
+  components: {GameEnd},
   data() {
     return {
       title: '',
@@ -173,7 +177,8 @@ export default {
       popup: false,
       inputValueList: [],
       outputValueList: [],
-      testcaseWarning: false
+      testcaseWarning: false,
+      gameEnd: false
     }
   },
   methods: {
@@ -401,53 +406,7 @@ export default {
       this.consoleCode = html
     },
     addQuizBtClick() {
-      let data = {
-        quizTitle: '방금올린걸수정해볼게요',
-        quizContent: '수정테스트랍니당',
-        quizInput: '인풋이랍니당',
-        quizOutput: '아웃풋이다/!?ㅋ',
-        outputType: 'Double',
-        memberNo: 1,
-        testcaseDTOList: [
-          {
-            testcaseOutput: '1임!',
-            testcaseInputDTOList: [
-              {
-                inputVar: 'String[] s1',
-                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
-              },
-              {
-                inputVar: 'Double',
-                testcaseInput: 3.889
-              }
-            ]
-          },
-          {
-            testcaseOutput: '2번째아!',
-            testcaseInputDTOList: [
-              {
-                inputVar: 'String[] s1',
-                testcaseInput: '"수정임", "하기싫어", "흑흑", "살려줘", "제발"'
-              },
-              {
-                inputVar: 'Double',
-                testcaseInput: 3.889
-              }
-            ]
-          }
-        ]
-      }
-
-      axios
-        .post('http://192.168.1.67:8080/codesparring/quiz', JSON.stringify(data), {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((res) => {
-          
-          location.href = '/'
-        })
+      this.gameEnd=true
     },
     onTcHelp() {
       if (this.testcaseWarning) {
@@ -508,7 +467,11 @@ export default {
         return
       }
       this.testcaseWarning = false
-    }
+    },
+    backOff() {
+      this.gameEnd=false
+      document.body.style.overflow = 'auto'
+    },
   }
 }
 </script>
@@ -945,5 +908,32 @@ div.addQuizBox > div.quizInfo > div.addOutput > table.outputTable > tr > td > in
   height: 20px;
   padding-right: 10px;
   bottom: 5%;
+}
+
+#end-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main5-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 400px;
+  height: 570px;
+  margin-top: 80px;
+  margin-left: 430px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+#back-off {
+  width: 100%;
+  height: 100%;
+
+  display: fixed;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  z-index: 1;
+
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
