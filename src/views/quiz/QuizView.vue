@@ -20,8 +20,12 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span v-if="!modifyBt" class="info-span"
-                :id="'quiz-tier-' + this.quizTier">{{ this.quizTier }}</span>
+              <span class="info-text">티어</span>:<span
+                v-if="!modifyBt"
+                class="info-span"
+                :id="'quiz-tier-' + this.quizTier"
+                >{{ this.quizTier }}</span
+              >
               <input v-if="modifyBt" id="quiz-tier-input" v-model="this.quizTier" />
             </div>
             <div class="info-div" id="author">
@@ -30,12 +34,18 @@
               }}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{ this.quizSubmitCnt
-              }}회</span>
+              <span class="info-text">제출된 횟수</span>:<span
+                class="info-span"
+                id="quiz-submit-cnt"
+                >{{ this.quizSubmitCnt }}회</span
+              >
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{ this.quizSuccessCnt
-              }}회</span>
+              <span class="info-text">성공한 횟수</span>:<span
+                class="info-span"
+                id="quiz-success-cnt"
+                >{{ this.quizSuccessCnt }}회</span
+              >
             </div>
             <div class="info-div" id="correct">
               <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{
@@ -50,20 +60,22 @@
               <div v-if="testcaseCnt == 0 && !modifyBt">존재하지 않습니다</div>
               <div class="testcase-box-for" v-for="(tc, index) in testcaseList" :key="tc">
                 <div class="testcase-no">
-                  [{{ index + 1 }}]&nbsp;&nbsp;&nbsp;<button v-if="!modifyBt" class="delete-tc-button" :id="tc.testcaseNo"
-                    @click="deleteTc">
+                  [{{ index + 1 }}]&nbsp;&nbsp;&nbsp;<button
+                    v-if="!modifyBt"
+                    class="delete-tc-button"
+                    :id="tc.testcaseNo"
+                    @click="deleteTc"
+                  >
                     삭제
                   </button>
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">입력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput"
-                    readonly />
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput" readonly />
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">출력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput"
-                    readonly />
+                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput" readonly />
                 </div>
                 <br />
               </div>
@@ -73,18 +85,15 @@
 
         <div id="content">
           <div class="index-name">문제 내용</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent"
-            readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-content" v-model="this.quizContent"></textarea>
 
           <div class="index-name">입력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input"
-            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input" :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-input" v-model="this.inputInfo"></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output"
-            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
+          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output" :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
           <textarea v-if="modifyBt" id="quiz-output" v-model="this.outputInfo"></textarea>
 
           <div id="button-area">

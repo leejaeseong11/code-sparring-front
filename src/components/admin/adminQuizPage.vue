@@ -9,7 +9,11 @@
 
         <div id="quiz-search-box">
           <input id="search-text" type="number" placeholder="문제 번호 검색" @focus="searchQuiz" />
-          <font-awesome-icon id="search-icon" :icon="['fa', 'magnifying-glass']" @click="searchQuiz" />
+          <font-awesome-icon
+            id="search-icon"
+            :icon="['fa', 'magnifying-glass']"
+            @click="searchQuiz"
+          />
         </div>
       </div>
 
@@ -28,12 +32,17 @@
       </div>
 
       <div v-if="!popup" id="quiz-page">
-        <button v-if="startPage !== 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
-        <button v-for="pg in endPage - startPage + 1" :key="pg"
+        <button v-if="startPage!==1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button
+          v-for="pg in endPage-startPage+1"
+          :key="pg"
           :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
-          :id="'pg' + (startPage + pg - 1)" @click="pgClick">
-          {{ startPage + pg - 1 }}</button>&nbsp;
-        <button v-if="endPage != totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+          :id="'pg'+(startPage+pg-1)"
+          @click="pgClick"
+        >
+          {{ startPage+pg-1 }}</button
+        >&nbsp;
+        <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
       </div>
     </div>
   </main>

@@ -27,10 +27,11 @@
             {{ totalPage }} : {{ startPage }} : {{ endPage }}
             <div v-if="!popup" id="report-page">
                 <button v-if="startPage > 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
-                <button v-for="pg in endPage - startPage + 1" :key="pg"
-                    :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
-                    :id="'pg' + (startPage + pg - 1)" @click="pgClick">
-                    {{ startPage + pg - 1 }}
+                <button v-for="pg in endPage-startPage+1"
+                    :key="pg"
+                    :class="['page-bt-num', { 'current-page': startPage + pg -1 == currentPage }]"
+                    :id="'pg' + (startPage + pg -1)" @click="pgClick">
+                    {{ startPage + pg -1 }}
                 </button>&nbsp;
                 <button v-if="endPage < totalPages" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
             </div>

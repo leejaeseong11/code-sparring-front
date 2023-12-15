@@ -20,8 +20,12 @@
               {{ roomInfo.roomMemberList.length }}/4
             </div>
             <div v-else class="room-member-number">0/4</div>
-            <button :class="{ 'button-disabled': roomInfo.roomStatus == 0 }" class="btn-custom-primary see-quiz-button"
-              v-bind:disabled="roomInfo.roomStatus == 0" @click="showQuizClickHandler">
+            <button
+              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              class="btn-custom-primary see-quiz-button"
+              v-bind:disabled="roomInfo.roomStatus == 0"
+              @click="showQuizClickHandler"
+            >
               문제보기
             </button>
             <div class="modal-wrap" v-show="modalCheck" @click="showQuizClickHandler">
@@ -31,7 +35,11 @@
                   <div>방 문제 확인</div>
                 </h5>
                 <ShowQuizSimply v-model:quizInfo="quizInfo" />
-                <button id="modal-close-button" class="btn-custom-primary" @click="showQuizClickHandler">
+                <button
+                  id="modal-close-button"
+                  class="btn-custom-primary"
+                  @click="showQuizClickHandler"
+                >
                   닫기
                 </button>
               </div>

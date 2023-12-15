@@ -12,8 +12,11 @@
           <div id="quiz-info">
             <div class="index-name">문제 정보</div>
             <div class="info-div" id="tier">
-              <span class="info-text">티어</span>:<span class="info-span" :id="'quiz-tier-' + this.quizTier">{{
-                this.quizTier }}</span>
+              <span class="info-text">티어</span>:<span
+                class="info-span"
+                :id="'quiz-tier-' + this.quizTier"
+                >{{ this.quizTier }}</span
+              >
             </div>
             <div class="info-div" id="author">
               <span class="info-text">출제자</span>:<span class="info-span" id="quiz-author">{{
@@ -21,12 +24,18 @@
               }}</span>
             </div>
             <div class="info-div" id="submit-cnt">
-              <span class="info-text">제출된 횟수</span>:<span class="info-span" id="quiz-submit-cnt">{{ this.quizSubmitCnt
-              }}회</span>
+              <span class="info-text">제출된 횟수</span>:<span
+                class="info-span"
+                id="quiz-submit-cnt"
+                >{{ this.quizSubmitCnt }}회</span
+              >
             </div>
             <div class="info-div" id="success-cnt">
-              <span class="info-text">성공한 횟수</span>:<span class="info-span" id="quiz-success-cnt">{{ this.quizSuccessCnt
-              }}회</span>
+              <span class="info-text">성공한 횟수</span>:<span
+                class="info-span"
+                id="quiz-success-cnt"
+                >{{ this.quizSuccessCnt }}회</span
+              >
             </div>
             <div class="info-div" id="correct">
               <span class="info-text">정답률</span>:<span class="info-span" id="quiz-correct">{{
@@ -36,12 +45,20 @@
           </div>
 
           <div class="index-name">입력값 설명</div>
-          <textarea class="readonlyTextarea" id="quiz-input"
-            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
+          <textarea
+            class="readonlyTextarea"
+            id="quiz-input"
+            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo"
+            readonly
+          ></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <textarea class="readonlyTextarea" id="quiz-output"
-            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
+          <textarea
+            class="readonlyTextarea"
+            id="quiz-output"
+            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo"
+            readonly
+          ></textarea>
         </div>
 
         <div id="content">
@@ -62,15 +79,19 @@
               </div>
             </div>
           </div>
-          <div v-if="this.rptOkCnt != 0">
-            <hr>
-          </div>
-          <textarea class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
+          <div v-if="this.rptOkCnt!=0"><hr></div>
+          <textarea
+            class="readonlyTextarea"
+            id="quiz-content"
+            v-model="this.quizContent"
+            readonly
+          ></textarea>
         </div>
 
         <div id="code-area">
           <div class="index-name">제출한 코드</div>
-          <textarea class="readonlyTextarea" id="quiz-code" readonly>{{ fileContent }}</textarea>
+          <textarea class="readonlyTextarea" id="quiz-code"
+          readonly>{{fileContent}}</textarea>
 
           <div id="button-area">
             <div></div>

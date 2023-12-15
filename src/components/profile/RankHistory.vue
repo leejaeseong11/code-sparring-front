@@ -10,9 +10,11 @@
       </div>
       <div>
         <div id="rank-cnt">총 랭크 게임 {{ this.win + this.lose + this.draw }}회</div>
-        <div id="rank-result"><span style="color: var(--main4-color)">{{ this.win }}</span>승 <span
-            style="color: var(--red-color)">{{ this.lose }}</span>패 <span style="color: var(--green-color);">{{ this.draw
-            }}</span>무</div>
+        <div id="rank-result">
+          <span style="color: var(--main4-color)">{{ this.win }}</span>승
+          <span style="color: var(--red-color)">{{ this.lose }}</span>패
+          <span style="color: var(--green-color);">{{ this.draw }}</span>무
+        </div>
       </div>
     </div>
 

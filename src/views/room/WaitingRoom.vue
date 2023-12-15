@@ -39,8 +39,17 @@
         </div>
       </div>
       <div id="room-chat-input-container">
-        <input type="text" id="chat-input" v-model="chatMessage" @keypress.enter="sendMessage($event)" />
-        <button id="chat-input-button" placeholder="채팅을 입력하세요." @click="sendMessage($event)">
+        <input
+          type="text"
+          id="chat-input"
+          v-model="chatMessage"
+          @keypress.enter="sendMessage($event)"
+        />
+        <button
+          id="chat-input-button"
+          placeholder="채팅을 입력하세요."
+          @click="sendMessage($event)"
+        >
           입력
         </button>
       </div>
