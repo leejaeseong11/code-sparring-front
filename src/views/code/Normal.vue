@@ -59,13 +59,13 @@
 <script>
 import Monaco from '../../components/code/NormalMonaco.vue'
 import AddReport from '../../components/report/AddReport.vue'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
     name: 'normal',
     props: ['quizInfo'],
-    components: {Monaco, AddReport},
-    data(){
-        return{
+    components: { Monaco, AddReport },
+    data() {
+        return {
             quizNo: '',
             testcaseNo: '',
             testcaseList: [],
@@ -82,15 +82,15 @@ export default {
             return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
         },
     },
-    
+
     methods: {
-        reportButtonClickHandler(){
+        reportButtonClickHandler() {
             this.reportModal = true
         },
         offReportModal() {
             this.reportModal = false
         },
-        exitButtonClickHandler(){
+        exitButtonClickHandler() {
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -110,8 +110,8 @@ export default {
                 setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
 
             }
-            if(this.seconds === 0 && this.minutes === 0){
-                if(confirm("시간이 초과되어 메인으로 이동합니다")){
+            if (this.seconds === 0 && this.minutes === 0) {
+                if (confirm("시간이 초과되어 메인으로 이동합니다")) {
                     this.$router.push({ path: `/` })
 
                 }
@@ -134,9 +134,9 @@ export default {
             return confirmationMessage; // For some older browsers
         },
 
-        
+
     },
-    created(){
+    created() {
         window.addEventListener('beforeunload', this.beforeUnloadHandler);
         //타이머 시작
         this.updateTimer();
@@ -144,34 +144,34 @@ export default {
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
         apiClient
-        .get(url, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => {
-            this.quizNo = response.data.quizNo
-            this.quizContent = response.data.quizContent
-            this.quizTitle = response.data.quizTitle
-
-            const url2 = `${this.backURL}/submit/${this.quizNo}`
-
-            apiClient
-            .get(url2, {
+            .get(url, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
             .then((response) => {
-                this.testcaseList = response.data
+                this.quizNo = response.data.quizNo
+                this.quizContent = response.data.quizContent
+                this.quizTitle = response.data.quizTitle
+
+                const url2 = `${this.backURL}/submit/${this.quizNo}`
+
+                apiClient
+                    .get(url2, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.testcaseList = response.data
+                    })
+                    .catch(() => {
+                        alert('테스트케이스 조회에 실패하였습니다')
+                    })
             })
-            .catch(()=>{
-                alert('테스트케이스 조회에 실패하였습니다')
+            .catch(() => {
+                alert('문제 정보 조회에 실패하였습니다')
             })
-        })
-        .catch(() => {
-            alert('문제 정보 조회에 실패하였습니다')
-        })
 
     },
     beforeDestroy() {
@@ -182,11 +182,11 @@ export default {
 </script>
 
 <style scoped>
-    #timer-content.timer-expired {
+#timer-content.timer-expired {
     color: red;
-    }
+}
 
-    #code-layout {
+#code-layout {
     min-width: 1280px;
     width: 100vh;
     height: 100vh;
@@ -196,17 +196,17 @@ export default {
 
     overflow: visible;
     white-space: nowrap;
-    }
+}
 
-    body.flex-container{
-        display: inline-flex;
-        justify-content: center; 
-        height: 100vh;
-        padding-bottom: 10px;
-    }
+body.flex-container {
+    display: inline-flex;
+    justify-content: center;
+    height: 100vh;
+    padding-bottom: 10px;
+}
 
 
-    #code-side-layout {
+#code-side-layout {
     width: 260px;
     padding: 10px;
     margin-top: 90px;
@@ -218,135 +218,140 @@ export default {
 
     border: 3px solid var(--main5-color);
     border-radius: 10px;
+}
+
+
+#problem-des-container {
+    box-sizing: border-box;
+    height: 300px;
+    margin-bottom: 10px;
+    background-color: var(--white-color);
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#problem-des-content {
+    box-sizing: border-box;
+    font-size: 0.8rem;
+    padding: 8px;
+}
+
+
+#testcase-des-container {
+    height: 250px;
+    margin-bottom: 10px;
+    background-color: var(--white-color);
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#testcase-des-content {
+
+    font-size: 0.8rem;
+    padding: 8px
+}
+
+.monaco {
+    width: 760px;
+    margin-top: 90px;
+    margin-right: 10px;
+    /* margin-left: 10px;  */
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+
+}
+
+.button {
+    padding: 8px;
+    font-size: 1.5rem;
+
+    color: var(--main1-color);
+    background-color: var(--main4-color);
+    border: none;
+    border-radius: 6px;
+
+    &:hover {
+        background-color: var(--main4-hover-color);
     }
+}
 
+#exit {
+    color: var(--main1-color);
+    background-color: var(--red-color);
+    border: none;
+    border-radius: 6px;
 
-    #problem-des-container{
-        box-sizing: border-box;
-        height: 300px;
-        margin-bottom: 10px;
-        background-color: var(--white-color);
-        border: 3px solid var(--main5-color);
-        border-radius: 10px;
-
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
+    &:hover {
+        background-color: var(--red-hover-color);
     }
+}
 
-    #problem-des-content{
-        box-sizing: border-box;
-        font-size: 0.8rem;
-        padding: 8px;
-    }
+#relative-code-layout {
+    width: 260px;
+    padding: 10px;
+    margin-top: 90px;
+    margin-right: 10px;
 
+    display: flex;
+    flex-direction: column;
+    align-items: left;
 
-    #testcase-des-container{
-        height: 250px;
-        margin-bottom: 10px;
-        background-color: var(--white-color);
-        border: 3px solid var(--main5-color);
-        border-radius: 10px;
-
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-    }
-    #testcase-des-content{
-
-        font-size: 0.8rem;
-        padding: 8px
-    }
-    .monaco {
-        width: 760px;
-        margin-top: 90px;
-        margin-right: 10px;
-        /* margin-left: 10px;  */
-        border: 3px solid var(--main5-color);
-        border-radius:10px;
-        
-    }
-
-    .button{
-        padding: 8px;
-        font-size: 1.5rem;
-
-        color: var(--main1-color);
-        background-color: var(--main4-color);
-        border: none;
-        border-radius: 6px;
-
-        &:hover {
-            background-color: var(--main4-hover-color);
-        }
-    }
-
-    #exit{
-        color: var(--main1-color);
-        background-color: var(--red-color);
-        border: none;
-        border-radius: 6px;
-
-        &:hover {
-            background-color: var(--red-hover-color);
-        }
-    }
-
-    #relative-code-layout{
-        width: 260px;
-        padding: 10px;
-        margin-top: 90px;
-        margin-right: 10px;
-
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-
-        border: 3px solid var(--main5-color);
-        border-radius: 10px;
-    }
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+}
 
 
-    .title{
-        padding-left: 10px;
-    }
-    #relative-code-container{
-        /* display: flex; */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        
-        
-    }
-    #relative-code-content{
-        width: 200px;
-        height: 26vh;
-        margin-bottom: 16px;
-        border: 3px solid var(--main5-color);
-        border-radius: 10px;
+.title {
+    padding-left: 10px;
+}
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+#relative-code-container {
+    /* display: flex; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-        background-color: var(--white-color);
-        /* justify-content: space-around; */
-        
-    }
-    .testcase-div{
-        background-color: var(--main2-color);
-        background-clip: content-box;
-    }
 
-    #testcase-hr{
-        border: 0px;
-        height: 3px;
-        background-color: var(--black-color);
-        margin:16px 0px 0px
-    }
+}
 
-    .readonlyTextarea {
+#relative-code-content {
+    width: 200px;
+    height: 26vh;
+    margin-bottom: 16px;
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--white-color);
+    /* justify-content: space-around; */
+
+}
+
+.testcase-div {
+    background-color: var(--main2-color);
+    background-clip: content-box;
+}
+
+#testcase-hr {
+    border: 0px;
+    height: 3px;
+    background-color: var(--black-color);
+    margin: 16px 0px 0px
+}
+
+.readonlyTextarea {
     width: 98%;
     height: 250px;
     overflow: auto;
@@ -354,32 +359,33 @@ export default {
     outline: none;
     border: none;
     resize: none;
-    }
-    ::-webkit-scrollbar {
+}
+
+::-webkit-scrollbar {
     width: 0;
-    }
-    #report-popup {
-        padding: 10px;
-        position: absolute;
-        background-color: var(--main1-color);
-        border: 8px solid var(--main5-color);
-        border-radius: 10px;
-        width: 700px;
-        height: 320px;
-        margin-top: 5%;
-        margin-left: 17%;
-        z-index: 2;
-    }
+}
 
-    #back-off {
-        width: 100%;
-        height: 100%;
-        display: fixed;
-        position: fixed;
-        top: 0%;
-        left: 0%;
-        z-index: 1;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
+#report-popup {
+    padding: 10px;
+    position: fixed;
+    background-color: var(--main1-color);
+    border: 8px solid var(--main5-color);
+    border-radius: 10px;
+    width: 700px;
+    height: 320px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
 
-</style>
+#back-off {
+    width: 100%;
+    height: 100%;
+    display: fixed;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}</style>

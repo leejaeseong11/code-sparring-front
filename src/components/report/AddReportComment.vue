@@ -8,7 +8,7 @@
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고사유</div>
-            <select class="report-title" id="report-reason" :disabled="true" v-model="reportDetail.reportType">
+            <select class="report-title" id="report-reason" :disabled="true" v-model="reportDetail.reportType" style="background-color: transparent;">
                 <option value="1">테스트케이스 추가요청</option>
                 <option value="2">문제 오류</option>
                 <option value="3">기타</option>
@@ -16,7 +16,7 @@
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고내용</div>
-            <textarea v-model="reportDetail.reportContent" class="report-title" readonly></textarea>
+            <textarea v-model="reportDetail.reportContent" class="report-title" readonly style="background-color: transparent;"></textarea>
         </div>
         <div class="report-box flex-container">
             <div class="report-title">조치내역</div>
@@ -199,6 +199,7 @@ button {
 #edit-bt {
     background-color: var(--green-color);
     border-color: var(--green-color);
+    font-size: 1.3rem;
 
     &:hover {
         background-color: var(--green-hover-color);
@@ -206,11 +207,12 @@ button {
     }
 }
 
-
 #delete-bt {
-
     background-color: var(--red-color);
     border-color: var(--red-color);
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 1.3rem;
 
     &:hover {
         background-color: var(--red-hover-color);
@@ -219,11 +221,10 @@ button {
     }
 }
 
-
 #cancle-bt {
     background-color: var(--main4-color);
     border-color: var(--main4-color);
-    margin-right: 10px;
+    font-size: 1.3rem;
 
     &:hover {
         background-color: var(--main4-hover-color);
