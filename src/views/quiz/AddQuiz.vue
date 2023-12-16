@@ -4,18 +4,26 @@
     <div id="header">문제 만들기</div>
 
     <div id="title">
-      <input id="title-obj" placeholder="제목을 입력하세요" />
+      <input id="title-obj" placeholder="제목을 입력하세요" v-model="this.title" />
     </div>
 
     <div id="content">
       <div id="testcase">
         <div id="input-info">
           <div class="index">| 입력값 설명</div>
-          <textarea id="input-textarea" placeholder="입력값을 설명하세요"></textarea>
+          <textarea
+            id="input-textarea"
+            placeholder="입력값을 설명하세요"
+            v-model="this.inputInfo"
+          ></textarea>
         </div>
         <div id="output-info">
           <div class="index">| 출력값 설명</div>
-          <textarea id="output-textarea" placeholder="출력값을 설명하세요"></textarea>
+          <textarea
+            id="output-textarea"
+            placeholder="출력값을 설명하세요"
+            v-model="this.outputInfo"
+          ></textarea>
         </div>
         <div id="testcase-value">
           <div class="index">
@@ -31,16 +39,21 @@
         </div>
 
         <div id="answer-code">
-            <button id="tc-add-button" @click="addTestcase" @mouseover="hoverBt" @mouseout="hoverBt">테스트케이스 추가</button>&nbsp;
-            <span v-if="tcHelp" id="help-tc-add">클릭 시 목록에 입력칸이 추가됩니다</span>
+          <button id="tc-add-button" @click="addTestcase" @mouseover="hoverBt" @mouseout="hoverBt">
+            테스트케이스 추가</button
+          >&nbsp;
+          <span v-if="tcHelp" id="help-tc-add">클릭 시 목록에 입력칸이 추가됩니다</span>
         </div>
       </div>
 
       <div id="quiz-info">
         <div class="index">| 문제 내용</div>
-        <textarea id="quiz-content" placeholder="문제를 설명하세요"></textarea>
+        <textarea
+          id="quiz-content"
+          placeholder="문제를 설명하세요"
+          v-model="this.content"
+        ></textarea>
         <div id="etc-button">
-          
           <label for="fileInput" style="display: flex; justify-content: space-between">
             <button id="fileUpload" @click="openFile()">정답 코드 첨부</button>
             <div id="fileName" title="">선택된 파일 없음</div>
@@ -48,7 +61,7 @@
           <input type="file" id="fileInput" accept=".java" @change="updateFileName" />
           <div id="right-button">
             <button id="cancle-button" @click="cancle">취소</button>&nbsp;
-            <button id="add-button">저장</button>
+            <button id="add-button" @click="saveQuiz">저장</button>
           </div>
         </div>
       </div>
@@ -56,7 +69,9 @@
   </div>
 </template>
 <script>
+import { apiClient } from '@/axios-interceptor'
 import TestcaseHelp from '../../components/quiz/TestcaseHelp.vue'
+
 export default {
   name: 'AddQuiz',
   components: { TestcaseHelp },
@@ -64,15 +79,20 @@ export default {
     return {
       testcaseCnt: 10,
       helpPop: false,
-      tcHelp: false
+      tcHelp: false,
+      title: '',
+      content: '',
+      inputInfo: '',
+      outputInfo: '',
+      testcase: []
     }
   },
   methods: {
     addTestcase() {
-        this.testcaseCnt++
+      this.testcaseCnt++
     },
     hoverBt() {
-        this.tcHelp=!this.tcHelp
+      this.tcHelp = !this.tcHelp
     },
     openFile() {
       document.getElementById('fileInput').click()
@@ -80,10 +100,10 @@ export default {
     updateFileName(e) {
       const input = e.target
       const fileNameDiv = document.getElementById('fileName')
-      if(input.files[0]==null) {
+      if (input.files[0] == null) {
         fileNameDiv.innerHTML = '선택된 파일 없음'
         fileNameDiv.title = ''
-       } else {
+      } else {
         fileNameDiv.innerHTML = input.files[0].name
         fileNameDiv.title = input.files[0].name
       }
@@ -92,7 +112,57 @@ export default {
       this.helpPop = !this.helpPop
     },
     cancle() {
-        location.href='/'
+        location.href = '/'
+    },
+    saveQuiz() {
+        if(this.title=='') {
+            alert('제목을 입력하세요')
+            return
+        } else if(this.content=='') {
+            alert('내용을 입력하세요')
+            return
+        }
+
+      const url = `${this.backURL}/quiz`
+      const inputValue = document.querySelectorAll('.input-obj')
+      const outputValue = document.querySelectorAll('.output-obj')
+
+      this.testcase=[]
+      for (let i = 0; i < this.testcaseCnt; i++) {
+        if(inputValue[i].value=='' || outputValue[i].value=='') continue
+        this.testcase.push({
+          input: inputValue[i].value,
+          output: outputValue[i].value
+        })
+      }
+
+      if(this.testcase.length<10) {
+        alert('테스트케이스를 10개 이상 작성하세요')
+        return
+      }
+
+      const data = {
+        quizTitle: this.title,
+        quizContent: this.content,
+        quizInput: this.inputInfo,
+        quizOutput: this.outputInfo,
+        // memberNo: 1,
+        testcaseDTOList: this.testcase
+      }
+      apiClient
+        .post(url, data, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(() => {
+          alert('문제가 추가되었습니다')
+          location.href = '/'
+        })
+        .catch(() => {
+          alert('문제 추가에 실패하였습니다')
+        })
     }
   }
 }
@@ -276,11 +346,11 @@ button {
 }
 
 #help-tc-add {
-    background-color: var(--main2-color);
-    color: var(--white-color);
-    padding: 6px;
-    border: 1px solid var(--main2-color);
-    border-radius: 5px;
+  background-color: var(--main2-color);
+  color: var(--white-color);
+  padding: 6px;
+  border: 1px solid var(--main2-color);
+  border-radius: 5px;
 }
 
 #cancle-button {
