@@ -7,7 +7,10 @@
             <div id="problem-des-title" class="title">문제설명</div>
             <div id="problem-des-container">
                 <div id="problem-des-content">
-                    <span v-html="replaceNewlines(this.quizContent)"></span>
+                    <textarea
+                        class="readonlyTextarea"
+                        :value="this.quizContent"
+                        readonly></textarea>
                 </div>
             </div>
 
@@ -54,7 +57,7 @@
 
 <script>
 import Monaco from '../../components/code/NormalMonaco.vue'
-import axios from 'axios';
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'normal',
     components: {Monaco},
@@ -64,6 +67,7 @@ export default {
             testcaseNo: '',
             testcaseList: [],
             quizContent: '',
+            quizTitle: '',
             timerRunning: true,
             minutes: 60,
             seconds: 0,
@@ -111,25 +115,47 @@ export default {
         replaceNewlines(text) {
             return text.replace(/\n/g, '<br>');
         },
+        // beforeunload 이벤트 핸들러
+        beforeUnloadHandler(event) {
+            // 여기에 알림창을 띄우는 로직 추가
+            const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+            const shouldNavigateHome = window.confirm(confirmationMessage);
+            if (shouldNavigateHome) {
+                this.$router.push({ path: `/` });
+            }
+            return confirmationMessage; // For some older browsers
+        },
 
         
     },
     created(){
+        window.addEventListener('beforeunload', this.beforeUnloadHandler);
         //타이머 시작
         this.updateTimer();
 
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
-        axios
-        .get(url)
+        apiClient
+        .get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then((response) => {
             this.quizNo = response.data.quizNo
             this.quizContent = response.data.quizContent
+            this.quizTitle = response.data.quizTitle
 
             const url2 = `${this.backURL}/submit/${this.quizNo}`
 
-            axios
-            .get(url2)
+            apiClient
+            .get(url2, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             .then((response) => {
                 this.testcaseList = response.data
             })
@@ -142,6 +168,10 @@ export default {
         })
 
     },
+    beforeDestroy() {
+        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+    },
 }
 
 </script>
@@ -153,7 +183,8 @@ export default {
 
 #code-layout {
   min-width: 1280px;
-  height: max-content;
+  width: 100vh;
+  height: 100vh;
 
   display: flex;
   justify-content: space-around;
@@ -165,7 +196,7 @@ export default {
 body.flex-container{
     display: inline-flex;
     justify-content: center; 
-    height: 792px;
+    height: 100vh;
     padding-bottom: 10px;
 }
 
@@ -187,7 +218,7 @@ body.flex-container{
 
 #problem-des-container{
     box-sizing: border-box;
-    height: 250px;
+    height: 300px;
     margin-bottom: 10px;
     background-color: var(--white-color);
     border: 3px solid var(--main5-color);
@@ -196,14 +227,12 @@ body.flex-container{
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    word-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
 }
 
 #problem-des-content{
     box-sizing: border-box;
     font-size: 0.8rem;
     padding: 8px;
-    overflow-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
 }
 
 
@@ -287,7 +316,7 @@ body.flex-container{
 }
 #relative-code-content{
     width: 200px;
-    height: 22vh;
+    height: 26vh;
     margin-bottom: 16px;
     border: 3px solid var(--main5-color);
     border-radius: 10px;
@@ -310,6 +339,19 @@ body.flex-container{
     height: 3px;
     background-color: var(--black-color);
     margin:16px 0px 0px
+}
+
+.readonlyTextarea {
+  width: 98%;
+  height: 250px;
+  overflow: auto;
+  cursor: default;
+  outline: none;
+  border: none;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0;
 }
 
 </style>

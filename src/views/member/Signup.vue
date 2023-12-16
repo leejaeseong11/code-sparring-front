@@ -76,7 +76,7 @@
             </p>
             <div id="info-agree">
                 <!-- <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed" @click="clearAllErrMsg"> -->
-                <input type="checkbox" id="privacy-checkbox"  v-model="privacyAgreed">
+                <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed">
                 위의 내용에 동의합니다.
             </div>
 
@@ -84,7 +84,7 @@
             <!-- <button disabled="false"> {{ flag }}</button> -->
             <!-- <button id="submit" :disabled="!flag">가입하기</button> -->
             <button id="submit">가입하기</button>
-           
+
             <!-- <button id="submit" @click="checkForm" @focus="clearAllErrMsg" type="submit">가입하기</button> -->
             <!-- <div id="result-fail">{{ resultFailMsg }}</div> -->
             <div class="exist">
@@ -98,8 +98,7 @@
 
 <script>
 import ProfileImgPopup from './ProfileImgPopup.vue';
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
     name: "Signup",
     components: { ProfileImgPopup },
@@ -140,7 +139,7 @@ export default {
             isIdValid: false,
             isNickValid: false,
             isPwdValid: false,
-            flag : false,
+            flag: false,
 
 
         }
@@ -149,20 +148,20 @@ export default {
 
     },
     methods: {
-        test(){
+        test() {
             this.privacyAgreed = !this.privacyAgreed
             this.clearAllErrMsg()
         },
         isFormValid() {
-        // alert("isFormValid")
-        const valid = (
-            this.privacyAgreed &&
-            this.isIdValid &&
-            this.isNickValid
-        );
-        // console.log(" isFormValid",  this.privacyAgreed, this.isIdValid,  this.isNickValid)
-        return valid;
-    },
+            // alert("isFormValid")
+            const valid = (
+                this.privacyAgreed &&
+                this.isIdValid &&
+                this.isNickValid
+            );
+            // console.log(" isFormValid",  this.privacyAgreed, this.isIdValid,  this.isNickValid)
+            return valid;
+        },
         openProfilePopup() {
             this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false : true;
         },
@@ -190,7 +189,7 @@ export default {
                 }
             });
             console.log("clearAllErrMsg after call isFormValid privacyAgreed=", this.privacyAgreed)
-            
+
         },
 
         validateId() {
@@ -213,20 +212,24 @@ export default {
             const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
             console.log(url)
             apiClient
-                .post(url)
+                .post(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then(response => {
                     const isDuplicate = response.data;
                     if (!isDuplicate) {
                         this.errMsg.id.success = '사용 가능한 아이디입니다';
                         this.errMsg.id.fail = '';
                         this.isIdCheck = true;
-                    } 
+                    }
                 })
                 .catch(error => {
-                        this.errMsg.id.fail = error.response.data.errors[0];
-                        this.errMsg.id.success = '';
-                        this.isIdValid = false;
-                        this.isIdCheck = false;
+                    this.errMsg.id.fail = error.response.data.errors[0];
+                    this.errMsg.id.success = '';
+                    this.isIdValid = false;
+                    this.isIdCheck = false;
                 });
         },
 
@@ -289,14 +292,19 @@ export default {
 
         btNickDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupName`
-            apiClient.post(url, `memberName=${this.c.nick}`)
+            apiClient
+                .post(url, `memberName=${this.c.nick}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then(response => {
                     const isDuplicate = response.data;
                     console.log(response)
                     if (!isDuplicate) {
                         this.errMsg.nick.success = '사용 가능한 닉네임입니다';
                         this.errMsg.nick.fail = '';
-                    } 
+                    }
                 })
                 .catch(error => {
                     this.errMsg.nick.fail = '이미 사용중인 닉네임입니다';
@@ -306,7 +314,7 @@ export default {
                 });
         },
         checkForm() {
-            if (this.c.id == null || !this.isIdValid ) {
+            if (this.c.id == null || !this.isIdValid) {
                 alert("아이디를 확인하세요");
                 return;
             }
@@ -323,7 +331,7 @@ export default {
                 return;
             }
 
-            if (this.c.nick == null || this.c.nick.trim() === ""  || !this.isNickValid) {
+            if (this.c.nick == null || this.c.nick.trim() === "" || !this.isNickValid) {
                 alert("닉네임을 확인하세요");
                 return;
             }
@@ -335,24 +343,24 @@ export default {
         },
         signupFormSubmitHandler(e) {
             let data = {
-                memberInfo:this.intro,
-                memberId:this.c.id,
-                memberPwd:this.c.pwd,
-                memberName:this.c.nick,
-                memberProfileImg:this.memberProfileImg
-                }
-                // JSON.stringify(data)
+                memberInfo: this.intro,
+                memberId: this.c.id,
+                memberPwd: this.c.pwd,
+                memberName: this.c.nick,
+                memberProfileImg: this.memberProfileImg
+            }
+            // JSON.stringify(data)
             apiClient
                 .post(`${this.backURL}/auth/signup`, data, {
-                    headers:{
-                        'Content-Type': 'application/json'       
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
                 })
                 .then(response => {
                     console.log(response);
                     alert("가입에 성공했습니다")
                     location.href = '/login'
-                    
+
                 })
                 .catch(error => {
                     // alert(error.message)
@@ -372,6 +380,7 @@ export default {
     position: absolute;
     background-color: var(--main1-color);
 }
+
 .logo {
     text-align: center;
     margin-top: 20px;
@@ -493,7 +502,7 @@ option {
 
     z-index: 3;
 
-        top: 100px;
+    top: 100px;
 }
 
 .content {

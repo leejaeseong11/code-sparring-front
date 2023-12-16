@@ -6,7 +6,9 @@
         id="room-manager-icon"
         :icon="['fas', 'crown']"
       />
-      <button v-show="member.hostStatus == 1" class="room-resign-button">x</button>
+      <button v-show="(member.hostStatus == 1) & isRoomManager" class="room-resign-button">
+        x
+      </button>
       <img
         class="profile-image"
         :src="'/images/icon/' + member.memberProfileImg + '.png'"
@@ -30,6 +32,8 @@
   ></div>
 </template>
 <script>
+import { apiClient } from '@/axios-interceptor'
+
 export default {
   name: 'RoomMember',
   props: ['member'],
@@ -37,6 +41,11 @@ export default {
     return {
       isRoomManager: false
     }
+  },
+  mounted() {
+    apiClient.get(`${this.backURL}/room-member`).then((response) => {
+      console.log(response)
+    })
   }
 }
 </script>

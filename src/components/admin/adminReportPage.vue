@@ -41,8 +41,7 @@
     </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 export default {
     name: 'AdminReportPage',
     data() {
@@ -71,10 +70,14 @@ export default {
             this.currentPage = this.$route.params.currentPage
             const url = `${this.backURL}/admin/report/all?page=${this.currentPage - 1}`
             apiClient
-                .get(url)
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then((res) => {
                     console.log(res.data)
-                    this.reportList = res.data.content 
+                    this.reportList = res.data.content
                     this.totalPage = res.data.totalPages
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
                     this.endPage = Math.ceil(res.data.totalElements / 10);
@@ -97,7 +100,11 @@ export default {
             this.currentPage = this.$route.params.currentPage
             const url = `${this.backURL}/admin/report/commentNull?page=${this.currentPage - 1}`
             apiClient
-                .get(url)
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then((res) => {
                     this.reportList = res.data.content
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;

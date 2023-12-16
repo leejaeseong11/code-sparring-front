@@ -7,7 +7,10 @@
                 <div id="problem-des-title" class="title">문제설명</div>
                 <div id="problem-des-container">
                     <div id="problem-des-content">
-                        <span v-html="replaceNewlines(this.quizContent)"></span>
+                        <textarea
+                        class="readonlyTextarea"
+                        :value="this.quizContent"
+                        readonly></textarea>
                     </div>
                 </div>
     
@@ -26,7 +29,6 @@
                         <hr id="testcase-hr">
                     </div>
                 </div>
-                <button class="button" @:click="reportButtonClickHandler">문제신고하기</button>
                 
                 <div id="timer-title" class="title">제한시간</div>
                 <div id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</div>
@@ -52,95 +54,130 @@
     </div>
     </template>
     
-    <script>
-    import Monaco from '../../components/code/RankMonaco.vue'
-    import axios from 'axios';
-    export default {
-        name: 'rank',
-        components: {Monaco},
-        data(){
-            return{
-                quizNo: '',
-                testcaseNo: '',
-                testcaseList: [],
-                quizContent: '',
-                timerRunning: true,
-                minutes: 60,
-                seconds: 0,
-                
+<script>
+import Monaco from '../../components/code/RankMonaco.vue'
+import { apiClient } from '@/axios-interceptor'
+export default {
+    name: 'rank',
+    components: { Monaco },
+    data() {
+        return {
+            quizNo: '',
+            testcaseNo: '',
+            testcaseList: [],
+            quizContent: '',
+            timerRunning: true,
+            minutes: 60,
+            seconds: 0,
+
+        }
+    },
+    computed: {
+        formattedTime() {
+            return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
+        },
+    },
+
+    methods: {
+        exitButtonClickHandler() {
+            this.$router.push({ path: `/` })
+        },
+        updateTimer() {
+            if (this.minutes === 0 && this.seconds === 0) {
+                this.timerRunning = false; // 타이머 종료
+                return;
+            }
+
+            if (this.seconds === 0) {
+                this.minutes--;
+                this.seconds = 59;
+            } else {
+                this.seconds--;
+            }
+
+            if (this.timerRunning) {
+                setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
+
+            }
+            if (this.seconds === 0 && this.minutes === 0) {
+                if (confirm("시간이 초과되어 메인으로 이동합니다")) {
+                    this.$router.push({ path: `/` })
+
+                }
             }
         },
-        computed: {
-            formattedTime() {
-                return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
-            },
+        // /n을 <br> 태그로 대체하는 메서드
+        replaceNewlines(text) {
+            return text.replace(/\n/g, '<br>');
         },
-        
-        methods: {
-            reportButtonClickHandler(){
-                //신고팝업창
-            },
-            exitButtonClickHandler(){
-                this.$router.push({ path: `/` })
-            },
-            updateTimer() {
-                if (this.minutes === 0 && this.seconds === 0) {
-                    this.timerRunning = false; // 타이머 종료
-                    return;
-                }
-    
-                if (this.seconds === 0) {
-                    this.minutes--;
-                    this.seconds = 59;
-                } else {
-                    this.seconds--;
-                }
-    
-                if (this.timerRunning) {
-                    setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
-    
-                }
-                if(this.seconds === 0 && this.minutes === 0){
-                    if(confirm("시간이 초과되어 메인으로 이동합니다")){
-                        this.$router.push({ path: `/` })
-    
-                    }
-                }
-            },
-            // /n을 <br> 태그로 대체하는 메서드
-            replaceNewlines(text) {
-                return text.replace(/\n/g, '<br>');
-            },
-    
-            
+        // beforeunload 이벤트 핸들러
+        beforeUnloadHandler(event) {
+            // 여기에 알림창을 띄우는 로직 추가
+            const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+            const shouldNavigateHome = window.confirm(confirmationMessage);
+            if (shouldNavigateHome) {
+                this.$router.push({ path: `/` });
+            }
+            return confirmationMessage; // For some older browsers
         },
-        created(){
-            //타이머 시작
-            this.updateTimer();
-    
-            // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
-            const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.rankNo}`
-            axios
-            .get(url)
+
+
+    },
+    created() {
+        window.addEventListener('beforeunload', this.beforeUnloadHandler);
+        //타이머 시작
+        this.updateTimer();
+
+
+        const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
+        apiClient
+            .get(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             .then((response) => {
                 this.quizNo = response.data.quizNo
-                this.quizContent = response.data.quizContent
-    
-                const url2 = `${this.backURL}/submit/${this.quizNo}`
-    
-                axios
-                .get(url2)
-                .then((response) => {
-                    this.testcaseList = response.data
-                })
-                .catch(()=>{
-                    alert('테스트케이스 조회에 실패하였습니다')
-                })
+
+                const url2 = `${this.backURL}/quiz/${this.quizNo}`
+                apiClient
+                    .get(url2, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.quizContent = response.data.quizContent
+                    })
+                    .catch(() => {
+                        alert('문제 조회에 실패하였습니다')
+                    })
+
+
+                const url3 = `${this.backURL}/submit/${this.quizNo}`
+                apiClient
+                    .get(url3, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.testcaseList = response.data
+                    })
+                    .catch(() => {
+                        alert('테스트케이스 조회에 실패하였습니다')
+                    })
             })
             .catch(() => {
                 alert('문제 정보 조회에 실패하였습니다')
             })
-    
+
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
         },
     }
     
@@ -153,6 +190,7 @@
     
     #code-layout {
       min-width: 1280px;
+      width: 100vh;
       height: max-content;
     
       display: flex;
@@ -165,7 +203,7 @@
     body.flex-container{
         display: inline-flex;
         justify-content: center; 
-        height: 792px;
+        height: 100vh;
         padding-bottom: 10px;
     }
     
@@ -187,7 +225,7 @@
     
     #problem-des-container{
         box-sizing: border-box;
-        height: 250px;
+        height: 300px;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -196,19 +234,17 @@
         display: flex;
         flex-direction: column;
         overflow-y: auto;
-        word-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
     }
     
     #problem-des-content{
         box-sizing: border-box;
         font-size: 0.8rem;
         padding: 8px;
-        overflow-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
     }
     
     
     #testcase-des-container{
-        height: 250px;
+        height: 300px;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -261,6 +297,7 @@
     #relative-code-layout{
         width: 260px;
         padding: 10px;
+        
         margin-top: 90px;
         margin-right: 10px;
     
@@ -271,8 +308,9 @@
         border: 3px solid var(--main5-color);
         border-radius: 10px;
     }
-    
-    
+    #timer-title{
+        margin-top: 55px;
+    }
     .title{
         padding-left: 10px;
     }
@@ -288,7 +326,7 @@
     
     #relative-code-content{
         width: 200px;
-        height: 22vh;
+        height: 26vh;
         margin-bottom: 16px;
         border: 3px solid var(--main5-color);
         border-radius: 10px;
@@ -313,4 +351,19 @@
         margin:16px 0px 0px
     }
     
+
+
+.readonlyTextarea {
+  width: 98%;
+  height: 250px;
+  overflow: auto;
+  cursor: default;
+  outline: none;
+  border: none;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+
     </style>

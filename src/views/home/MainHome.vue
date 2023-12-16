@@ -6,7 +6,11 @@
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
-          <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
+          <img
+            id="profile-image"
+            :src="'/images/icon/' + loginMember.memberProfileImg + '.png'"
+            alt="profile"
+          />
           <div id="profile-tier-container">
             <div id="tier-container">
               <div id="rank-tier-help" class="custom-tooltip">
@@ -28,14 +32,14 @@
               <img
                 id="my-rank-tier"
                 class="rank-tier-icon"
-                src="/images/rank/bronze.png"
+                :src="'/images/rank/' + loginMember.memberTier.toLowerCase() + '.png'"
                 alt="my-tier"
               />
             </div>
-            <div id="profile-nickname">닉네임</div>
+            <div id="profile-nickname">{{ loginMember.memberName }}</div>
           </div>
           <div id="exp-container">
-            <div id="my-level">Lv. 10</div>
+            <div id="my-level">Lv. {{ loginMember.memberLevel }}</div>
             <div class="progress col-sm-8">
               <div
                 class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
@@ -43,9 +47,9 @@
                 aria-valuenow="10"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                style="width: 10%"
+                :style="'width: ' + loginMember.memberExp + '%'"
               >
-                <span id="my-exp">10 / 100</span>
+                <span id="my-exp">{{ loginMember.memberExp }} / 100</span>
               </div>
             </div>
           </div>
@@ -160,8 +164,16 @@
         <div id="room-list-container">
           <div class="row room-containers">
             <template v-for="room in roomSize" :key="'room' + room">
-              <MainHomeRoom v-if="room <= roomList.length" v-model:roomInfo="roomList[room - 1]" />
-              <MainHomeRoom v-if="room > roomList.length" v-model:roomInfo="nullRoom" />
+              <MainHomeRoom
+                v-if="room <= roomList.length"
+                v-model:roomInfo="roomList[room - 1]"
+                :memberNo="loginMember.memberNo"
+              />
+              <MainHomeRoom
+                v-if="room > roomList.length"
+                v-model:roomInfo="nullRoom"
+                :memberNo="loginMember.memberNo"
+              />
             </template>
           </div>
         </div>
@@ -188,8 +200,7 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
@@ -221,6 +232,14 @@ export default {
         tierPoint: 0,
         memberInfo: ''
       },
+      loginMember: {
+        memberExp: 0,
+        memberLevel: 0,
+        memberName: '',
+        memberNo: 0,
+        memberProfileImg: 0,
+        memberTier: ''
+      },
       addRoomPopup: false,
       rankMatching: false,
       memberProfilePopup: false,
@@ -231,7 +250,11 @@ export default {
     refreshButtonClickHandler() {
       this.inputRoomNo = null
       apiClient
-        .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`)
+        .get(`${this.backURL}/room?page=${this.roomPage}&size=${this.roomSize}`, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((response) => {
           this.roomList = response.data.content
           this.totalPages = response.data.totalPages
@@ -281,7 +304,10 @@ export default {
           url,
           {},
           {
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           }
         )
         .then(() => {
@@ -318,7 +344,12 @@ export default {
       } else {
         apiClient
           .get(
-            `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`
+            `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`,
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
           )
           .then((response) => {
             this.roomList = response.data.content
@@ -378,19 +409,34 @@ export default {
     showProfileDetailClickHandler(memberNo) {
       this.memberProfilePopup = !this.memberProfilePopup
       if (this.memberProfilePopup) {
-        apiClient.get(`${this.backURL}/member/${memberNo}`).then((response) => {
-          this.rankMember = response.data
-        })
+        apiClient
+          .get(`${this.backURL}/member/${memberNo}`, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            this.rankMember = response.data
+          })
       }
       this.preventScroll()
     }
   },
   mounted() {
     this.refreshButtonClickHandler()
-    apiClient.get(`${this.backURL}/member/ranking`).then((response) => {
-      this.memberRankList = response.data
-        .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
-        .slice(0, 5)
+    apiClient
+      .get(`${this.backURL}/member/ranking`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        this.memberRankList = response.data
+          .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
+          .slice(0, 5)
+      })
+    apiClient.get(`${this.backURL}/member/my`).then((response) => {
+      this.loginMember = response.data
     })
   }
 }
@@ -399,6 +445,7 @@ export default {
 * {
   cursor: default;
 }
+
 #main-layout {
   min-width: 1280px;
 
@@ -410,6 +457,7 @@ export default {
 
   color: var(--main5-color);
 }
+
 #main-side-layout {
   min-width: 260px;
   padding: 0;
@@ -419,11 +467,13 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 #main-profile-containers {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 #my-profile-container {
   margin-top: 12px;
 
@@ -431,22 +481,24 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 #profile-image {
   width: 50%;
   margin: 12px;
-
-  border-radius: 50%;
 }
+
 #profile-tier-container {
   margin-bottom: 12px;
 
   display: flex;
   align-items: center;
 }
+
 #tier-container {
   display: flex;
   align-items: flex-end;
 }
+
 #rank-tier-help {
   width: 1rem;
   height: 1rem;
@@ -462,9 +514,11 @@ export default {
   border: 1px solid var(--main2-color);
   border-radius: 50%;
 }
+
 .custom-tooltip {
   position: relative;
 }
+
 .custom-tooltip .custom-tooltiptext {
   width: 260px;
   padding: 8px 12px;
@@ -486,20 +540,24 @@ export default {
 .custom-tooltip:hover .custom-tooltiptext {
   visibility: visible;
 }
+
 .rank-tier-icon {
   width: 36px;
   margin-right: 8px;
 }
+
 #my-rank-tier {
   width: 36px;
   margin: 0 4px 0 -4px;
 }
+
 #profile-nickname {
   margin-left: 4px;
 
   white-space: wrap;
   font-size: 1.25rem;
 }
+
 #rank-tier-hlep {
   justify-self: flex-end;
 }
@@ -511,6 +569,7 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 #my-level {
   padding-right: 4px;
 
@@ -518,6 +577,7 @@ export default {
   align-items: center;
   white-space: nowrap;
 }
+
 #exp-container > .progress {
   margin-left: 4px;
   min-width: 172px;
@@ -527,6 +587,7 @@ export default {
 
   background-color: var(--main2-color);
 }
+
 #my-exp {
   position: absolute;
   right: 0;
@@ -534,12 +595,14 @@ export default {
 
   color: var(--main5-color);
 }
+
 .btn-custom {
   padding: 6px 12px;
 
   color: var(--main1-color);
   border-radius: 6px;
 }
+
 .btn-custom-primary {
   padding: 6px 12px;
 
@@ -553,12 +616,14 @@ export default {
     background-color: var(--main4-hover-color);
     border: none;
   }
+
   &:active {
     color: var(--main1-color);
     background-color: var(--main4-hover-color);
     border: none;
   }
 }
+
 .btn-custom-danger {
   padding: 6px 12px;
 
@@ -571,11 +636,13 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+
   &:active {
     color: var(--main1-color);
     background-color: var(--red-hover-color);
   }
 }
+
 .btn-danger {
   color: var(--main1-color);
   background-color: var(--red-color);
@@ -585,11 +652,13 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+
   &:active {
     color: var(--main1-color);
     background-color: var(--red-hover-color);
   }
 }
+
 #rank-matching-button {
   width: 84%;
   margin-top: 24px;
@@ -608,6 +677,7 @@ export default {
     transform: scale(1.2);
   }
 }
+
 #rank-title-icon {
   transition: transform 0.5s;
 }
@@ -620,6 +690,7 @@ export default {
   width: 2rem;
   cursor: pointer;
 }
+
 #rank-container {
   width: 100%;
   padding: 8px;
@@ -656,11 +727,13 @@ export default {
 
   cursor: pointer;
 }
+
 #rank-list > li > * {
   margin: 4px;
 
   cursor: pointer;
 }
+
 .modal-wrap {
   width: 100%;
   height: 100%;
@@ -672,6 +745,7 @@ export default {
 
   background: rgba(0, 0, 0, 0.4);
 }
+
 .modal-container {
   min-width: 550px;
   width: 50%;
@@ -691,18 +765,23 @@ export default {
   border-radius: 10px;
   box-sizing: border-box;
 }
+
 .rank-number {
   width: 24px;
 }
+
 .rank-tier-icon {
   width: 24px;
 }
+
 ol {
   padding: 0;
 }
+
 li {
   list-style: none;
 }
+
 .rank-nickname {
   overflow: hidden;
   white-space: nowrap;
@@ -710,15 +789,18 @@ li {
 
   color: var(--main1-color);
 }
+
 #room-layout {
   padding-top: 32px;
 }
+
 #main-navigation {
   margin-top: 12px;
 
   display: flex;
   justify-content: space-between;
 }
+
 #main-navigation-left,
 #main-navigation-right {
   display: flex;
@@ -726,6 +808,7 @@ li {
 
   font-size: 1.5rem;
 }
+
 #mypage-button {
   border: none;
   background-color: var(--main3-color);
@@ -735,28 +818,34 @@ li {
     background-color: var(--main3-hover-color);
     color: var(--main1-color);
   }
+
   &:active {
     border: none;
   }
 }
+
 #main-navigation-left > *,
 #main-navigation-right > * {
   margin: 0 4px;
 }
+
 #create-problem-button {
   cursor: pointer;
 
   color: var(--main1-color) !important;
 }
+
 .main-menu-button {
   font-size: 1.25rem;
 }
+
 #main-room-containers {
   margin-top: 24px;
   padding-top: 12px;
 
   border-top: 3px solid var(--main5-color);
 }
+
 #room-navigation {
   margin-bottom: 16px;
 
@@ -764,9 +853,11 @@ li {
   align-items: center;
   justify-content: space-between;
 }
+
 #all-room-title {
   font-size: 1.5rem;
 }
+
 #room-number-search-container {
   margin-right: 8px;
 
@@ -777,6 +868,7 @@ li {
   border: 1px solid var(--main3-color);
   border-radius: 20px;
 }
+
 #room-number-search-input {
   height: 2rem;
 
@@ -787,6 +879,7 @@ li {
   border: none;
   border-radius: 20px;
 }
+
 #room-number-search-icon {
   padding: 8px 12px 8px 0;
 
@@ -796,11 +889,13 @@ li {
   opacity: 50%;
   border: none;
 }
+
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 #room-refresh-button {
   cursor: pointer;
   transition: transform 0.5s;
@@ -811,28 +906,34 @@ input[type='number']::-webkit-inner-spin-button {
   &:hover {
     transform: rotate(180deg);
   }
+
   &:active {
     border: none;
   }
 }
+
 #room-refresh-button > img {
   cursor: pointer;
 }
+
 #room-list-container {
   width: 100%;
 
   display: flex;
   flex-direction: column;
 }
+
 #room-list-container > nav {
   align-self: center;
 }
+
 #pagenation-button-container {
   margin-top: 12px;
 
   display: flex;
   justify-content: center;
 }
+
 .pagenation-button {
   width: 120px;
   margin: 0 12px 0 4px;
@@ -851,11 +952,13 @@ input[type='number']::-webkit-inner-spin-button {
     background-color: var(--main4-hover-color);
     border: none;
   }
+
   &:active {
     background-color: var(--main4-hover-color);
     border: none;
   }
 }
+
 .page-disabled {
   cursor: not-allowed;
 

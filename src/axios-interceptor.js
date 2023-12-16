@@ -9,11 +9,14 @@ var apiClient = null;
 
 apiClient.interceptors.request.use(
     function (config) {
-      config.headers["Content-Type"] = "application/json;";
+    //   config.headers["Content-Type"] = "application/json";
+    //   config.headers["Content-Type"] = "multipart/form-data";
       config.headers["Authorization"] = `Bearer ${sessionStorage.getItem('accessToken')}`;
       return config;
     }
 )
+
+
 
 apiClient.interceptors.response.use(res => {
         if (!(res.status === 200 || res.status === 201 || res.status === 204)) throw new Error();

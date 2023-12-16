@@ -48,8 +48,7 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
@@ -100,8 +99,8 @@ export default {
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     pgClick(e) {
-      const pg=parseInt(e.target.id.replace("pg", ""));
-      this.currentPage=pg
+      const pg = parseInt(e.target.id.replace("pg", ""));
+      this.currentPage = pg
       const filter = this.$route.params.filter
 
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
@@ -127,12 +126,16 @@ export default {
 
       const url = `${this.backURL}/admin/quiz/list/${this.currentPage}`
       apiClient
-        .get(url)
+        .get(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((res) => {
           this.quizList = res.data.list
           this.startPage = res.data.startPage
           this.endPage = res.data.endPage
-          this.totalPage=res.data.totalPage
+          this.totalPage = res.data.totalPage
         })
         .catch((error) => {
           // alert('관리자 페이지를 조회할 수 없습니다')
@@ -153,12 +156,16 @@ export default {
 
       const url = `${this.backURL}/admin/quiz/tier/UNRANKED/${this.currentPage}`
       apiClient
-        .get(url)
+        .get(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((res) => {
           this.quizList = res.data.list
           this.startPage = res.data.startPage
           this.endPage = res.data.endPage
-          this.totalPage=res.data.totalPage
+          this.totalPage = res.data.totalPage
         })
         .catch(() => {
           window.history.back()
