@@ -6,11 +6,16 @@
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
-          <img id="profile-image" src="/images/tmp_profile.png" alt="profile" />
+          <img
+            id="profile-image"
+            :src="'/images/icon/' + loginMember.memberProfileImg + '.png'"
+            alt="profile"
+          />
           <div id="profile-tier-container">
             <div id="tier-container">
               <div id="rank-tier-help" class="custom-tooltip">
-                ?<span class="custom-tooltiptext">티어는 랭크 모드 결과를 통해 정해집니다. <br />
+                ?<span class="custom-tooltiptext"
+                  >티어는 랭크 모드 결과를 통해 정해집니다. <br />
                   티어의 종류는 다음과 같습니다.<br />
                   <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
                   <span>브론즈</span>
@@ -24,24 +29,38 @@
                   <br />
                 </span>
               </div>
-              <img id="my-rank-tier" class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
+              <img
+                id="my-rank-tier"
+                class="rank-tier-icon"
+                :src="'/images/rank/' + loginMember.memberTier.toLowerCase() + '.png'"
+                alt="my-tier"
+              />
             </div>
-            <div id="profile-nickname">닉네임</div>
+            <div id="profile-nickname">{{ loginMember.memberName }}</div>
           </div>
           <div id="exp-container">
-            <div id="my-level">Lv. 10</div>
+            <div id="my-level">Lv. {{ loginMember.memberLevel }}</div>
             <div class="progress col-sm-8">
-              <div class="progress-bar progress-bar-striped bg-primary progress-bar-animated" role="progressbar"
-                aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
-                <span id="my-exp">10 / 100</span>
+              <div
+                class="progress-bar progress-bar-striped bg-primary progress-bar-animated"
+                role="progressbar"
+                aria-valuenow="10"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :style="'width: ' + loginMember.memberExp + '%'"
+              >
+                <span id="my-exp">{{ loginMember.memberExp }} / 100</span>
               </div>
             </div>
           </div>
           <div id="main-profile-buttons"></div>
         </div>
       </div>
-      <button id="rank-matching-button" class="btn-custom-danger room-menu-button"
-        @click="rankMatchingButtonClickHandler">
+      <button
+        id="rank-matching-button"
+        class="btn-custom-danger room-menu-button"
+        @click="rankMatchingButtonClickHandler"
+      >
         랭 크
         <img id="rank-title-icon" src="/images/swords.png" alt="rank-icon" />
         매 칭
@@ -49,22 +68,36 @@
       <div id="rank-container">
         <div id="rank-title">순 위</div>
         <ol id="rank-list">
-          <li v-for="(memberRank, index) in memberRankList" :key="'memberRank' + index"
-            @click="showProfileDetailClickHandler(memberRank.memberNo)">
+          <li
+            v-for="(memberRank, index) in memberRankList"
+            :key="'memberRank' + index"
+            @click="showProfileDetailClickHandler(memberRank.memberNo)"
+          >
             <div v-if="index + 1 == 1" class="rank-number" style="color: var(--yellow-rank-color)">
               {{ index + 1 }}위
             </div>
-            <div v-else-if="index + 1 == 2" class="rank-number" style="color: var(--red-rank-color)">
+            <div
+              v-else-if="index + 1 == 2"
+              class="rank-number"
+              style="color: var(--red-rank-color)"
+            >
               {{ index + 1 }}위
             </div>
-            <div v-else-if="index + 1 == 3" class="rank-number" style="color: var(--blue-rank-color)">
+            <div
+              v-else-if="index + 1 == 3"
+              class="rank-number"
+              style="color: var(--blue-rank-color)"
+            >
               {{ index + 1 }}위
             </div>
             <div v-else class="rank-number" style="color: var(--main1-color)">
               {{ index + 1 }}위
             </div>
-            <img class="rank-tier-icon" :src="'/images/rank/' + memberRank.memberTier.toLowerCase() + '.png'"
-              alt="rank-tier" />
+            <img
+              class="rank-tier-icon"
+              :src="'/images/rank/' + memberRank.memberTier.toLowerCase() + '.png'"
+              alt="rank-tier"
+            />
             <div class="rank-nickname" title="닉네임">{{ memberRank.memberName }}</div>
           </li>
         </ol>
@@ -79,17 +112,32 @@
     <div id="room-layout" class="col-9">
       <div id="main-navigation">
         <div id="main-navigation-left">
-          <button class="btn-custom-primary main-menu-button" @click="createWaitingRoomclickHandler">
+          <button
+            class="btn-custom-primary main-menu-button"
+            @click="createWaitingRoomclickHandler"
+          >
             방 만들기
           </button>
-          <router-link id="create-problem-button" class="btn-custom-primary main-menu-button" to="quiz/add">문제
-            만들기</router-link>
+          <router-link
+            id="create-problem-button"
+            class="btn-custom-primary main-menu-button"
+            to="quiz/add"
+            >문제 만들기</router-link
+          >
         </div>
         <div id="main-navigation-right">
-          <button id="mypage-button" class="btn-custom main-menu-button" @click="mypageButtonClickHandler">
+          <button
+            id="mypage-button"
+            class="btn-custom main-menu-button"
+            @click="mypageButtonClickHandler"
+          >
             {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
-          <button id="logout-button" class="btn-custom-danger main-menu-button" @click="logoutButtonClickHandler">
+          <button
+            id="logout-button"
+            class="btn-custom-danger main-menu-button"
+            @click="logoutButtonClickHandler"
+          >
             종료
           </button>
         </div>
@@ -103,26 +151,47 @@
             </button>
           </div>
           <div id="room-number-search-container">
-            <input id="room-number-search-input" type="text" placeholder="방 번호 검색" v-model="inputRoomNo"
-              @input="searchRoomInputChangeHandler($event)" />
+            <input
+              id="room-number-search-input"
+              type="text"
+              placeholder="방 번호 검색"
+              v-model="inputRoomNo"
+              @input="searchRoomInputChangeHandler($event)"
+            />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
           </div>
         </div>
         <div id="room-list-container">
           <div class="row room-containers">
             <template v-for="room in roomSize" :key="'room' + room">
-              <MainHomeRoom v-if="room <= roomList.length" v-model:roomInfo="roomList[room - 1]" />
-              <MainHomeRoom v-if="room > roomList.length" v-model:roomInfo="nullRoom" />
+              <MainHomeRoom
+                v-if="room <= roomList.length"
+                v-model:roomInfo="roomList[room - 1]"
+                :memberNo="loginMember.memberNo"
+              />
+              <MainHomeRoom
+                v-if="room > roomList.length"
+                v-model:roomInfo="nullRoom"
+                :memberNo="loginMember.memberNo"
+              />
             </template>
           </div>
         </div>
         <div id="pagenation-button-container">
-          <button :class="{ 'page-disabled': roomPage == 0 }" class="pagenation-button" v-bind:disabled="roomPage == 0"
-            @click="prevButtonClickHandler">
+          <button
+            :class="{ 'page-disabled': roomPage == 0 }"
+            class="pagenation-button"
+            v-bind:disabled="roomPage == 0"
+            @click="prevButtonClickHandler"
+          >
             ◀
           </button>
-          <button :class="{ 'page-disabled': roomPage == totalPages - 1 }" class="pagenation-button"
-            v-bind:disabled="roomPage == totalPages - 1" @click="nextButtonClickHandler">
+          <button
+            :class="{ 'page-disabled': roomPage == totalPages - 1 }"
+            class="pagenation-button"
+            v-bind:disabled="roomPage == totalPages - 1"
+            @click="nextButtonClickHandler"
+          >
             ▶
           </button>
         </div>
@@ -162,6 +231,14 @@ export default {
         memberExp: 0,
         tierPoint: 0,
         memberInfo: ''
+      },
+      loginMember: {
+        memberExp: 0,
+        memberLevel: 0,
+        memberName: '',
+        memberNo: 0,
+        memberProfileImg: 0,
+        memberTier: ''
       },
       addRoomPopup: false,
       rankMatching: false,
@@ -207,7 +284,7 @@ export default {
       document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
-    rankTierHelpHoverHandler() { },
+    rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
       this.$router.push({ path: `/admin/quiz/all/1` })
     },
@@ -223,12 +300,16 @@ export default {
       console.log('Request sent')
       const url = `${this.backURL}/auth/logout`
       apiClient
-        .post(url, {}, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        .post(
+          url,
+          {},
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        })
+        )
         .then(() => {
           sessionStorage.removeItem('accessToken')
           location.href = '/login'
@@ -262,11 +343,14 @@ export default {
         this.refreshButtonClickHandler()
       } else {
         apiClient
-          .get(`${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`, {
-            headers: {
-              'Content-Type': 'application/json'
+          .get(
+            `${this.backURL}/room?searchNo=${this.inputRoomNo}&page=${this.roomPage}&size=${this.roomSize}`,
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
             }
-          })
+          )
           .then((response) => {
             this.roomList = response.data.content
             this.totalPages = response.data.totalPages
@@ -305,7 +389,7 @@ export default {
         // }
         // this.socket.send(JSON.stringify(enterMessage))
         this.sendMatching()
-        this.socket.onclose = () => { }
+        this.socket.onclose = () => {}
         this.socket.onmessage = (e) => {
           console.log(e.data)
         }
@@ -331,9 +415,9 @@ export default {
               'Content-Type': 'application/json'
             }
           })
-        then((response) => {
-          this.rankMember = response.data
-        })
+          .then((response) => {
+            this.rankMember = response.data
+          })
       }
       this.preventScroll()
     }
@@ -351,6 +435,9 @@ export default {
           .sort((rankUserA, rankUserB) => rankUserA.rank - rankUserB.rank)
           .slice(0, 5)
       })
+    apiClient.get(`${this.backURL}/member/my`).then((response) => {
+      this.loginMember = response.data
+    })
   }
 }
 </script>
@@ -398,8 +485,6 @@ export default {
 #profile-image {
   width: 50%;
   margin: 12px;
-
-  border-radius: 50%;
 }
 
 #profile-tier-container {
@@ -493,7 +578,7 @@ export default {
   white-space: nowrap;
 }
 
-#exp-container>.progress {
+#exp-container > .progress {
   margin-left: 4px;
   min-width: 172px;
   height: 28px;
@@ -633,7 +718,7 @@ export default {
   color: var(--main1-color);
 }
 
-#rank-list>li {
+#rank-list > li {
   padding: 6px;
 
   display: flex;
@@ -643,7 +728,7 @@ export default {
   cursor: pointer;
 }
 
-#rank-list>li>* {
+#rank-list > li > * {
   margin: 4px;
 
   cursor: pointer;
@@ -739,8 +824,8 @@ li {
   }
 }
 
-#main-navigation-left>*,
-#main-navigation-right>* {
+#main-navigation-left > *,
+#main-navigation-right > * {
   margin: 0 4px;
 }
 
@@ -827,7 +912,7 @@ input[type='number']::-webkit-inner-spin-button {
   }
 }
 
-#room-refresh-button>img {
+#room-refresh-button > img {
   cursor: pointer;
 }
 
@@ -838,7 +923,7 @@ input[type='number']::-webkit-inner-spin-button {
   flex-direction: column;
 }
 
-#room-list-container>nav {
+#room-list-container > nav {
   align-self: center;
 }
 
