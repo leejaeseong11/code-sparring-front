@@ -1,5 +1,5 @@
 <template>
-<div class="report-object" v-if="showPopup">
+<div class="report-object" @click="close-modal">
         <div class="report-box">
             <div class="report-title">신고문제</div>
             <div class="report-title" id="report-content">{{quizInfo.quizTitle}}</div>
@@ -20,7 +20,7 @@
         <div id="bt-area">
             <div></div>
             <div>
-                <button id="cancle-bt" @click="$emit('close')">취소</button>
+                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
                 <button id="add-bt" @click="addReprot">제출</button>
             </div>
         </div>
@@ -29,19 +29,33 @@
 
 <script>
 import {apiClient} from '@/axios-interceptor'
-
+import sweetAlert from '../../util/modal.js'
 export default {
   name: 'AddReport',
-  props: ['quizInfo'],
+  props : ['quizInfo'],
   data() {
     return {
       reportType: '',
       reportContent: '',
-      showPopup : false
     }
   },
   methods: {
+    closeModal() {
+      this.$emit('close-modal');
+    },
     addReprot() {
+        if (!this.reportType) {
+        sweetAlert.warning('신고사유을 선택해주세요!', '', '확인')(() =>{
+            this.$refs.reportTypeInput.focus();
+            return;
+            })
+        }
+        if (!this.reportContent) {
+        sweetAlert.warning('신고내용을 입력해주세요!', '', '확인')(() =>{
+            this.$refs.reportContentInput.focus();
+            return;
+            })
+        }
         const url=`${this.backURL}/report`
         const data={
             reportType: this.reportType,
@@ -55,10 +69,10 @@ export default {
                     }
                 })
                 .then(() => {
-                    alert('신고 제출이 완료되었습니다')
-                    window.history.go(0)
+                    sweetAlert.success("신고제출이 완료되었습니다", "", "확인")
+                    this.$emit('close-modal');
                 }).catch(()=>{
-                    alert('신고 제출에 실패하였습니다')
+                    sweetAlert.warning("신고제출이 실패하였습니다", "", "확인")
         })
     }
   }
