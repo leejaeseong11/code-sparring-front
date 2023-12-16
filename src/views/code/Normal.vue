@@ -26,7 +26,8 @@
                     <hr id="testcase-hr">
                 </div>
             </div>
-            <button class="button" @:click="reportButtonClickHandler">문제신고하기</button>
+            <button class="button" @click="reportButtonClickHandler">문제신고하기</button>
+            <AddReport v-if="reportBt" id="report-popup" @click="offReport"></AddReport>
             
             <div id="timer-title" class="title">제한시간</div>
             <div id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</div>
@@ -53,11 +54,13 @@
 </template>
 
 <script>
+import { faL } from '@fortawesome/free-solid-svg-icons';
 import Monaco from '../../components/code/NormalMonaco.vue'
+import AddReport from '../../components/report/AddReport.vue';
 import { apiClient } from '@/axios-interceptor'
 export default {
     name: 'normal',
-    components: { Monaco },
+    components: { Monaco , AddReport },
     data() {
         return {
             quizNo: '',
@@ -68,6 +71,8 @@ export default {
             minutes: 60,
             seconds: 0,
 
+            quizTitle:'',
+            reportBt : false,
         }
     },
     computed: {
@@ -79,7 +84,12 @@ export default {
     methods: {
         reportButtonClickHandler() {
             //신고팝업창
+            this.reportBt = (this.reportBt) ? false : true;
         },
+        offReport() {
+            this.reportBt = false;
+        },
+
         exitButtonClickHandler() {
             this.$router.push({ path: `/` })
         },
@@ -129,6 +139,7 @@ export default {
             .then((response) => {
                 this.quizNo = response.data.quizNo
                 this.quizContent = response.data.quizContent
+                this.quizTitle = response.data.quizTitle
 
                 const url2 = `${this.backURL}/submit/${this.quizNo}`
 
