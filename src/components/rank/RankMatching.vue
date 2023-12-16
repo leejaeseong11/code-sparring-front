@@ -94,7 +94,7 @@ export default {
 }
 
 #content {
-    margin-top: 70px;
+    margin-top: 40px;
     display: flex;
     justify-content: space-between;
     text-align: center;
