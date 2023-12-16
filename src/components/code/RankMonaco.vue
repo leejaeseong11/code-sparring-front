@@ -90,7 +90,6 @@
         default() {
           return {
             minimap: { enabled: false,},
-            // paste: { enabled: false, showPasteSelector: 'never'}
           }
         },
       },
@@ -127,10 +126,6 @@
         .then((response) => {
             this.quizNo = response.data.quizNo
         })
-
-
-        //********************memberNo 얻어오기****************************
-
 
     },
     mounted() {
@@ -240,7 +235,6 @@
         
         const quizNo = this.quizNo  // 퀴즈번호
         const rankNo = this.rankNo  // 랭크번호
-        const memberNo = this.memberNo
         const fileContent = this._getValue();
 
         // FormData 객체 생성
@@ -277,19 +271,18 @@
                 'Content-Type': 'application/json'
               }
             })
-            .then(response => {
-              console.log(response.data)
-              console.log(response.data.msg)
-            })
+            .catch(error => {
+              console.log('Server Error:', error);
+                alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
+            });
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
             console.log(error)
             alert(error.message)
         })
-
-
-      }
+      },
+      
     },
     watch: {  
       options: {

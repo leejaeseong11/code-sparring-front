@@ -9,8 +9,8 @@ var apiClient = null;
 
 apiClient.interceptors.request.use(
     function (config) {
-      config.headers["Content-Type"] = "application/json;";
-      config.headers["Content-Type"] = "multipart/form-data";
+    //   config.headers["Content-Type"] = "application/json;";
+    //   config.headers["Content-Type"] = "multipart/form-data";
       config.headers["Authorization"] = `Bearer ${sessionStorage.getItem('accessToken')}`;
       return config;
     }

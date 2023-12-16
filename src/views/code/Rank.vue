@@ -9,7 +9,6 @@
                     <div id="problem-des-content">
                         <textarea
                         class="readonlyTextarea"
-                        id="quiz-input"
                         :value="this.quizContent"
                         readonly></textarea>
                     </div>
@@ -179,6 +178,7 @@
     
     #code-layout {
       min-width: 1280px;
+      width: 100vh;
       height: max-content;
     
       display: flex;
@@ -191,7 +191,7 @@
     body.flex-container{
         display: inline-flex;
         justify-content: center; 
-        height: 792px;
+        height: 100vh;
         padding-bottom: 10px;
     }
     
@@ -213,7 +213,7 @@
     
     #problem-des-container{
         box-sizing: border-box;
-        height: 250px;
+        height: 300px;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -222,19 +222,17 @@
         display: flex;
         flex-direction: column;
         overflow-y: auto;
-        word-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
     }
     
     #problem-des-content{
         box-sizing: border-box;
         font-size: 0.8rem;
         padding: 8px;
-        overflow-wrap: break-word; /* 단어 단위로 자동 줄 바꿈  */
     }
     
     
     #testcase-des-container{
-        height: 250px;
+        height: 300px;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -287,6 +285,7 @@
     #relative-code-layout{
         width: 260px;
         padding: 10px;
+        
         margin-top: 90px;
         margin-right: 10px;
     
@@ -297,8 +296,9 @@
         border: 3px solid var(--main5-color);
         border-radius: 10px;
     }
-    
-    
+    #timer-title{
+        margin-top: 55px;
+    }
     .title{
         padding-left: 10px;
     }
@@ -314,7 +314,7 @@
     
     #relative-code-content{
         width: 200px;
-        height: 22vh;
+        height: 26vh;
         margin-bottom: 16px;
         border: 3px solid var(--main5-color);
         border-radius: 10px;
@@ -340,21 +340,18 @@
     }
     
 
-    #quiz-input,
-#quiz-output {
-  width: 98%;
-  height: 100%;
-  line-height: 30px;
-  /* overflow: auto; */
-  cursor: default;
-  border: none;
-}
-/* 
+
 .readonlyTextarea {
-  background-color: var(--main1-color);
-  color: var(--main5-color);
-  
+  width: 98%;
+  height: 250px;
+  overflow: auto;
   cursor: default;
-} */
+  outline: none;
+  border: none;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
 
     </style>

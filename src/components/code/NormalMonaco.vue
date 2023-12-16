@@ -14,7 +14,6 @@
   
   <script>
   import {apiClient} from '@/axios-interceptor'
-  // import axios from 'axios';
   import { defineComponent, computed, toRefs } from 'vue'
   import * as monaco from 'monaco-editor'
   
@@ -43,7 +42,6 @@
         default() {
           return {
             minimap: { enabled: false,},
-            // paste: { enabled: false, showPasteSelector: 'never'}
           }
         },
       },
@@ -65,9 +63,6 @@
           'text-align': 'left',
           'align-items': 'center',
           'margin-left': '15px',
-          // 'background-color': 'black',
-          // 'border': '3px solid var(--main5-color)',
-          // 'border-radius': '10px'
         }
       })
       return {
@@ -75,9 +70,6 @@
       }
     },
     created(){
-              // room에서 roomNo에 해당하는 quizNo 가져오기
-        // 문제내용 가져오기
-        // 테스트케이스 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
 
         apiClient
@@ -179,14 +171,12 @@
             headers: {
              'Content-Type': 'multipart/form-data',
             },
-        }) 
+        })
         .then(response=>{
-          console.log('여기?111')
             this.output = response.data
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error=>{
-          console.log('여기?')
             console.log(error)
             alert(error.message)
         })
@@ -200,7 +190,7 @@
         const formData = new FormData();
 
         // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-        const dto = { memberNo: 1, quizNo};
+        const dto = { quizNo};
         formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
         // 파일 데이터 추가
