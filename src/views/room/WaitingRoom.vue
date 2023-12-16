@@ -26,7 +26,10 @@
       </div>
       <div id="room-member-container">
         <template v-for="index in 4" :key="'member' + index">
-          <RoomMember v-if="index <= roomMemberList.length" v-model:member="roomMemberList[index - 1]" />
+          <RoomMember
+            v-if="index <= roomMemberList.length"
+            v-model:member="roomMemberList[index - 1]"
+          />
           <RoomMember v-else v-model:member="nullMember" />
         </template>
       </div>
@@ -100,9 +103,9 @@ export default {
         this.socket.send(JSON.stringify(enterMessage))
       }
 
-      this.socket.onclose = () => { }
+      this.socket.onclose = () => {}
 
-      this.socket.onerror = () => { }
+      this.socket.onerror = () => {}
 
       this.socket.onmessage = (e) => {
         if (this.socket.readyState === WebSocket.OPEN) {
@@ -150,7 +153,6 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         const roomChat = this.$refs.roomChat
-        console.log(roomChat)
         roomChat.scrollTop = roomChat.scrollHeight
       })
     },
@@ -179,7 +181,6 @@ export default {
       .then((response) => {
         this.roomInfo = response.data
         this.roomMemberList = response.data.roomMemberList
-        console.log(this.roomMemberList[0])
       })
       .catch(async (error) => {
         const ok = await SweetAlert.error(error.response.data.errors[0])
@@ -281,7 +282,7 @@ pre {
   border: 3px solid var(--main5-color);
 }
 
-#room-member-container>* {
+#room-member-container > * {
   width: 25%;
 }
 
@@ -407,7 +408,7 @@ pre {
   align-items: center;
 }
 
-.room-info-code-open>input {
+.room-info-code-open > input {
   margin-right: 4px;
 
   border: 0;
@@ -415,7 +416,7 @@ pre {
   height: 1.125em;
 }
 
-.room-info-code-open>label {
+.room-info-code-open > label {
   opacity: 50%;
 }
 </style>

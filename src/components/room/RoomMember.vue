@@ -44,7 +44,7 @@ export default {
   },
   mounted() {
     apiClient.get(`${this.backURL}/room-member`).then((response) => {
-      console.log(response)
+      this.isRoomManager = response.data
     })
   }
 }

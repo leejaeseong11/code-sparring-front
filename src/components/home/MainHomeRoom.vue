@@ -106,7 +106,7 @@ export default {
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
         })
         .catch((error) => {
-          console.log(error)
+          sweetAlert.error(error.response.data.errors[0])
         })
     }
   },
