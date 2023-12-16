@@ -67,7 +67,7 @@ export default {
   border-top: 3px solid var(--main5-color);
 }
 #quiz-content-container {
-  height: 412px;
+  height: 380px;
 
   white-space: wrap;
   overflow: scroll;

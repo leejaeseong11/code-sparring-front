@@ -87,7 +87,9 @@ export default {
       roomNo: '',
       roomInfo: {},
       roomMemberList: [],
-      nullMember: null
+      nullMember: null,
+      loginMemberName: '',
+      LoginMemberNo: 0
     }
   },
   methods: {
@@ -98,7 +100,7 @@ export default {
         const enterMessage = {
           type: 'ROOM_ENTER',
           roomNo: this.roomNo,
-          sender: '닉네임'
+          sender: this.loginMemberName
         }
         this.socket.send(JSON.stringify(enterMessage))
       }
@@ -124,7 +126,7 @@ export default {
         const outMessage = {
           type: 'ROOM_QUIT',
           roomNo: this.roomNo,
-          sender: '닉네임'
+          sender: this.loginMemberName
         }
         this.socket.send(JSON.stringify(outMessage))
         this.socket.close()
@@ -136,7 +138,7 @@ export default {
       var talkMessage = {
         type: 'ROOM_TALK',
         roomNo: this.roomNo,
-        sender: '닉네임',
+        sender: this.loginMemberName,
         message: this.chatMessage
       }
       this.socket.send(JSON.stringify(talkMessage))
@@ -147,8 +149,10 @@ export default {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     },
     roomOutButtonClickHandler() {
-      this.disconnect()
-      this.$router.push({ path: '/' })
+      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        this.disconnect()
+        this.$router.push({ path: '/' })
+      })
     },
     scrollToBottom() {
       this.$nextTick(() => {
@@ -160,7 +164,7 @@ export default {
       const outMessage = {
         type: 'ROOM_QUIT',
         roomNo: this.roomNo,
-        sender: '닉네임'
+        sender: this.loginMemberName
       }
       this.socket.send(JSON.stringify(outMessage))
 
@@ -190,13 +194,19 @@ export default {
       })
     window.addEventListener('beforeunload', this.unLoadEvent)
     this.roomNo = this.$router.currentRoute.value.params.roomNo
-    this.connect()
+
+    apiClient.get(`${this.backURL}/member/my`).then((response) => {
+      this.connect()
+      console.log(response.data.memberNo)
+      this.loginMemberName = response.data.memberName
+      this.loginMemberNo = response.data.memberNo
+    })
   },
   beforeUnmount() {
     const outMessage = {
       type: 'ROOM_QUIT',
       roomNo: this.roomNo,
-      sender: '닉네임'
+      sender: this.loginMemberName
     }
     this.socket.send(JSON.stringify(outMessage))
     this.disconnect()
