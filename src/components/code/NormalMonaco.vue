@@ -186,12 +186,10 @@ export default defineComponent({
           },
         })
         .then(response => {
-          console.log('여기?111')
           this.output = response.data
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error => {
-          console.log('여기?')
           console.log(error)
           alert(error.message)
         })

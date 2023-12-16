@@ -7,7 +7,10 @@
             <div id="problem-des-title" class="title">문제설명</div>
             <div id="problem-des-container">
                 <div id="problem-des-content">
-                    <span v-html="replaceNewlines(this.quizContent)"></span>
+                    <textarea
+                        class="readonlyTextarea"
+                        :value="this.quizContent"
+                        readonly></textarea>
                 </div>
             </div>
 
@@ -54,20 +57,21 @@
 
 <script>
 import Monaco from '../../components/code/NormalMonaco.vue'
-import { apiClient } from '@/axios-interceptor'
+import {apiClient} from '@/axios-interceptor'
 export default {
     name: 'normal',
-    components: { Monaco },
-    data() {
-        return {
+    components: {Monaco},
+    data(){
+        return{
             quizNo: '',
             testcaseNo: '',
             testcaseList: [],
             quizContent: '',
+            quizTitle: '',
             timerRunning: true,
             minutes: 60,
             seconds: 0,
-
+            
         }
     },
     computed: {
@@ -75,12 +79,12 @@ export default {
             return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
         },
     },
-
+    
     methods: {
-        reportButtonClickHandler() {
+        reportButtonClickHandler(){
             //신고팝업창
         },
-        exitButtonClickHandler() {
+        exitButtonClickHandler(){
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -100,8 +104,8 @@ export default {
                 setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
 
             }
-            if (this.seconds === 0 && this.minutes === 0) {
-                if (confirm("시간이 초과되어 메인으로 이동합니다")) {
+            if(this.seconds === 0 && this.minutes === 0){
+                if(confirm("시간이 초과되어 메인으로 이동합니다")){
                     this.$router.push({ path: `/` })
 
                 }
@@ -111,90 +115,110 @@ export default {
         replaceNewlines(text) {
             return text.replace(/\n/g, '<br>');
         },
+        // beforeunload 이벤트 핸들러
+        beforeUnloadHandler(event) {
+            // 여기에 알림창을 띄우는 로직 추가
+            const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+            const shouldNavigateHome = window.confirm(confirmationMessage);
+            if (shouldNavigateHome) {
+                this.$router.push({ path: `/` });
+            }
+            return confirmationMessage; // For some older browsers
+        },
 
-
+        
     },
-    created() {
+    created(){
+        window.addEventListener('beforeunload', this.beforeUnloadHandler);
         //타이머 시작
         this.updateTimer();
 
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
         apiClient
-            .get(url, {
+        .get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.quizNo = response.data.quizNo
+            this.quizContent = response.data.quizContent
+            this.quizTitle = response.data.quizTitle
+
+            const url2 = `${this.backURL}/submit/${this.quizNo}`
+
+            apiClient
+            .get(url2, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
             .then((response) => {
-                this.quizNo = response.data.quizNo
-                this.quizContent = response.data.quizContent
-
-                const url2 = `${this.backURL}/submit/${this.quizNo}`
-
-                apiClient
-                    .get(url2, {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then((response) => {
-                        this.testcaseList = response.data
-                    })
-                    .catch(() => {
-                        alert('테스트케이스 조회에 실패하였습니다')
-                    })
+                this.testcaseList = response.data
             })
-            .catch(() => {
-                alert('문제 정보 조회에 실패하였습니다')
+            .catch(()=>{
+                alert('테스트케이스 조회에 실패하였습니다')
             })
+        })
+        .catch(() => {
+            alert('문제 정보 조회에 실패하였습니다')
+        })
 
+    },
+    beforeDestroy() {
+        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
     },
 }
 
 </script>
 <style scoped>
+
 #timer-content.timer-expired {
-    color: red;
+  color: red;
 }
 
 #code-layout {
-    min-width: 1280px;
-    height: max-content;
+  min-width: 1280px;
+  width: 100vh;
+  height: 100vh;
 
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 
-    overflow: visible;
-    white-space: nowrap;
+  overflow: visible;
+  white-space: nowrap;
 }
 
-body.flex-container {
+body.flex-container{
     display: inline-flex;
-    justify-content: center;
-    height: 792px;
+    justify-content: center; 
+    height: 100vh;
     padding-bottom: 10px;
 }
 
 
 #code-side-layout {
-    width: 260px;
-    padding: 10px;
-    margin-top: 90px;
-    margin-right: 10px;
+  width: 260px;
+  padding: 10px;
+  margin-top: 90px;
+  margin-right: 10px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: left;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
 
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
 }
 
 
-#problem-des-container {
+#problem-des-container{
     box-sizing: border-box;
-    height: 250px;
+    height: 300px;
     margin-bottom: 10px;
     background-color: var(--white-color);
     border: 3px solid var(--main5-color);
@@ -203,20 +227,16 @@ body.flex-container {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    word-wrap: break-word;
-    /* 단어 단위로 자동 줄 바꿈  */
 }
 
-#problem-des-content {
+#problem-des-content{
     box-sizing: border-box;
     font-size: 0.8rem;
     padding: 8px;
-    overflow-wrap: break-word;
-    /* 단어 단위로 자동 줄 바꿈  */
 }
 
 
-#testcase-des-container {
+#testcase-des-container{
     height: 250px;
     margin-bottom: 10px;
     background-color: var(--white-color);
@@ -227,24 +247,22 @@ body.flex-container {
     flex-direction: column;
     overflow-y: auto;
 }
-
-#testcase-des-content {
+#testcase-des-content{
 
     font-size: 0.8rem;
     padding: 8px
 }
-
 .monaco {
     width: 760px;
     margin-top: 90px;
-    margin-right: 10px;
+     margin-right: 10px;
     /* margin-left: 10px;  */
     border: 3px solid var(--main5-color);
-    border-radius: 10px;
-
+    border-radius:10px;
+    
 }
 
-.button {
+.button{
     padding: 8px;
     font-size: 1.5rem;
 
@@ -258,7 +276,7 @@ body.flex-container {
     }
 }
 
-#exit {
+#exit{
     color: var(--main1-color);
     background-color: var(--red-color);
     border: none;
@@ -269,7 +287,7 @@ body.flex-container {
     }
 }
 
-#relative-code-layout {
+#relative-code-layout{
     width: 260px;
     padding: 10px;
     margin-top: 90px;
@@ -284,23 +302,21 @@ body.flex-container {
 }
 
 
-.title {
+.title{
     padding-left: 10px;
 }
-
-#relative-code-container {
+#relative-code-container{
     /* display: flex; */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
-
+    
+    
 }
-
-#relative-code-content {
+#relative-code-content{
     width: 200px;
-    height: 22vh;
+    height: 26vh;
     margin-bottom: 16px;
     border: 3px solid var(--main5-color);
     border-radius: 10px;
@@ -311,17 +327,31 @@ body.flex-container {
 
     background-color: var(--white-color);
     /* justify-content: space-around; */
-
+    
 }
-
-.testcase-div {
+.testcase-div{
     background-color: var(--main2-color);
     background-clip: content-box;
 }
 
-#testcase-hr {
+#testcase-hr{
     border: 0px;
     height: 3px;
     background-color: var(--black-color);
-    margin: 16px 0px 0px
-}</style>
+    margin:16px 0px 0px
+}
+
+.readonlyTextarea {
+  width: 98%;
+  height: 250px;
+  overflow: auto;
+  cursor: default;
+  outline: none;
+  border: none;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+
+</style>

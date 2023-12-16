@@ -9,7 +9,6 @@
                     <div id="problem-des-content">
                         <textarea
                         class="readonlyTextarea"
-                        id="quiz-input"
                         :value="this.quizContent"
                         readonly></textarea>
                     </div>
@@ -179,198 +178,192 @@ export default {
     beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
         window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-    },
-}
-
-</script>
-<style scoped>
-#timer-content.timer-expired {
-    color: red;
-}
-
-#code-layout {
-    min-width: 1280px;
-    height: max-content;
-
-    display: flex;
-    justify-content: space-around;
-
-    overflow: visible;
-    white-space: nowrap;
-}
-
-body.flex-container {
-    display: inline-flex;
-    justify-content: center;
-    height: 792px;
-    padding-bottom: 10px;
-}
-
-
-#code-side-layout {
-    width: 260px;
-    padding: 10px;
-    margin-top: 90px;
-    margin-right: 10px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-}
-
-
-#problem-des-container {
-    box-sizing: border-box;
-    height: 250px;
-    margin-bottom: 10px;
-    background-color: var(--white-color);
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    word-wrap: break-word;
-    /* 단어 단위로 자동 줄 바꿈  */
-}
-
-#problem-des-content {
-    box-sizing: border-box;
-    font-size: 0.8rem;
-    padding: 8px;
-    overflow-wrap: break-word;
-    /* 단어 단위로 자동 줄 바꿈  */
-}
-
-
-#testcase-des-container {
-    height: 250px;
-    margin-bottom: 10px;
-    background-color: var(--white-color);
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
-
-#testcase-des-content {
-
-    font-size: 0.8rem;
-    padding: 8px
-}
-
-.monaco {
-    width: 760px;
-    margin-top: 90px;
-    margin-right: 10px;
-    /* margin-left: 10px;  */
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-
-}
-
-.button {
-    padding: 8px;
-    font-size: 1.5rem;
-
-    color: var(--main1-color);
-    background-color: var(--main4-color);
-    border: none;
-    border-radius: 6px;
-
-    &:hover {
-        background-color: var(--main4-hover-color);
+        },
     }
-}
-
-#exit {
-    color: var(--main1-color);
-    background-color: var(--red-color);
-    border: none;
-    border-radius: 6px;
-
-    &:hover {
-        background-color: var(--red-hover-color);
+    
+    </script>
+    <style scoped>
+    
+    #timer-content.timer-expired {
+      color: red;
     }
-}
+    
+    #code-layout {
+      min-width: 1280px;
+      width: 100vh;
+      height: max-content;
+    
+      display: flex;
+      justify-content: space-around;
+    
+      overflow: visible;
+      white-space: nowrap;
+    }
+    
+    body.flex-container{
+        display: inline-flex;
+        justify-content: center; 
+        height: 100vh;
+        padding-bottom: 10px;
+    }
+    
+    
+    #code-side-layout {
+      width: 260px;
+      padding: 10px;
+      margin-top: 90px;
+      margin-right: 10px;
+    
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+    
+      border: 3px solid var(--main5-color);
+      border-radius: 10px;
+    }
+    
+    
+    #problem-des-container{
+        box-sizing: border-box;
+        height: 300px;
+        margin-bottom: 10px;
+        background-color: var(--white-color);
+        border: 3px solid var(--main5-color);
+        border-radius: 10px;
+    
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    
+    #problem-des-content{
+        box-sizing: border-box;
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    
+    #testcase-des-container{
+        height: 300px;
+        margin-bottom: 10px;
+        background-color: var(--white-color);
+        border: 3px solid var(--main5-color);
+        border-radius: 10px;
+    
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    #testcase-des-content{
+    
+        font-size: 0.8rem;
+        padding: 8px
+    }
+    .monaco {
+        width: 760px;
+        margin-top: 90px;
+         margin-right: 10px;
+        /* margin-left: 10px;  */
+        border: 3px solid var(--main5-color);
+        border-radius:10px;
+        
+    }
+    
+    .button{
+        padding: 8px;
+        font-size: 1.5rem;
+    
+        color: var(--main1-color);
+        background-color: var(--main4-color);
+        border: none;
+        border-radius: 6px;
+    
+        &:hover {
+            background-color: var(--main4-hover-color);
+        }
+    }
+    
+    #exit{
+        color: var(--main1-color);
+        background-color: var(--red-color);
+        border: none;
+        border-radius: 6px;
+    
+        &:hover {
+            background-color: var(--red-hover-color);
+        }
+    }
+    
+    #relative-code-layout{
+        width: 260px;
+        padding: 10px;
+        
+        margin-top: 90px;
+        margin-right: 10px;
+    
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    
+        border: 3px solid var(--main5-color);
+        border-radius: 10px;
+    }
+    #timer-title{
+        margin-top: 55px;
+    }
+    .title{
+        padding-left: 10px;
+    }
+    #relative-code-container{
+        /* display: flex; */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        
+    }
+    
+    #relative-code-content{
+        width: 200px;
+        height: 26vh;
+        margin-bottom: 16px;
+        border: 3px solid var(--main5-color);
+        border-radius: 10px;
+    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+        background-color: var(--white-color);
+        /* justify-content: space-around; */
+        
+    }
+    .testcase-div{
+        background-color: var(--main2-color);
+        background-clip: content-box;
+    }
+    
+    #testcase-hr{
+        border: 0px;
+        height: 3px;
+        background-color: var(--black-color);
+        margin:16px 0px 0px
+    }
+    
 
-#relative-code-layout {
-    width: 260px;
-    padding: 10px;
-    margin-top: 90px;
-    margin-right: 10px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-}
-
-
-.title {
-    padding-left: 10px;
-}
-
-#relative-code-container {
-    /* display: flex; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-
-}
-
-#relative-code-content {
-    width: 200px;
-    height: 22vh;
-    margin-bottom: 16px;
-    border: 3px solid var(--main5-color);
-    border-radius: 10px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: var(--white-color);
-    /* justify-content: space-around; */
-
-}
-
-.testcase-div {
-    background-color: var(--main2-color);
-    background-clip: content-box;
-}
-
-#testcase-hr {
-    border: 0px;
-    height: 3px;
-    background-color: var(--black-color);
-    margin: 16px 0px 0px
-}
-
-
-#quiz-input,
-#quiz-output {
-    width: 98%;
-    height: 100%;
-    line-height: 30px;
-    /* overflow: auto; */
-    cursor: default;
-    border: none;
-}
-
-/* 
 .readonlyTextarea {
-  background-color: var(--main1-color);
-  color: var(--main5-color);
-  
+  width: 98%;
+  height: 250px;
+  overflow: auto;
   cursor: default;
-} */</style>
+  outline: none;
+  border: none;
+  resize: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+}
+
+    </style>
