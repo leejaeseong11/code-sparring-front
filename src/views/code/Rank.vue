@@ -54,116 +54,128 @@
     </div>
     </template>
     
-    <script>
-    import Monaco from '../../components/code/RankMonaco.vue'
-    import {apiClient} from '@/axios-interceptor'
-    export default {
-        name: 'rank',
-        components: {Monaco},
-        data(){
-            return{
-                quizNo: '',
-                testcaseNo: '',
-                testcaseList: [],
-                quizContent: '',
-                timerRunning: true,
-                minutes: 60,
-                seconds: 0,
-                
+<script>
+import Monaco from '../../components/code/RankMonaco.vue'
+import { apiClient } from '@/axios-interceptor'
+export default {
+    name: 'rank',
+    components: { Monaco },
+    data() {
+        return {
+            quizNo: '',
+            testcaseNo: '',
+            testcaseList: [],
+            quizContent: '',
+            timerRunning: true,
+            minutes: 60,
+            seconds: 0,
+
+        }
+    },
+    computed: {
+        formattedTime() {
+            return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
+        },
+    },
+
+    methods: {
+        exitButtonClickHandler() {
+            this.$router.push({ path: `/` })
+        },
+        updateTimer() {
+            if (this.minutes === 0 && this.seconds === 0) {
+                this.timerRunning = false; // 타이머 종료
+                return;
+            }
+
+            if (this.seconds === 0) {
+                this.minutes--;
+                this.seconds = 59;
+            } else {
+                this.seconds--;
+            }
+
+            if (this.timerRunning) {
+                setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
+
+            }
+            if (this.seconds === 0 && this.minutes === 0) {
+                if (confirm("시간이 초과되어 메인으로 이동합니다")) {
+                    this.$router.push({ path: `/` })
+
+                }
             }
         },
-        computed: {
-            formattedTime() {
-                return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
-            },
+        // /n을 <br> 태그로 대체하는 메서드
+        replaceNewlines(text) {
+            return text.replace(/\n/g, '<br>');
         },
-        
-        methods: {
-            exitButtonClickHandler(){
-                this.$router.push({ path: `/` })
-            },
-            updateTimer() {
-                if (this.minutes === 0 && this.seconds === 0) {
-                    this.timerRunning = false; // 타이머 종료
-                    return;
-                }
-    
-                if (this.seconds === 0) {
-                    this.minutes--;
-                    this.seconds = 59;
-                } else {
-                    this.seconds--;
-                }
-    
-                if (this.timerRunning) {
-                    setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
-    
-                }
-                if(this.seconds === 0 && this.minutes === 0){
-                    if(confirm("시간이 초과되어 메인으로 이동합니다")){
-                        this.$router.push({ path: `/` })
-    
-                    }
-                }
-            },
-            // /n을 <br> 태그로 대체하는 메서드
-            replaceNewlines(text) {
-                return text.replace(/\n/g, '<br>');
-            },
-            // beforeunload 이벤트 핸들러
-            beforeUnloadHandler(event) {
-                // 여기에 알림창을 띄우는 로직 추가
-                const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
-                event.returnValue = confirmationMessage; // Standard for most browsers
-                // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
-                const shouldNavigateHome = window.confirm(confirmationMessage);
-                if (shouldNavigateHome) {
-                    this.$router.push({ path: `/` });
-                }
-                return confirmationMessage; // For some older browsers
-            },
-    
-            
+        // beforeunload 이벤트 핸들러
+        beforeUnloadHandler(event) {
+            // 여기에 알림창을 띄우는 로직 추가
+            const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+            const shouldNavigateHome = window.confirm(confirmationMessage);
+            if (shouldNavigateHome) {
+                this.$router.push({ path: `/` });
+            }
+            return confirmationMessage; // For some older browsers
         },
-        created(){
-            window.addEventListener('beforeunload', this.beforeUnloadHandler);
-            //타이머 시작
-            this.updateTimer();
-    
-        
-            const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
-            apiClient
-            .get(url)
+
+
+    },
+    created() {
+        window.addEventListener('beforeunload', this.beforeUnloadHandler);
+        //타이머 시작
+        this.updateTimer();
+
+
+        const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
+        apiClient
+            .get(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             .then((response) => {
                 this.quizNo = response.data.quizNo
-                
+
                 const url2 = `${this.backURL}/quiz/${this.quizNo}`
                 apiClient
-                .get(url2)
-                .then((response) => {
-                    this.quizContent = response.data.quizContent
-                })
-                .catch(()=>{
-                    alert('문제 조회에 실패하였습니다')
-                })
+                    .get(url2, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.quizContent = response.data.quizContent
+                    })
+                    .catch(() => {
+                        alert('문제 조회에 실패하였습니다')
+                    })
 
-    
+
                 const url3 = `${this.backURL}/submit/${this.quizNo}`
                 apiClient
-                .get(url3)
-                .then((response) => {
-                    this.testcaseList = response.data
-                })
-                .catch(()=>{
-                    alert('테스트케이스 조회에 실패하였습니다')
-                })
+                    .get(url3, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.testcaseList = response.data
+                    })
+                    .catch(() => {
+                        alert('테스트케이스 조회에 실패하였습니다')
+                    })
             })
             .catch(() => {
                 alert('문제 정보 조회에 실패하였습니다')
             })
-    
-        },
-        beforeDestroy() {
+
+    },
+    beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
         window.removeEventListener('beforeunload', this.beforeUnloadHandler);
         },

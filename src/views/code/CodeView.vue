@@ -70,7 +70,7 @@
                   {{ report.reportComment == null ? '' : '[' + report.reportDate + ']' }}&nbsp;
                 </span>
                 <span class="report-span" id="report-com">
-                    {{ commentNotNull(report.reportComment) }}&nbsp;
+                  {{ commentNotNull(report.reportComment) }}&nbsp;
                 </span>
                 <span class="report-span" id="report-id">
                   {{ report.reportComment == null ? '' : '-' + report.memberName + '님 신고' }}
@@ -106,8 +106,7 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 
 export default {
   name: 'CodeView',
@@ -133,12 +132,12 @@ export default {
   },
   methods: {
     commentNotNull(obj) {
-        if(obj!=null) {
-            this.rptOkCnt++
-            return obj
-        } else {
-            return null
-        }
+      if (obj != null) {
+        this.rptOkCnt++
+        return obj
+      } else {
+        return null
+      }
     },
     rptQuiz() {
       this.reportPopup = true
@@ -150,15 +149,19 @@ export default {
       const memberNo = this.$route.params.memberNo
       location.href = '/profile/code/' + memberNo
     },
-    objectUrlGet(){
-      
+    objectUrlGet() {
+
     }
   },
   created() {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
     apiClient
-      .get(url)
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then((res) => {
         this.quizTitle = res.data.quizTitle
         this.quizContent = res.data.quizContent
@@ -174,16 +177,20 @@ export default {
       .catch(() => {
         alert('문제 조회에 실패하였습니다')
       })
-      this.memberNo = this.$route.params.memberNo
-      const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
-      apiClient
-      .get(url2)
-      .then((res)=>{
+    this.memberNo = this.$route.params.memberNo
+    const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
+    apiClient
+      .get(url2, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
         this.quizUrl = res.data
       })
   },
-  mounted(){
-        // S3 객체의 URL 사용 (직접 접근)
+  mounted() {
+    // S3 객체의 URL 사용 (직접 접근)
     const s3ObjectUrl = 'https://s3.ap-northeast-2.amazonaws.com/codesparring/1/1_101.java';
 
     // 파일 내용을 가져오기
@@ -214,7 +221,7 @@ button {
 }
 
 hr {
-    width: 470px;
+  width: 470px;
 }
 
 input,

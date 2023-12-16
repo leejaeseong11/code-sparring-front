@@ -114,8 +114,7 @@
   </main>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import AddTestcase from '../../components/quiz/AddTestcase.vue'
 
 export default {
@@ -196,7 +195,11 @@ export default {
         const tcNo = e.target.id
         const url = `${this.backURL}/testcase/` + tcNo
         apiClient
-          .delete(url)
+          .delete(url, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
           .then(() => {
             alert('테스트케이스가 삭제되었습니다')
             window.history.go(0)
@@ -211,7 +214,11 @@ export default {
       if (!result) return
       const url = `${this.backURL}/quiz/` + this.quizNo
       apiClient
-        .delete(url)
+        .delete(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then(() => {
           alert('문제가 삭제되었습니다')
           location.href = '/admin/quiz/all/1'
@@ -225,7 +232,11 @@ export default {
     this.quizNo = this.$route.params.quizNo
     const url = `${this.backURL}/quiz/${this.quizNo}`
     apiClient
-      .get(url)
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       .then((res) => {
         this.quizTitle = res.data.quizTitle
         this.quizContent = res.data.quizContent
@@ -261,7 +272,7 @@ textarea {
   color: var(--main3-hover-color);
   padding: 5px;
   resize: none;
-  
+
   &:focus {
     outline: none;
   }
@@ -519,7 +530,8 @@ textarea {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.readonlyTextarea, .readonlyTextareaTc {
+.readonlyTextarea,
+.readonlyTextareaTc {
   background-color: var(--main1-color);
   color: var(--main5-color);
   border: none;

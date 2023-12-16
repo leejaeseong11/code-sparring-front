@@ -60,8 +60,7 @@
   </div>
 </template>
 <script>
-// import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 import ShowQuizSimply from './ShowQuizSimply.vue'
 import sweetAlert from '../../util/modal.js'
 
@@ -76,8 +75,8 @@ export default {
   },
   methods: {
     showQuizClickHandler() {
-      if(this.modalCheck) document.body.style.overflow='auto'
-      else document.body.style.overflow='hidden'
+      if (this.modalCheck) document.body.style.overflow = 'auto'
+      else document.body.style.overflow = 'hidden'
       this.modalCheck = !this.modalCheck
     },
     async enterButtonClickHandler() {
@@ -89,7 +88,11 @@ export default {
         addMemberUrl = `${this.backURL}/room-member`
       }
       apiClient
-        .post(addMemberUrl, {})
+        .post(addMemberUrl, {}, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
         .then((response) => {
           console.log(response)
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
@@ -116,12 +119,15 @@ export default {
   border: 6px solid var(--main5-color);
   opacity: 30%;
 }
+
 .in-game {
   opacity: 100%;
 }
+
 .room-container {
   display: flex;
 }
+
 .room-no {
   width: 24%;
   padding: 0 4px;
@@ -135,9 +141,11 @@ export default {
 
   border-right: 3px solid var(--main5-color);
 }
+
 .room-infos {
   width: 100%;
 }
+
 .room-title {
   height: 48px;
   padding: 10px;
@@ -147,6 +155,7 @@ export default {
 
   border-bottom: 2px dashed var(--main5-color);
 }
+
 .room-info {
   padding: 0 10px 10px 10px;
 
@@ -154,13 +163,16 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+
 .room-enter {
   display: flex;
   align-items: center;
 }
+
 .room-member-number {
   margin: 0 8px 0 4px;
 }
+
 .see-quiz-button {
   width: 92px;
   margin-right: 8px;
@@ -172,11 +184,13 @@ export default {
     border: none;
     background-color: var(--main4-hover-color);
   }
+
   &:active {
     border: none;
     background-color: var(--main4-hover-color);
   }
 }
+
 .modal-wrap {
   width: 100%;
   height: 100%;
@@ -188,6 +202,7 @@ export default {
 
   background: rgba(0, 0, 0, 0.4);
 }
+
 .modal-container {
   min-width: 480px;
   width: 50%;
@@ -206,6 +221,7 @@ export default {
   border-radius: 10px;
   box-sizing: border-box;
 }
+
 #show-quiz-modal-label {
   margin-bottom: 12px;
 
@@ -215,9 +231,11 @@ export default {
 
   color: var(--main5-color);
 }
+
 #show-quiz-modal-house-icon {
   margin-right: 4px;
 }
+
 #modal-close-button {
   margin-top: 12px;
   padding: 4px 16px;
@@ -233,11 +251,13 @@ export default {
     border: none;
     background-color: var(--main4-hover-color);
   }
+
   &:active {
     border: none;
     background-color: var(--main5-hover-color);
   }
 }
+
 .enter-button {
   width: 55px;
 
@@ -248,11 +268,13 @@ export default {
     border: none;
     background-color: var(--red-hover-color);
   }
+
   &:active {
     border: none;
     background-color: var(--red-hover-color);
   }
 }
+
 .btn-custom-primary {
   padding: 6px 12px;
 
@@ -260,6 +282,7 @@ export default {
   border: none;
   border-radius: 6px;
 }
+
 .button-disabled {
   cursor: not-allowed;
   pointer-events: none;

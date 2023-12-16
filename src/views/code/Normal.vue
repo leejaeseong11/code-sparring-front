@@ -138,7 +138,11 @@ export default {
         // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
         const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
         apiClient
-        .get(url)
+        .get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         .then((response) => {
             this.quizNo = response.data.quizNo
             this.quizContent = response.data.quizContent
@@ -147,7 +151,11 @@ export default {
             const url2 = `${this.backURL}/submit/${this.quizNo}`
 
             apiClient
-            .get(url2)
+            .get(url2, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             .then((response) => {
                 this.testcaseList = response.data
             })
@@ -176,7 +184,7 @@ export default {
 #code-layout {
   min-width: 1280px;
   width: 100vh;
-  height: max-content;
+  height: 100vh;
 
   display: flex;
   justify-content: space-around;
@@ -229,7 +237,7 @@ body.flex-container{
 
 
 #testcase-des-container{
-    height: 300px;
+    height: 250px;
     margin-bottom: 10px;
     background-color: var(--white-color);
     border: 3px solid var(--main5-color);
