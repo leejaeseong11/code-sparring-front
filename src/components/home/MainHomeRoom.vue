@@ -62,7 +62,7 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import ShowQuizSimply from './ShowQuizSimply.vue'
-import sweetAlert from '../../util/modal.js'
+import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHomeRoom',
@@ -82,7 +82,7 @@ export default {
     async enterButtonClickHandler() {
       let addMemberUrl
       if (this.roomInfo.roomPwd) {
-        const passwordInput = await sweetAlert.prompt('비밀번호를 입력하세요', '')
+        const passwordInput = await SweetAlert.prompt('비밀번호를 입력하세요', '')
         addMemberUrl = `${this.backURL}/room-member?roomPwd=${passwordInput.value}`
       } else {
         addMemberUrl = `${this.backURL}/room-member`
@@ -93,7 +93,7 @@ export default {
           {
             memberNo: this.memberNo,
             roomNo: this.roomInfo.roomNo,
-            hostStatus: 0
+            hostStatus: 1
           },
           {
             headers: {
@@ -101,12 +101,11 @@ export default {
             }
           }
         )
-        .then((response) => {
-          console.log(response)
+        .then(() => {
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
         })
         .catch((error) => {
-          console.log(error)
+          SweetAlert.error(error.response.data.errors[0])
         })
     }
   },
