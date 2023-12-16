@@ -89,7 +89,7 @@ export default {
       roomMemberList: [],
       nullMember: null,
       loginMemberName: '',
-      LoginMemberNo: 0
+      loginMemberNo: 0
     }
   },
   methods: {
@@ -111,6 +111,19 @@ export default {
 
       this.socket.onmessage = (e) => {
         if (this.socket.readyState === WebSocket.OPEN) {
+          if (e.data.includes('님이 입장했습니다.') || e.data.includes('님이 퇴장했습니다.')) {
+            apiClient
+              .get(`${this.backURL}/room/${this.roomNo}`)
+              .then((response) => {
+                this.roomMemberList = response.data.roomMemberList
+              })
+              .catch(async (error) => {
+                const ok = await SweetAlert.error(error.response.data.errors[0])
+                if (ok) {
+                  this.$router.push({ path: '/' })
+                }
+              })
+          }
           this.chatContentList.push(e.data)
           this.scrollToBottom()
         } else if (
@@ -160,7 +173,7 @@ export default {
         roomChat.scrollTop = roomChat.scrollHeight
       })
     },
-    unLoadEvent: function (event) {
+    unLoadEvent: function () {
       const outMessage = {
         type: 'ROOM_QUIT',
         roomNo: this.roomNo,
@@ -171,36 +184,73 @@ export default {
       if (this.socket.readyState === WebSocket.OPEN) {
         this.socket.close()
       }
-      event.preventDefault()
-      event.returnValue = ''
+
+      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        this.disconnect()
+        this.$router.push({ path: '/' })
+      })
     }
   },
   mounted() {
-    apiClient
-      .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then((response) => {
-        this.roomInfo = response.data
-        this.roomMemberList = response.data.roomMemberList
-      })
-      .catch(async (error) => {
-        const ok = await SweetAlert.error(error.response.data.errors[0])
-        if (ok) {
-          this.$router.push({ path: '/' })
-        }
-      })
-    window.addEventListener('beforeunload', this.unLoadEvent)
     this.roomNo = this.$router.currentRoute.value.params.roomNo
-
     apiClient.get(`${this.backURL}/member/my`).then((response) => {
-      this.connect()
-      console.log(response.data.memberNo)
       this.loginMemberName = response.data.memberName
       this.loginMemberNo = response.data.memberNo
+      apiClient
+        .get(`${this.backURL}/room/${this.roomNo}`, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          this.roomInfo = response.data
+          this.roomMemberList = response.data.roomMemberList
+          if (
+            this.roomMemberList.filter((roomMember) => roomMember.memberNo == this.loginMemberNo)
+              .length == 0
+          ) {
+            let addMemberUrl
+            if (this.roomInfo.roomPwd) {
+              addMemberUrl = `${this.backURL}/room-member?roomPwd=${this.roomInfo.roomPwd}`
+            } else {
+              addMemberUrl = `${this.backURL}/room-member`
+            }
+            apiClient
+              .post(
+                addMemberUrl,
+                {
+                  memberNo: this.loginMemberNo,
+                  roomNo: this.roomInfo.roomNo,
+                  hostStatus: 1
+                },
+                {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }
+              )
+              .then(() => {
+                apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
+                  this.roomInfo = response.data
+                  this.roomMemberList = response.data.roomMemberList
+                  this.connect()
+                })
+              })
+              .catch((error) => {
+                SweetAlert.error(error.response.data.errors[0])
+              })
+          } else {
+            this.connect()
+          }
+        })
+        .catch(async (error) => {
+          const ok = await SweetAlert.error(error.response.data.errors[0])
+          if (ok) {
+            this.$router.push({ path: '/' })
+          }
+        })
     })
+    window.addEventListener('beforeunload', this.unLoadEvent)
   },
   beforeUnmount() {
     const outMessage = {
@@ -209,7 +259,11 @@ export default {
       sender: this.loginMemberName
     }
     this.socket.send(JSON.stringify(outMessage))
-    this.disconnect()
+
+    apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+      this.disconnect()
+      this.$router.push({ path: '/' })
+    })
   }
 }
 </script>

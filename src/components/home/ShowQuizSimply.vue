@@ -6,7 +6,7 @@
       <div class="col-2">정답률</div>
       <div class="col-2">출제자</div>
     </div>
-    <div class="tier-info-container">
+    <div class="tier-info-container row">
       <div class="col-3" v-if="quizInfo.quizTier == 'BRONZE'" style="color: var(--bronze-color)">
         {{ quizInfo.quizTier }}
       </div>
@@ -67,7 +67,7 @@ export default {
   border-top: 3px solid var(--main5-color);
 }
 #quiz-content-container {
-  height: 380px;
+  height: 454px;
 
   white-space: wrap;
   overflow: scroll;

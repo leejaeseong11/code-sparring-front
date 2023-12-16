@@ -43,7 +43,7 @@ export default {
     }
   },
   mounted() {
-    apiClient.get(`${this.backURL}/room-member`).then((response) => {
+    apiClient.get(`${this.backURL}/room-member/hostCheck`).then((response) => {
       this.isRoomManager = response.data
     })
   }
