@@ -1,4 +1,5 @@
 import axios from "axios"
+import sweetAlert from './util/modal.js'
 
 var apiClient = null;
     apiClient = axios.create({
@@ -27,13 +28,23 @@ apiClient.interceptors.response.use(res => {
 
     ,async (error) => {
         if (error.response?.status === 401) {
-            alert("로그인이 필요합니다")
+            sweetAlert.warning("로그인이 필요합니다", '', '로그인창으로 가기').then(() =>{
             window.location.href='/login';
+            })
         }
-        if (error.response?.status === 403 || error.response?.status === 500) {
-            console.error("403 Forbidden 에러 발생 :", error.response)
-            alert("접근 권한이 없습니다")
+        if (error.response?.status === 403) {
+            console.error("403 Forbidden 에러 발생 :", error.response);
+            sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() =>{
             window.history.back();
+          })
+        }
+
+        if (error.response?.status === 500) {
+            console.error("500 Internal Server Error 발생 :", error.response)
+            sweetAlert.error("오류가 발생했습니다", '', '닫기').then(() =>{
+                // window.history.back();
+            })
+
         }
         return Promise.reject(error);
     }
