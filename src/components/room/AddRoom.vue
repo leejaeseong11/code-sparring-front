@@ -170,6 +170,8 @@ export default {
     const url = `${this.backURL}/quiz/list`
     apiClient.get(url).then((res) => {
       this.quizList = res.data
+    }).catch((e)=>{
+      alert('문제를 조회할 수 없습니다')
     })
   }
 }
