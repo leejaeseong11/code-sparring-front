@@ -29,9 +29,20 @@
           <RoomMember
             v-if="index <= roomMemberList.length"
             v-model:member="roomMemberList[index - 1]"
+            @click="showProfileDetailClickHandler(roomMemberList[index - 1].memberNo)"
+            :isRoomManager="isRoomManager"
           />
           <RoomMember v-else v-model:member="nullMember" />
         </template>
+      </div>
+
+      <div class="modal-wrap" v-show="memberProfilePopup" @click="showMemberClickHandler">
+        <div class="modal-container" @click.stop="">
+          <MemberProfile
+            v-model:memberProfile="memberProfile"
+            @showMember="showMemberClickHandler"
+          />
+        </div>
       </div>
       <div id="room-chat" ref="roomChat">
         <div id="chat-title">채팅방</div>
@@ -63,7 +74,6 @@
         <div id="room-quiz-title">선택된 문제</div>
         <ShowQuizSimply v-model:quizInfo="roomInfo" />
       </div>
-
       <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
@@ -71,12 +81,13 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
+import MemberProfile from '../../components/home/MemberProfile.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
 import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'WaitingRoom',
-  components: { RoomMember, ShowQuizSimply },
+  components: { RoomMember, ShowQuizSimply, MemberProfile },
   data() {
     return {
       message: '',
@@ -89,7 +100,21 @@ export default {
       roomMemberList: [],
       nullMember: null,
       loginMemberName: '',
-      loginMemberNo: 0
+      loginMemberNo: 0,
+      memberProfilePopup: false,
+      memberProfile: {
+        memberProfileImg: 0,
+        memberTier: '',
+        memberName: '',
+        winCnt: 0,
+        drawCnt: 0,
+        loseCnt: 0,
+        memberLevel: 0,
+        memberExp: 0,
+        tierPoint: 0,
+        memberInfo: ''
+      },
+      isRoomManager: false
     }
   },
   methods: {
@@ -162,10 +187,8 @@ export default {
       this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
     },
     roomOutButtonClickHandler() {
-      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-        this.disconnect()
-        this.$router.push({ path: '/' })
-      })
+      this.disconnect()
+      this.$router.push({ path: '/' })
     },
     scrollToBottom() {
       this.$nextTick(() => {
@@ -189,6 +212,26 @@ export default {
         this.disconnect()
         this.$router.push({ path: '/' })
       })
+    },
+    showMemberClickHandler() {
+      this.memberProfilePopup = !this.memberProfilePopup
+      this.preventScroll()
+    },
+    preventScroll() {
+      if (this.memberProfilePopup === true) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
+    },
+    showProfileDetailClickHandler(memberNo) {
+      this.memberProfilePopup = !this.memberProfilePopup
+      if (this.memberProfilePopup) {
+        apiClient.get(`${this.backURL}/member/${memberNo}`).then((response) => {
+          this.memberProfile = response.data
+        })
+      }
+      this.preventScroll()
     }
   },
   mounted() {
@@ -249,6 +292,9 @@ export default {
             this.$router.push({ path: '/' })
           }
         })
+    })
+    apiClient.get(`${this.backURL}/room-member`).then((response) => {
+      this.isRoomManager = response.data
     })
     window.addEventListener('beforeunload', this.unLoadEvent)
   },
@@ -482,5 +528,36 @@ pre {
 
 .room-info-code-open > label {
   opacity: 50%;
+}
+.modal-wrap {
+  width: 100%;
+  height: 100%;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-container {
+  min-width: 550px;
+  width: 50%;
+  height: 440px;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  top: 400px;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 </style>
