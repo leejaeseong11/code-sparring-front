@@ -186,8 +186,7 @@ export default defineComponent({
           },
         })
         .then(response => {
-          this.output = response.data.result
-          this.gameResult = response.data.gameResult
+          this.output = response.data
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error => {
