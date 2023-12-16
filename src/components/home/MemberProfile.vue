@@ -62,7 +62,7 @@
         <textarea :value="memberProfile.memberInfo" disabled></textarea>
       </div>
     </div>
-    <button id="modal-close-button" class="btn-custom-primary" @click="showQuizEventEmit">
+    <button id="modal-close-button" class="btn-custom-primary" @click="showMemberEventEmit">
       닫기
     </button>
   </div>
@@ -75,8 +75,8 @@ export default {
     return {}
   },
   methods: {
-    showQuizEventEmit() {
-      this.$emit('showQuiz')
+    showMemberEventEmit() {
+      this.$emit('showMember')
     }
   }
 }
