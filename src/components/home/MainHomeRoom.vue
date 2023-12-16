@@ -66,7 +66,7 @@ import sweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHomeRoom',
-  props: ['roomInfo'],
+  props: ['roomInfo', 'memberNo'],
   data() {
     return {
       modalCheck: false,
@@ -88,11 +88,19 @@ export default {
         addMemberUrl = `${this.backURL}/room-member`
       }
       apiClient
-        .post(addMemberUrl, {}, {
-          headers: {
-            'Content-Type': 'application/json'
+        .post(
+          addMemberUrl,
+          {
+            memberNo: this.memberNo,
+            roomNo: this.roomInfo.roomNo,
+            hostStatus: 0
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        })
+        )
         .then((response) => {
           console.log(response)
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
