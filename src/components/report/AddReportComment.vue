@@ -1,27 +1,14 @@
 <template>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="../main.css">
-    <link rel="stylesheet" href="addComment.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문제 조치</title>
-    <style>
-    </style>
-</head>
-<body>
-    <div class="report-object">
+    <div class="report-object" @click="close - modal">
         <div class="report-box">
             <div class="report-title">문제번호</div>
-            <div class="report-title" id="report-content">quizTitle</div>
+            <div class="report-title" id="report-content">{{ reportDetail.quizNo }}</div>
+            <div class="report-title">신고자</div>
+            <div class="report-title" id="report-content">{{ reportDetail.memberName }}</div>
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고사유</div>
-            <select class="report-title" id="report-reason">
-                <option value="" disabled selected>선택해주세요</option>
+            <select class="report-title" id="report-reason" :disabled="true" v-model="reportDetail.reportType">
                 <option value="1">테스트케이스 추가요청</option>
                 <option value="2">문제 오류</option>
                 <option value="3">기타</option>
@@ -29,44 +16,120 @@
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고내용</div>
-            <textarea class="report-title"></textarea>
+            <textarea v-model="reportDetail.reportContent" class="report-title" readonly></textarea>
         </div>
         <div class="report-box flex-container">
             <div class="report-title">조치내역</div>
-            <textarea class="report-title" id="report-answer" placeholder="조치 내역을 작성해주세요."></textarea>
+            <textarea v-model="editedReportComment" class="report-title" id="report-answer"
+                placeholder="조치 내역을 작성해주세요."></textarea>
         </div>
         <div id="bt-area">
             <div></div>
             <div>
-                <button id="edit-bt" @click="addTestcase">수정</button>
-                <button id="delete-bt" @click="addTestcase">삭제</button>
-                <button id="cancle-bt" @click="$emit('close-testcase')">취소</button>
+                <button id="edit-bt" @click="editReport">수정</button>
+                <button id="delete-bt" @click="deleteReport">삭제</button>
+                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
 
             </div>
         </div>
     </div>
-</body>
-</html>
 </template>
 
 <script>
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
+import sweetAlert from '../../util/modal.js'
 
 export default {
+    name: 'AddReportComment',
+    props: ['reportNo'],
+    data() {
+        return {
+            reportDetail: {
+                memberName: '',
+                quizNo: 0,
+                reportContent: '',
+                reportComment: '',
+                reportType: 0,
+            },
+            editedReportComment: '',
+        }
+    },
+    mounted() {
+        this.readReport();
+    },
+    methods: {
+        closeModal() {
+            this.$emit('close-modal');
+        },
+        readReport() {
+            apiClient
+                .get(`${this.backURL}/admin/report/${this.reportNo}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    console.log('Report Detail:', response.data);
+                    this.reportDetail = response.data
+                    this.editedReportComment = this.reportDetail.reportComment
+                })
+                .catch((error) => {
+                    console.error('Error fetching report details:', error.message);
+                })
+        },
+        editReport() {
+            const url = `${this.backURL}/admin/report/${this.reportNo}`;
+            const data = {
+                reportComment: this.editedReportComment
+            }
+            apiClient
+                .put(url, data, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => {
+                    sweetAlert.success("신고조치가 완료되었습니다", "", "확인")
+                    this.$emit('close-modal');
+                }).catch(() => {
+                    sweetAlert.warning("신고조치가 실패하였습니다", "", "확인")
+                })
+        },
+        deleteReport() {
+            sweetAlert.question("삭제 확인", "신고를 삭제하시겠습니까?", "네", "아니오")
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        const url = `${this.backURL}/admin/report/${this.reportNo}`;
+                        return apiClient
+                            .delete(url, {
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                    } else {
+                        throw new Error("삭제가 취소되었습니다");
+                    }
+                })
+                .then(() => {
+                    sweetAlert.success("신고조치가 완료되었습니다", "", "확인");
+                    this.$emit('report-deleted');
+                    this.$emit('close-modal');
+                })
+                .catch((error) => {
+                    if (error.message !== "삭제가 취소되었습니다") {
+                        sweetAlert.warning("신고조치가 실패하였습니다", "", "확인");
+                    }
+                });
+        }
 
-  name: 'AddTestcase',
-  data() {
-    return {
-      inputValue: '',
-      outputValue: ''
+
+
+
     }
-  },
-  methods: {
-  }
 }
 </script>
 
-<style sc>
+<style scoped>
 .report-object {
     max-width: 600px;
     margin: 20px auto;
@@ -104,7 +167,7 @@ textarea.report-title {
     box-sizing: border-box;
     margin-top: 5px;
     font-size: 1.2rem;
-    
+
 }
 
 textarea.report-title {
@@ -167,5 +230,4 @@ button {
         border-color: var(--main4-hover-color);
     }
 }
-
 </style>

@@ -8,9 +8,9 @@
             <div class="report-title">신고사유</div>
             <select class="report-title" id="report-reason" v-model="reportType">
                 <option value="" disabled selected>선택해주세요</option>
-                <option value="0">테스트케이스 추가요청</option>
-                <option value="1">문제 오류</option>
-                <option value="2">기타</option>
+                <option value="1">테스트케이스 추가요청</option>
+                <option value="2">문제 오류</option>
+                <option value="3">기타</option>
             </select>
         </div>
         <div class="report-box flex-container">
