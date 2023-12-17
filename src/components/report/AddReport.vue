@@ -20,8 +20,8 @@
         <div id="bt-area">
             <div></div>
             <div>
-                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
                 <button id="add-bt" @click="addReprot">제출</button>
+                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
             </div>
         </div>
     </div>

@@ -16,7 +16,7 @@
                             class="profile-icon" />
                         <button @click="openProfilePopup" type="button">변경</button>
                         <ProfileImgPopup v-if="isProfilePopupOpen" @selected="handleSelectedProfileImage"
-                            @close="closeProfilePopup" />
+                        @close-modal="offProfileModal" />
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import ProfileImgPopup from './ProfileImgPopup.vue';
+import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue';
 import { apiClient } from '@/axios-interceptor'
 export default {
     name: "Signup",
@@ -165,7 +165,7 @@ export default {
         openProfilePopup() {
             this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false : true;
         },
-        closeProfilePopup() {
+        offProfileModal() {
             this.isProfilePopupOpen = false;
         },
         handleSelectedProfileImage(index) {
@@ -212,7 +212,7 @@ export default {
             const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
             console.log(url)
             apiClient
-                .post(url, {
+                .get(url, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -293,7 +293,7 @@ export default {
         btNickDupchkClickHandler() {
             const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.nick}`
             apiClient
-                .post(url, {
+                .get(url, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -383,7 +383,7 @@ export default {
 
 .logo {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 10px;
     z-index: 2;
     display: flex;
@@ -484,31 +484,28 @@ option {
 /* signup */
 .signup {
     position: relative;
-    margin-top: 500px;
-    justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: column;
     width: 450px;
-    height: 980px;
+    height: 866px;
     min-width: 450px;
     margin: auto;
-
-
     border: 1px solid var(--main2-color);
     border-radius: 40px;
     box-shadow: 1px 1px 12px var(--main2-color);
     box-sizing: border-box;
-
     z-index: 3;
-
-    top: 100px;
+    top: 85px;
+    margin-bottom: 114px;
 }
 
 .content {
     width: 80%;
     flex-direction: column;
     align-items: center;
+    padding-top:20px;
+    padding-bottom:20px;
 }
 
 /* HEADER */
@@ -636,9 +633,7 @@ button#submit {
     width: 200px;
     /* 아이콘의 가로 크기 */
     height: 200px;
-    /* 아이콘의 세로 크기 */
     border-radius: 50%;
-    /* 원 형태를 만들기 위해 반지름 설정 */
 
 }
 
@@ -655,63 +650,14 @@ button#submit {
 
 #info-profileImg {
     margin-bottom: 10px;
-    /* 이미지와 섹션 간격을 조절합니다. */
 }
 
 section {
     margin: 10px 0 25px 0;
-    /* 섹션 간격을 조절합니다. */
-}
-
-
-
-
-/* WEB - SMALL SCREEN */
-@media screen and (min-width: 500px) and (max-height: 850px) {
-    body {
-        min-height: 700px;
-    }
-
-    .signup {
-        height: 900px;
-    }
-
-    .content {
-        width: 360px;
-        margin-top: 30px;
-        margin-bottom: 10px;
-    }
-
-    section {
-        margin: 20px 0 0px 0;
-    }
-
-    .info {
-        margin-bottom: 18px;
-    }
-}
-
-/* MOBILE */
-@media screen and (max-width: 500px) {
-    body {
-        min-height: 780px;
-        background-color: var(--white-color);
-    }
-
-    .signup {
-        width: 100vw;
-        height: 700px;
-        border: 0px;
-        box-shadow: none;
-    }
-
-    .content {
-        width: 85vw;
-        min-width: 380px;
-    }
 }
 
 .divImg>img {
     width: 100px;
 }
+
 </style>

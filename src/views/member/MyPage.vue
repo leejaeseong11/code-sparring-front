@@ -17,10 +17,9 @@
             alt="home"
             @click="movePage"
           />
-          <button id="unregister">회원 탈퇴</button>
+          <button id="unregister" @click="onRemoveModal">회원 탈퇴</button>
         </div>
       </div>
-
       <div class="content-area">
         <ProfileCheck v-if="this.myProfile"></ProfileCheck>
         <ProfileEdit v-if="this.profileEdit"></ProfileEdit>
@@ -28,6 +27,9 @@
         <RankHistory v-if="this.rankHistory"></RankHistory>
       </div>
     </div>
+
+    <div v-if="removeModal" id="back-off" @click="offRemoveModal"></div>
+    <ProfileRemove v-if="removeModal" id="remove-popup" @close-modal="offRemoveModal"/>
   </main>
 </template>
 <script>
@@ -35,17 +37,20 @@ import ProfileCheck from '../../components/profile/ProfileCheck.vue'
 import ProfileEdit from '../../components/profile/ProfileEdit.vue'
 import MyCode from '../../components/profile/MyCode.vue'
 import RankHistory from '../../components/profile/RankHistory.vue'
+import ProfileRemove from '../../components/profile/ProfileRemove.vue'
 
 export default {
   name: 'MyPage',
-  components: { ProfileCheck, ProfileEdit, MyCode, RankHistory },
+  components: { ProfileCheck, ProfileEdit, MyCode, RankHistory, ProfileRemove},
   data() {
     return {
       memberNo: '',
       myProfile: true,
       profileEdit: false,
       myCode: false,
-      rankHistory: false
+      rankHistory: false,
+      removeModal: false,
+
     }
   },
   methods: {
@@ -56,7 +61,13 @@ export default {
         else if(viewName=='code-page') location.href='/profile/code/'+this.memberNo
         else if(viewName=='rank-history') location.href='/profile/rank/'+this.memberNo
         else location.href='/'
-    }
+    },
+    offRemoveModal() {
+            this.removeModal = false
+    },
+    onRemoveModal() {
+            this.removeModal = true
+    },
   },
   mounted() {
     this.memberNo=this.$route.params.memberNo
@@ -203,5 +214,30 @@ export default {
   &:hover {
     color: var(--white-color);
   }
+}
+
+#remove-popup {
+    padding: 10px;
+    position: fixed;
+    background-color: var(--white-color);
+    border: 8px solid var(--red-color);
+    border-radius: 10px;
+    width: 700px;
+    height: 320px;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+#back-off {
+    width: 100%;
+    height: 100%;
+    display: fixed;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
