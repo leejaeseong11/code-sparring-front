@@ -77,6 +77,9 @@
       <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
     </div>
   </div>
+
+  
+  
 </template>
 <script>
 import { apiClient } from '@/axios-interceptor'

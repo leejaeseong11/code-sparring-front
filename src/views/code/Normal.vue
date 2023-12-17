@@ -1,8 +1,8 @@
 <template lang="">
     <div id="code-layout" class="row">
         <body class="flex-container">
-
             <div id="code-side-layout">
+
                 <div id="problem-des-title" class="title">문제설명</div>
                 <div id="problem-des-container">
                     <div id="problem-des-content">
@@ -33,26 +33,79 @@
                 <AddReport v-if="reportModal" id="report-popup" @close-modal="offReportModal"
                         :quizInfo="{quizNo, quizTitle}"></AddReport>
                 <button class="button" @:click="reportButtonClickHandler">문제신고하기</button>
-                
+
                 <div id="timer-title" class="title">제한시간</div>
                 <div id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</div>
 
-                <button class="button" id="exit" @:click="exitButtonClickHandler">나가기</button>
+                <button class="button" id="exit" @click="exitButtonClickHandler">나가기</button>
             </div>
 
+
             <div class="monaco">
-                <Monaco v-bind:childQuizNoValue="quizNo"/>
+                <Monaco 
+                @monacoSubmitEvent="setSubmitValue"
+                @monacoRunEvent="setRunValue"
+                :msgMemberButtonValue="this.msgMemberButtonValue"
+                v-bind:childQuizNoValue="quizNo"
+                />
             </div>
 
             <div id="relative-code-layout">
-                <div id="relative-code-title" class="title">상대코드</div>
-                <div id="relative-code-container">
-                    <div id="relative-code-content">1P</div>
-                    <div id="relative-code-content">2P</div>
-                    <div id="relative-code-content">3P</div>
+                <!-- <div id="relative-code-title" class="title">상대코드</div> -->
+                    <div id="relative-code-container">
+                        <div id="member-title">
+                            <!-- {{ roomMemberList && roomMemberList.length > 0 ? roomMemberList[0].memberName : '1P' }} -->
+                            {{ roomMemberList && roomMemberList.length > 0 && this.memberName === roomMemberList[0].memberName
+                                ? '나의코드('+this.memberName + ')'
+                                : '1P' }}
+                        </div>
+                        <div id="relative-code-content">
+                            <div v-if="this.buttonValuePlayer1">
+                                {{ this.buttonValuePlayer1 }}
+                            </div>
+                            <div v-else>1P 작성중...</div>
+                            
+                        </div>
+                        <div id="member-title">
+                            {{ roomMemberList && roomMemberList.length > 1 && this.memberName === roomMemberList[1].memberName
+                                ? '나의코드('+this.memberName + ')'
+                                : '2P' }}
+                        </div>
+                        <div id="relative-code-content">
+                            <div v-if="this.buttonValuePlayer2">
+                                {{ this.buttonValuePlayer2 }}
+                            </div>
+                            <div v-else>2P 작성중...</div>
+                        </div>
+
+                        <div id="member-title"> 
+                            {{ roomMemberList && roomMemberList.length > 2 && this.memberName === roomMemberList[2].memberName
+                                ? '나의코드('+this.memberName + ')'
+                                : '3P' }}
+                        </div>
+                        <div id="relative-code-content">
+                            <div v-if="this.buttonValuePlayer3">
+                                {{ this.buttonValuePlayer3 }}
+                            </div>
+                            <div v-else>3P 작성중...</div>
+                        </div>
+
+                        <div id="member-title"> 
+                            {{ roomMemberList && roomMemberList.length > 3 && this.memberName === roomMemberList[3].memberName
+                                ? '나의코드('+this.memberName + ')'
+                                : '4P' }}
+                        </div>
+                        <div id="relative-code-content">
+                            <div v-if="this.buttonValuePlayer3">
+                                {{ this.buttonValuePlayer4 }}
+                            </div>
+                            <div v-else>4P 작성중...</div>
+                        </div>
+                        
                 </div>
             </div>
         </body>
+
     </div>
 </template>
 
@@ -60,12 +113,14 @@
 import Monaco from '../../components/code/NormalMonaco.vue'
 import AddReport from '../../components/report/AddReport.vue'
 import { apiClient } from '@/axios-interceptor'
+import SweetAlert from '../../util/modal.js'
 export default {
     name: 'normal',
     props: ['quizInfo'],
     components: { Monaco, AddReport },
     data() {
         return {
+            roomNo: '',
             quizNo: '',
             testcaseNo: '',
             testcaseList: [],
@@ -75,6 +130,18 @@ export default {
             minutes: 60,
             seconds: 0,
             reportModal: false,
+            socket: null,
+            buttonValue: '',
+            buttonValuePlayer1: '',
+            buttonValuePlayer2: '',
+            buttonValuePlayer3: '',
+            buttonValuePlayer4: '',
+            roomMemberList: [],
+            memberStatus: '',
+            memberNo: '',
+            memberName: '',
+            msgMemberButtonValue: '',
+            
         }
     },
     computed: {
@@ -87,6 +154,110 @@ export default {
         reportButtonClickHandler() {
             this.reportModal = true
         },
+        setRunValue(dataFromChild){
+            this.buttonValue = dataFromChild;
+            console.log('자식에서 받은 run데이터: ', dataFromChild);
+            this.sendMessage()
+        },
+        setSubmitValue(dataFromChild){
+            this.buttonValue = dataFromChild
+            console.log('자식에서 받은 submit데이터: ', dataFromChild)
+            this.sendMessage()
+        },
+        // handleMsgMemberButtonValue(msgMemberButtonValue) {
+        //     this.msgMemberButtonValue = msgMemberButtonValue;
+        // },
+
+        connect(){
+            this.socket = new WebSocket(this.socketURL)
+
+            console.log(this.memberName)
+            this.socket.onopen = () => {
+                const enterMessage = {
+                    type: 'ROOM_ENTER',
+                    roomNo: this.roomNo,
+                    sender: this.memberName
+                }
+                this.socket.send(JSON.stringify(enterMessage))
+            }
+
+            this.socket.onclose = () => { }
+            this.socket.onerror = () => { }
+
+            this.socket.onmessage = (e) => {
+                if(this.socket.readyState === WebSocket.OPEN){
+
+                    const rawData = e.data;
+                    const colonIndex = rawData.indexOf(':');
+                    var msgMemberName = ''
+                    var msgMemberButtonValue = ''
+                    //test1: run
+                    if (colonIndex !== -1) {
+                        msgMemberName = rawData.substring(0, colonIndex).trim();
+                        msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
+                        this.msgMemberButtonValue = msgMemberButtonValue
+                        for(let i=0; i<this.roomMemberList.length; i++){
+                            console.log(this.roomMemberList[i].memberName)
+                            if (this.roomMemberList[i].memberName === msgMemberName) {
+                                this[`buttonValuePlayer${i + 1}`] = msgMemberButtonValue;
+                            }
+                        }
+                    } else {
+                        console.log("No colon found in the data.");
+                    }
+                    this.buttonValue = e.data;
+                }else if(
+                    this.socket.readyState === WebSocket.CLOSING ||
+                    this.socket.readyState === WebSocket.CLOSED
+                ){
+                    this.connect()
+                }
+
+            }
+        },
+        disconnect(){
+            if(this.socket.readyState === WebSocket.OPEN) {
+                const outMessage = {
+                    type: 'ROOM_QUIT',
+                    roomNo: this.roomNo,
+                    sender: this.memberName
+                }
+                this.socket.send(JSON.stringify(outMessage))
+                this.socket.close()
+            }
+        },
+        sendMessage(){
+            if(this.buttonValue == '') return
+            var talkMessage = {
+                type: 'ROOM_TALK',
+                roomNo: this.roomNo,
+                sender: this.memberName,
+                message: this.buttonValue
+            }
+            this.socket.send(JSON.stringify(talkMessage))
+            for(let i=0; i<this.roomMemberList.length; i++){
+                console.log(this.roomMemberList[i].memberName)
+                if (this.roomMemberList[i].memberName === this.memberName) {
+                    this[`buttonValuePlayer${i + 1}`] = this.buttonValue;
+                }
+            }
+            this.buttonValue = ''
+        },
+        unLoadEvent: function (event) {
+            const outMessage = {
+                type: 'ROOM_QUIT',
+                roomNo: this.roomNo,
+                sender: this.memberName
+            }
+            this.socket.send(JSON.stringify(outMessage))
+
+            if (this.socket.readyState === WebSocket.OPEN) {
+                this.socket.close()
+            }
+            event.preventDefault()
+            event.returnValue = ''
+        },
+
         offReportModal() {
             this.reportModal = false
         },
@@ -140,9 +311,9 @@ export default {
         window.addEventListener('beforeunload', this.beforeUnloadHandler);
         //타이머 시작
         this.updateTimer();
-
-        // room에서 roomNo에 해당하는 quizNo, quizContent 가져오기
-        const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
+        this.roomNo = this.$router.currentRoute.value.params.roomNo
+        //quizNo, quizContent, quizTitle 가져오기
+        const url = `${this.backURL}/room/${this.roomNo}`
         apiClient
             .get(url, {
                 headers: {
@@ -154,8 +325,8 @@ export default {
                 this.quizContent = response.data.quizContent
                 this.quizTitle = response.data.quizTitle
 
+                //testcaseList
                 const url2 = `${this.backURL}/submit/${this.quizNo}`
-
                 apiClient
                     .get(url2, {
                         headers: {
@@ -173,6 +344,65 @@ export default {
                 alert('문제 정보 조회에 실패하였습니다')
             })
 
+        //memberNo
+        const url3 = `${this.backURL}/mycode/memberNo`
+        apiClient
+        .get(url3, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.memberNo = response.data
+
+            //memberName
+            const url4 = `${this.backURL}/member/${this.memberNo}`
+            apiClient
+            .get(url4, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                this.memberName = response.data.memberName
+                console.log(this.memberName)
+            })
+        })
+
+    },
+    mounted(){
+        apiClient
+        .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`, {
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.roomInfo = response.data
+            this.roomMemberList = response.data.roomMemberList
+            
+            // this.memberNo와 같은 memberNo를 가진 요소 제거
+            // this.roomMemberList = this.roomMemberList.filter(member => member.memberNo !== this.memberNo);
+            console.log(this.roomMemberList)
+        })
+        .catch(async (error) => {
+            const ok = await SweetAlert.error(error.response.data.errors[0])
+            if (ok) {
+                this.$router.push({ path: '/' })
+            }
+        })
+        window.addEventListener('beforeunload', this.unLoadEvent)
+        this.roomNo = this.$router.currentRoute.value.params.roomNo
+        this.connect()
+    },
+    beforeUnmount() {
+        const outMessage = {
+            type: 'ROOM_QUIT',
+            roomNo: this.roomNo,
+            sender: this.memberName
+        }
+        this.socket.send(JSON.stringify(outMessage))
+        this.disconnect()
     },
     beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
@@ -325,7 +555,7 @@ body.flex-container {
 
 #relative-code-content {
     width: 200px;
-    height: 26vh;
+    height: 17vh;
     margin-bottom: 16px;
     border: 3px solid var(--main5-color);
     border-radius: 10px;

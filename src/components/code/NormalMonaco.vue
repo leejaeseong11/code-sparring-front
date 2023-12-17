@@ -5,8 +5,8 @@
       <span v-html="replaceNewlines(this.output)"></span>
     </div>
     <button @click="_setValue(this.value)" class="button">리셋하기</button>
-    <button @click="execution()" class="button">코드 실행하기</button>
-    <button @click="submit()" class="button" id="submit">코드 제출하기</button>
+    <button :disabled="isButtonDisabled" @click="execution()" class="button">코드 실행하기</button>
+    <button :disabled="isButtonDisabled" @click="submit()" class="button" id="submit">코드 제출하기</button>
     <div style="display: inline;"> *주의! Main클래스를 변경하지 마세요! </div>
     <br>
   </div>
@@ -26,6 +26,10 @@ export default defineComponent({
       memberNo: '',
       output: '',
       gameResult: '',
+      buttonValue: '',
+      isExecutionButtonDisabled: false,
+      isSubmitButtonDisabled: false,
+      isButtonDisabled: false,
     };
   },
   props: {
@@ -47,6 +51,10 @@ export default defineComponent({
           // paste: { enabled: false, showPasteSelector: 'never'}
         }
       },
+    },
+    msgMemberButtonValue: {
+        type: String,
+        default: ''
     },
   },
 
@@ -162,6 +170,9 @@ export default defineComponent({
       return text.replace(/\n/g, '<br>');
     },
     execution() {
+      this.buttonValue = '코드 실행!';
+      this.$emit('monacoRunEvent', this.buttonValue);
+      console.log('모나코에서 보낸 RUN 데이터: ' + this.buttonValue)
 
       const quizNo = this.quizNo // 퀴즈번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
@@ -195,6 +206,9 @@ export default defineComponent({
         })
     },
     submit() {
+      this.buttonValue = '코드 제출!';
+      this.$emit('monacoSubmitEvent', this.buttonValue);
+      console.log('모나코에서 보낸 SUBMIT 데이터: ' + this.buttonValue)
 
       const quizNo = this.quizNo  // 퀴즈번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
@@ -227,7 +241,16 @@ export default defineComponent({
           console.log(error)
           alert(error.message)
         })
-    }
+    },
+    disableButtons(buttonType, duration) {
+      setTimeout(() => {
+        if (buttonType === 'execution') {
+          this.executionDisabled = false;
+        } else if (buttonType === 'submit') {
+          this.submitDisabled = false;
+        }
+      }, duration);
+    },
   },
   watch: {
     options: {
@@ -253,6 +276,33 @@ export default defineComponent({
     },
     theme() {
       monaco.editor.setTheme(this.theme)
+    },
+    msgMemberButtonValue(newValue, oldValue) {
+      if (newValue === oldValue) {
+        if (newValue === '코드 실행!') {
+          this.isButtonDisabled = true;
+          setTimeout(() => {
+            this.isButtonDisabled = false;
+          }, 3000);
+        } else if (newValue === '코드 제출!') {
+          this.isButtonDisabled = true;
+          setTimeout(() => {
+            this.isButtonDisabled = false;
+          }, 5000);
+        }
+      } else {
+        if (newValue === '코드 실행!') {
+          this.isButtonDisabled = true;
+          setTimeout(() => {
+            this.isButtonDisabled = false;
+          }, 3000);
+        } else if (newValue === '코드 제출!') {
+          this.isButtonDisabled = true;
+          setTimeout(() => {
+            this.isButtonDisabled = false;
+          }, 5000);
+        }
+      }
     },
   },
 })
