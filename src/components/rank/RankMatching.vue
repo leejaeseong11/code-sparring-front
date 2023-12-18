@@ -1,6 +1,7 @@
 <template>
     <div id="layout">
         <div id="header">
+            <div id="match-text">・・・ Matching ・・・</div>
             <img src="../../../public/images/rank/matching.gif" id="matching-icon" alt="rank-matching">&nbsp;
             <span id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{ formattedTime }}</span>
         </div>
@@ -71,9 +72,15 @@ export default {
 }
 
 #header {
-    margin-top: 30px;
+    margin-top: 20px;
     text-align: center;
     padding-right: 10px;
+}
+
+#match-text {
+    padding-left: 15px;
+    margin-bottom: 10px;
+    color: var(--white-color);
 }
 
 #matching-icon {
@@ -87,7 +94,7 @@ export default {
 }
 
 #content {
-    margin-top: 70px;
+    margin-top: 40px;
     display: flex;
     justify-content: space-between;
     text-align: center;
