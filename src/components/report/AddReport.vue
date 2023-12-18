@@ -19,7 +19,7 @@
         </div>
         <div id="bt-area">
             <div></div>
-            <div>
+            <div class="button-container">
                 <button id="add-bt" @click="addReprot">제출</button>
                 <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
             </div>
@@ -129,9 +129,11 @@ textarea.report-title {
     gap: 8px;
 }
 
-#bt-area {
+.button-container {
+    grid-area: button-container;
     display: flex;
     justify-content: center;
+    gap: 10px;
 }
 
 button {
@@ -145,7 +147,6 @@ button {
 #cancle-bt {
     background-color: var(--red-color);
     border-color: var(--red-color);
-    margin-right: 10px;
 
     &:hover {
         background-color: var(--red-hover-color);

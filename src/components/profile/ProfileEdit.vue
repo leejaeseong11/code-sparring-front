@@ -86,8 +86,6 @@ export default {
                     this.editedProfileImg = this.loginMember.memberProfileImg
                     this.editedMemberName = this.loginMember.memberName
                     this.editedMemberInfo = this.loginMember.memberInfo
-                    console.log("editedMemberPwd", this.editedMemberPwd)
-                    console.log("checkPwd", this.checkPwd)
                 })
         },
         offProfileModal() {
@@ -105,9 +103,9 @@ export default {
                 sweetAlert.warning("변경할 닉네임을 입력해주세요", '', '닫기')
                 return;
             }
-            const nickRegExp = /^[a-zA-Z0-9]{5,20}$/;
+            const nickRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
             if (!nickRegExp.test(this.editedMemberName)) {
-                sweetAlert.warning("5~20자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
+                sweetAlert.warning("3~10자의  한글, 숫자, 영어만 사용 가능합니다", '', '닫기')
                 return;
             }
 
@@ -133,7 +131,8 @@ export default {
         },
         editInfo() {
             const data = {
-                memberPwd: null,
+                // memberPwd: null,
+                memberPwd: this.editedMemberPwd === '' ? null : this.editedMemberPwd,
                 memberName: null,
                 memberInfo: null,
                 memberProfileImg: null,
@@ -141,7 +140,8 @@ export default {
             if (!(this.editedMemberName === this.loginMember.memberName)) {
                 data.memberName = this.editedMemberName
             }
-            if (this.editedMemberPwd != null) {
+            if (this.editedMemberPwd != null && this.editedMemberPwd != '') {
+                console.log("data.memberPwd1", data.memberPwd)
                 const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
                 if (!pwdRegExp.test(this.editedMemberPwd)) {
                     sweetAlert.warning("비밀번호는 8~20자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다", '', '닫기')
@@ -164,6 +164,11 @@ export default {
             console.log("data.memberName", data.memberName)
             console.log("data.memberInfo", data.memberInfo)
             console.log("data.memberProfileImg", data.memberProfileImg)
+
+            if (data.memberPwd === null && data.memberName === null && data.memberInfo === null && data.memberProfileImg === null) {
+                sweetAlert.warning("변경 사항이 없습니다", '', '닫기')
+                return;
+            }
             apiClient
                 .put(`${this.backURL}/member/my`, data, {
                     headers: {

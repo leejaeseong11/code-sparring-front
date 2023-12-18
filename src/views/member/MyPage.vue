@@ -223,7 +223,7 @@ export default {
     border: 8px solid var(--red-color);
     border-radius: 10px;
     width: 700px;
-    height: 320px;
+    height: 330px;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);

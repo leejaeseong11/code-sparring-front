@@ -1,21 +1,23 @@
 <template>
     <div class="remove-object" @click="close - modal">
         <div class="remove-box">
-            <div class="remove-title">회 원 탈 퇴</div>
-            <div class="remove-title">회원탈퇴 완료 시 당사 사이트 이용 권한이 소멸되며, 이용자의 정보는 복구가 불가능합니다.</div>
+            <div class="profile-remove-title">회 원 탈 퇴</div>
+            <div class="remove-content">회원탈퇴 완료 시 당사 사이트 이용 권한이 소멸되며, 이용자의 정보는 복구가 불가능합니다.</div>
             <div class="remove-box flex-container">
-                <input type="checkbox" id="confirmCheckbox"> 위 내용을 확인하였습니다.
+                <input type="checkbox" id="confirmCheckbox" v-model="confirmChecked" @change="handleCheckboxChange"> 위 내용을
+                확인하였습니다.
             </div>
             <div class="remove-title">
-                <div class="remove-id">사용자의 아이디 : {{ loginMember.memberId }}</div>
+                <div id="remove-id">아이디 : {{ loginMember.memberId }}</div>
             </div>
-            <div class="remove-title">비밀번호 :
-                <input type="password" v-model="password" placeholder="비밀번호를 입력하세요.">
+            <div id="remove-pwd">비밀번호 :
+                <input id="remove-pwd-input" type="password" v-model="password" placeholder="비밀번호를 입력하세요">
             </div>
             <div id="bt-area">
                 <div></div>
-                <div>
-                    <button id="add-bt" @click="submitRemove">탈퇴</button>
+                <div class="button-container">
+                    <button id="add-bt" :disabled="!confirmChecked" :class="{ 'disabled-btn': !confirmChecked }"
+                        @click="submitRemove">탈퇴</button>
                     <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
                 </div>
             </div>
@@ -33,7 +35,8 @@ export default {
             loginMember: {
                 memberId: '',
             },
-            password: ''
+            password: '',
+            confirmChecked: false
         }
     },
     mounted() {
@@ -47,6 +50,29 @@ export default {
         closeModal() {
             this.$emit('close-modal');
         },
+        handleCheckboxChange() {
+            console.log('Checkbox changed:', this.confirmChecked);
+        },
+        submitRemove() {
+            const url = `${this.backURL}/member/my/withdraw`;
+            const data = {
+                memberPwd: this.password
+            }
+            apiClient
+                .put(url, data, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => {
+                    sweetAlert.success("회원탈퇴가 완료되었습니다", "", "확인").then(() => {
+                        window.location.href = '/login';
+                    })
+
+                }).catch(() => {
+                    sweetAlert.warning("회원탈퇴가 실패하였습니다", "", "확인")
+                })
+        }
     }
 }
 
@@ -56,7 +82,6 @@ export default {
 .remove-object {
     max-width: 600px;
     margin: 20px auto;
-    padding: 30px;
     border: 1px solid #ccc;
     border-radius: 5px;
     display: flex;
@@ -67,8 +92,7 @@ export default {
 }
 
 .remove-box {
-    margin-bottom: 15px;
-    text-align: left;
+    margin-bottom: 10px;
 }
 
 .remove-title {
@@ -76,22 +100,52 @@ export default {
     margin-bottom: 5px;
     width: 120px;
     padding-top: 3px;
+    text-align: center;
 }
 
-#remove-content {
-    font-size: 1.2rem;
-    padding: 30px;
+.profile-remove-title {
+    text-align: center;
+    align-items: center;
+    padding-bottom: 10px;
+    font-size: 1.9rem;
+}
+
+.remove-content {
+    font-size: 1.5rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#remove-id,
+#remove-pwd {
+    font-size: 1.3rem;
+    justify-content: center;
+    text-align: center;
+}
+
+#remove-pwd-input {
+    width: 199px;
+    font-size: 1.1rem;
+    text-align: center;
 }
 
 .flex-container {
     display: flex;
     gap: 8px;
+    font-size: 1.3rem;
+    justify-content: center;
+    padding-top: 10px
 }
 
-#bt-area {
+.button-container {
+    grid-area: button-container;
     display: flex;
     justify-content: center;
+    gap: 10px;
+    padding-top: 10px;
 }
+
 
 button {
     border: 1px solid;
@@ -104,7 +158,6 @@ button {
 #cancle-bt {
     background-color: var(--main4-hover-color);
     border-color: var(--main4-hover-color);
-    margin-right: 10px;
 
     &:hover {
         background-color: var(--main4-hover-color);
@@ -121,5 +174,11 @@ button {
         border-color: var(--red-hover-color);
 
     }
+}
+
+#add-bt:disabled {
+    background-color: var(--main2-color);
+    border-color: var(--main2-color);
+    cursor: not-allowed;
 }
 </style>
