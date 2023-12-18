@@ -45,6 +45,7 @@
                 <div>{{ loginMember.tierPoint }} pt</div>
             </div>
         </div>
+
         <div class="member-name-container">
             <span class="mini-title">닉네임</span>
             <div class="content-container">
@@ -54,7 +55,7 @@
         <div class="member-info-container">
             <span class="mini-title">소개</span>
             <div class="content-container">
-                <textarea class="input-box" type="text" v-model="loginMember.memberInfo"></textarea>
+                <textarea id="input-box" type="text" v-model="loginMember.memberInfo"></textarea>
             </div>
         </div>
     </div>
@@ -92,16 +93,16 @@ export default {
 <style scoped>
 .container {
     display: grid;
-    grid-template-columns: 0.8fr 1.1fr 0.3fr 2.4fr 0.8fr;
-    grid-template-rows: 0.12fr 0.1fr 0.3fr 0.25fr 0.25fr 0.5fr 0.25fr;
+    grid-template-columns: 0.8fr 1.1fr 0.45fr 2.4fr 0.8fr;
+    grid-template-rows: 0.12fr 0.05fr 0.25fr 0.3fr 0.25fr 0.3fr 0.1fr;
     gap: 0px 0px;
     grid-template-areas:
         "profile-check-title profile-check-title profile-check-title profile-check-title profile-check-title"
         ". profile-icon-container . . ."
         ". profile-icon-container . memberLevel-container ."
         ". profile-icon-container . member-tier-container ."
-        ". member-id-container . member-name-container ."
-        ". . . member-info-container ."
+        ". profile-icon-container . member-name-container ."
+        ". member-id-container . member-info-container ."
         ". . . . .";
     padding: 20px;
 }
@@ -118,15 +119,28 @@ export default {
 #profile-icon {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    margin-top: 20px;
 }
 
 .memberLevel-container {
     grid-area: memberLevel-container;
 }
 
+.mini-title {
+    font-size: 1.4rem;
+}
+
 .member-tier-container {
     grid-area: member-tier-container;
+}
+
+.member-tier-container > .content-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.content-container {
+    margin-top: 5px;
 }
 
 .rank-tier-icon {
@@ -136,7 +150,6 @@ export default {
 #exp-container {
     width: 100%;
     margin-bottom: 12px;
-
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -171,6 +184,8 @@ export default {
 
 .member-id-container {
     grid-area: member-id-container;
+    font-size: 1.3rem;
+    text-align: center;
 }
 
 .member-name-container {
@@ -179,5 +194,13 @@ export default {
 
 .member-info-container {
     grid-area: member-info-container;
+}
+
+#input-box {
+    width: 370px;
+    height: 200px;
+    background-color: transparent;
+    color: var(--main5-color);
+    border: none;
 }
 </style>

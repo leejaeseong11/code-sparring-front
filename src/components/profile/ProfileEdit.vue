@@ -18,13 +18,13 @@
                 <input class="input-box" type="text" v-model="editedMemberName">
                 <button id="dck-button" @click="btNickDupchkClickHandler">닉네임 중복확인</button>
             </div>
-            <span id="info-info">추후 변경가능</span>
+            <span id="info-info" style="font-size:0.9rem">*추후 변경가능</span>
         </div>
 
         <div class="memberPwd-container">
             <span class="mini-title">비밀번호 변경</span>
             <div class="content-container">
-                <input id="input-box" type="password" placeholder="문자, 숫자, 특수문자 포함 8~20자" v-model="editedMemberPwd">
+                <input class="input-box" type="password" placeholder="문자, 숫자, 특수문자 포함 8~20자" v-model="editedMemberPwd">
             </div>
         </div>
 
@@ -38,9 +38,8 @@
         <div class="memberInfo-container">
             <span class="mini-title">소개 변경</span>
             <div class="content-container">
-                <textarea class="input-box" type="text" v-model="editedMemberInfo"></textarea>
+                <textarea class="input-box" id="info-box" type="text" v-model="editedMemberInfo"></textarea>
             </div>
-            <span id="info-info">*자신에 대해 알려주세요</span>
         </div>
         <div class="button-container">
             <button id="edit-bt" @click="editInfo">제출</button>
@@ -186,16 +185,15 @@ export default {
 <style scoped>
 .container {
     display: grid;
-    grid-template-columns: 0.8fr 1.1fr 0.3fr 2.4fr 0.8fr;
-    grid-template-rows: 0.12fr 0.1fr 0.3fr 0.25fr 0.25fr 0.5fr 0.25fr;
-    gap: 0px 0px;
-    grid-auto-flow: row;
+    grid-template-columns: 0.8fr 1.1fr 0.45fr 2.4fr 0.8fr;
+    grid-template-rows: 0.12fr 0.05fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    grid-row-gap: 10px;
     grid-template-areas:
         "profile-edit-title profile-edit-title profile-edit-title profile-edit-title profile-edit-title"
         ". profile-icon-container . . ."
         ". profile-icon-container . memberName-container ."
         ". profile-icon-container . memberPwd-container ."
-        ". . . memberPwdck-container ."
+        ". profile-icon-container . memberPwdck-container ."
         ". . . memberInfo-container ."
         "button-container button-container button-container button-container button-container";
     padding: 20px;
@@ -213,21 +211,57 @@ export default {
 #profile-icon {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    margin-top: 10px;
 }
 
 #change-button {
     font-size: 1rem;
     width: 200px;
-    border-radius: 3px;
+    border: 1px solid;
+    border-radius: 10px;
+    height: 30px;
+    margin-top: 10px;
+    color: var(--main1-color);
+    background-color: var(--main4-color);
+    border-color: var(--main4-color);
+
+    &:hover {
+        background-color: var(--main4-hover-color);
+        border-color: var(--main4-hover-color);
+    }
 }
 
 .input-box {
     margin-right: 10px;
+    height: 30px;
+}
+
+#info-box {
+    width: 370px;
+    height: 200px;
+}
+
+.mini-title {
+    font-size: 1.3rem;
 }
 
 .memberName-container {
     grid-area: memberName-container;
+}
+
+#dck-button {
+    border: 1px solid;
+    border-radius: 10px;
+    height: 30px;
+    width: 130px;
+    color: var(--main1-color);
+    background-color: var(--main4-color);
+    border-color: var(--main4-color);
+
+    &:hover {
+        background-color: var(--main4-hover-color);
+        border-color: var(--main4-hover-color);
+    }
 }
 
 .memberPwd-container {
@@ -246,6 +280,36 @@ export default {
     grid-area: button-container;
     display: flex;
     justify-content: center;
+    gap: 10px;
+}
+
+.button-container > button {
+    border: 1px solid;
+    border-radius: 10px;
+    width: 60px;
+    height: 40px;
+    color: var(--main1-color);
+    gap: 10px;
+}
+
+#cancle-bt {
+    background-color: var(--red-color);
+    border-color: var(--red-color);
+
+    &:hover {
+        background-color: var(--red-hover-color);
+        border-color: var(--red-hover-color);
+    }
+}
+
+#edit-bt {
+    background-color: var(--main4-color);
+    border-color: var(--main4-color);
+
+    &:hover {
+        background-color: var(--main4-hover-color);
+        border-color: var(--main4-hover-color);
+    }
 }
 
 #profile-popup {
@@ -254,9 +318,9 @@ export default {
     background-color: var(--main1-color);
     border: 8px solid var(--main5-color);
     border-radius: 10px;
-    width: 700px;
-    height: 420px;
-    top: 50%;
+    width: 500px;
+    height: 250px;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;

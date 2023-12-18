@@ -78,6 +78,14 @@ body {
 .close-button {
   margin-top: 8px;
   padding: 5px;
+  color: var(--main1-color);
+    background-color: var(--main4-color);
+    border-color: var(--main4-color);
+
+    &:hover {
+        background-color: var(--main4-hover-color);
+        border-color: var(--main4-hover-color);
+    }
 }
 
 </style>
