@@ -4,7 +4,7 @@
             <div class="profile-remove-title">회 원 탈 퇴</div>
             <div class="remove-content">회원탈퇴 완료 시 당사 사이트 이용 권한이 소멸되며, 이용자의 정보는 복구가 불가능합니다.</div>
             <div class="remove-box flex-container">
-                <input type="checkbox" id="confirmCheckbox" v-model="confirmChecked" @change="handleCheckboxChange"> 위 내용을
+                <input type="checkbox" id="confirmCheckbox" v-model="confirmChecked"> 위 내용을
                 확인하였습니다.
             </div>
             <div class="remove-title">
@@ -50,9 +50,7 @@ export default {
         closeModal() {
             this.$emit('close-modal');
         },
-        handleCheckboxChange() {
-            console.log('Checkbox changed:', this.confirmChecked);
-        },
+
         submitRemove() {
             const url = `${this.backURL}/member/my/withdraw`;
             const data = {
@@ -66,12 +64,16 @@ export default {
                 })
                 .then(() => {
                     sweetAlert.success("회원탈퇴가 완료되었습니다", "", "확인").then(() => {
+                        window.sessionStorage.removeItem('accessToken');
                         window.location.href = '/login';
                     })
 
-                }).catch(() => {
-                    sweetAlert.warning("회원탈퇴가 실패하였습니다", "", "확인")
                 })
+                .catch((error) => {
+                    sweetAlert.warning(error.response.data.errors[0], "", "확인")
+                })
+
+
         }
     }
 }

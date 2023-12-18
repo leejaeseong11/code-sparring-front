@@ -1,10 +1,9 @@
 <template>
-    <div id="logoOff">
-
-    </div>
+    <div id="logoOff"></div>
     <div class="logo">
         <img id="main-logo" src="/images/logo.gif" alt="logo" @click="gotoLogin">
     </div>
+
     <form class="signup" v-on:submit.prevent="signupFormSubmitHandler">
         <div class="content">
             <section>
@@ -14,342 +13,174 @@
                     <div id="profile-input">
                         <img :src="'images/icon/' + (memberProfileImg) + '.png'" :alt="'Icon ' + (memberProfileImg)"
                             class="profile-icon" />
-                        <button @click="openProfilePopup" type="button">변경</button>
-                        <ProfileImgPopup v-if="isProfilePopupOpen" @selected="handleSelectedProfileImage"
-                        @close-modal="offProfileModal" />
+                        <button @click="onProfileModal" type="button">변경</button>
                     </div>
                 </div>
+                <div v-if="profileModal" id="back-off" @click="offProfileModal"></div>
+                <ProfileImgPopup v-if="profileModal" @selected="handleSelectedProfileImage"
+                    @close-modal="offProfileModal" />
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (6~20자)"
-                            @input="validateId" @focus="clearAllErrMsg" />
-                        <button id="id-check" @click="btIdDupchkClickHandler" :disabled="!isIdValid" type="button">중복
-                            확인</button>
-                    </div>
-                    <div class="error-msg"
-                        :class="{ 'invalid': errMsg.id.invalid, 'fail': errMsg.id.fail, 'success': errMsg.id.success }">
-                        {{ errMsg.id.invalid || errMsg.id.fail || errMsg.id.success }}
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (4~10자)" />
+                        <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
                     </div>
                 </div>
 
                 <div class="info" id="info-pwd">
-                    <input class="box" type="password" name="pwd" id="p" v-model="c.pwd" ref="p"
-                        placeholder="비밀번호 입력 (문자, 숫자, 특수문자 포함 8~20자)" @input="checkPwdValidHandler"
-                        @focus="clearAllErrMsg" />
-                    <div class="error-msg"
-                        :class="{ 'invalid': errMsg.pwd.invalid, 'fail': errMsg.pwd.fail, 'success': errMsg.pwd.success }">
-                        {{ errMsg.pwd.invalid || errMsg.pwd.fail || errMsg.pwd.success }}
-                    </div>
+                    <input class="box" type="password" name="pwd" id="p" v-model="c.pwd"
+                        placeholder="비밀번호 입력 (문자, 숫자, 특수문자 포함 8~20자)" />
                 </div>
 
                 <div class="info" id="info-pwdRe">
-                    <input class="box" type="password" id="pwdRe" v-model="pwdRe" @input="checkPwdReHandler"
-                        placeholder="비밀번호 재입력" @focus="clearAllErrMsg" />
-                    <div class="error-msg"
-                        :class="{ 'invalid': errMsg.pwdRe.invalid, 'fail': errMsg.pwdRe.fail, 'success': errMsg.pwdRe.success }">
-                        {{ errMsg.pwdRe.invalid || errMsg.pwdRe.fail || errMsg.pwdRe.success }}
-                    </div>
+                    <input class="box" type="password" id="pwdRe" v-model="pwdRe" placeholder="비밀번호 재입력">
                 </div>
-
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="nick" id="n" v-model="c.nick" placeholder="닉네임 입력 (추후변경가능)"
-                            @input="validateNick" @focus="clearAllErrMsg" />
-                        <button id="nick-check" @click="btNickDupchkClickHandler" :disabled="!isNickValid" type="button">중복
-                            확인</button>
-                    </div>
-                    <div class="error-msg"
-                        :class="{ 'invalid': errMsg.nick.invalid, 'fail': errMsg.nick.fail, 'success': errMsg.nick.success }">
-                        {{ errMsg.nick.invalid || errMsg.nick.fail || errMsg.nick.success }}
+                        <input class="box" type="text" name="memberName" id="n" v-model="c.name"
+                            placeholder="닉네임 입력 (추후 변경 가능)" />
+                        <button id="name-check" @click="btNameDupchkClickHandler" type="button">중복확인</button>
                     </div>
                 </div>
                 <div class="info" id="info-introduction">
-                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro" placeholder="소개(자신에 대해 알려주세요)"
-                        @focus="clearAllErrMsg"></textarea>
+                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro"
+                        placeholder="소개(자신에 대해 알려주세요)"></textarea>
                 </div>
             </section>
+
             <p for="privacy-checkbox" class="info" id="privacy-agreement">
                 ※ 개인정보 수집 및 이용 동의 ※<br>
                 코드스파링은 이용자 식별을 위해 아이디와 비밀번호를 수집하고 있으며, 게임 탈퇴 시까지 이용합니다.
             </p>
             <div id="info-agree">
-                <!-- <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed" @click="clearAllErrMsg"> -->
-                <input type="checkbox" id="privacy-checkbox" v-model="privacyAgreed">
+                <input type="checkbox" id="privacy-checkbox" v-model="agreeCheck">
                 위의 내용에 동의합니다.
             </div>
-
-            <!-- :disabled="!isFormValid" -->
-            <!-- <button disabled="false"> {{ flag }}</button> -->
-            <!-- <button id="submit" :disabled="!flag">가입하기</button> -->
-            <button id="submit">가입하기</button>
-
-            <!-- <button id="submit" @click="checkForm" @focus="clearAllErrMsg" type="submit">가입하기</button> -->
-            <!-- <div id="result-fail">{{ resultFailMsg }}</div> -->
+            <button id="submit" :disabled="!agreeCheck" :class="{ 'disabled-btn': !agreeCheck }">가입하기</button>
             <div class="exist">
                 <span>이미 회원이신가요?</span>
-                <router-link :to="`${this.backURL}/auth/login`">로그인 하러가기</router-link>
+                <router-link to="/login">로그인 하러가기</router-link>
             </div>
-
         </div>
     </form>
 </template>
 
 <script>
-import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue';
 import { apiClient } from '@/axios-interceptor'
+import sweetAlert from '../../util/modal.js'
+import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue';
+
 export default {
     name: "Signup",
     components: { ProfileImgPopup },
     data() {
         return {
-            pwdRe: '',
-            intro: 'hi',
+            pwdRe: null,
+            intro: '',
             c: {
-                id: 'test',
-                pwd: '',
-                name: '',
+                id: null,
+                pwd: null,
+                name: null,
             },
-            errMsg: {
-                id: {
-                    invalid: "",
-                    success: "",
-                    fail: "",
-                },
-                pwd: {
-                    invalid: "",
-                    success: "",
-                    fail: "",
-                },
-                pwdRe: {
-                    invalid: "",
-                    success: "",
-                    fail: "",
-                },
-                nick: {
-                    invalid: "",
-                    success: "",
-                    fail: "",
-                },
-            },
-            privacyAgreed: false,
             memberProfileImg: 0,
-            isProfilePopupOpen: false,
-            isIdValid: false,
-            isNickValid: false,
-            isPwdValid: false,
-            flag: false,
-
-
+            profileModal: false,
+            agreeCheck: false,
         }
     },
-    computed: {
-
-    },
     methods: {
-        test() {
-            this.privacyAgreed = !this.privacyAgreed
-            this.clearAllErrMsg()
-        },
-        isFormValid() {
-            // alert("isFormValid")
-            const valid = (
-                this.privacyAgreed &&
-                this.isIdValid &&
-                this.isNickValid
-            );
-            // console.log(" isFormValid",  this.privacyAgreed, this.isIdValid,  this.isNickValid)
-            return valid;
-        },
-        openProfilePopup() {
-            this.isProfilePopupOpen = (this.isProfilePopupOpen) ? false : true;
-        },
         offProfileModal() {
-            this.isProfilePopupOpen = false;
+            this.profileModal = false;
+        },
+        onProfileModal() {
+            this.profileModal = true;
         },
         handleSelectedProfileImage(index) {
             this.memberProfileImg = index;
-            this.closeProfilePopup();
-        },
-        gotoMain() {
-            location.href = '/'
+            this.onProfileModal();
         },
         gotoLogin() {
-            location.href = '/login'
+            this.$router.push('/login');
         },
 
-        clearAllErrMsg() {
-            console.log("clearAllErrMsg before call isFormValid privacyAgreed=", this.privacyAgreed)
-            this.flag = this.isFormValid();
-
-            Object.keys(this.errMsg).forEach(field => {
-                if (this.errMsg[field].invalid === '' && this.errMsg[field].fail === '') {
-                    this.errMsg[field].success = '';
-                }
-            });
-            console.log("clearAllErrMsg after call isFormValid privacyAgreed=", this.privacyAgreed)
-
-        },
-
-        validateId() {
-            const idRegExp = /^[a-zA-Z0-9]{5,20}$/;
-            this.isIdValid = false;
-            if (!idRegExp.test(this.c.id)) {
-                this.errMsg.id.invalid = '5~20자의 영문 소문자와 숫자만 사용 가능합니다';
-                this.errMsg.id.success = '';
-                this.errMsg.id.fail = '';
-            } else {
-                this.errMsg.id.invalid = '';
-                this.errMsg.id.fail = '';
-                this.errMsg.id.success = '아이디 중복 확인을 해주세요';
-                this.isIdValid = true;
-                this.isIdCheck = false;
-            }
-
-        },
         btIdDupchkClickHandler() {
+            const idRegExp = /^[a-zA-Z0-9]{4,10}$/;
+            if (!idRegExp.test(this.c.id)) {
+                sweetAlert.warning("4~10자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
+                return;
+            }
+
             const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
-            console.log(url)
             apiClient
                 .get(url, {
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
                 })
                 .then(response => {
                     const isDuplicate = response.data;
                     if (!isDuplicate) {
-                        this.errMsg.id.success = '사용 가능한 아이디입니다';
-                        this.errMsg.id.fail = '';
-                        this.isIdCheck = true;
+                        sweetAlert.success("사용 가능한 아이디입니다", '', '닫기')
+                    } else {
+                        sweetAlert.warning("이미 사용중인 아이디입니다", '', '닫기')
                     }
                 })
                 .catch(error => {
-                    this.errMsg.id.fail = error.response.data.errors[0];
-                    this.errMsg.id.success = '';
-                    this.isIdValid = false;
-                    this.isIdCheck = false;
-                });
-        },
-
-        checkPwdValidHandler() {
-            const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
-            let isPwdValid = false; // 비밀번호 유효성 여부
-            if (!pwdRegExp.test(this.c.pwd)) {
-                // 비밀번호가 유효성 검사를 통과하지 못한 경우
-                this.errMsg.pwd.invalid = '8~20자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.';
-                this.errMsg.pwd.success = '';
-                this.errMsg.pwd.fail = '';
-            } else {
-                // 비밀번호가 유효성 검사를 통과한 경우
-                this.errMsg.pwd.invalid = '';
-                this.errMsg.pwd.success = '사용 가능한 비밀번호입니다';
-                this.errMsg.pwd.fail = '';
-                isPwdValid = true;
-            }
-            return isPwdValid;
-        },
-
-        checkPwdReHandler() {
-            let pwdVal = this.c.pwd;
-            let pwdReVal = this.pwdRe;
-            if (pwdReVal !== '') {
-                if (pwdVal !== pwdReVal) {
-                    // 비밀번호와 재입력 값이 일치하지 않는 경우
-                    this.errMsg.pwdRe.invalid = '비밀번호가 일치하지 않습니다.';
-                    this.errMsg.pwdRe.success = '';
-                    this.errMsg.pwd.fail = '';
-                } else {
-                    // 비밀번호 재입력이 유효한 경우
-                    this.errMsg.pwdRe.invalid = '';
-                    this.errMsg.pwd.fail = '';
-                    this.errMsg.pwdRe.success = '비밀번호가 일치합니다.';
-                }
-            }
-            else {
-                // 비밀번호 재입력 필드가 비어 있는 경우
-                this.errMsg.pwdRe.invalid = '비밀번호를 다시 입력해주세요.';
-                this.errMsg.pwdRe.success = '';
-                this.errMsg.pwd.fail = '';
-            }
-        },
-
-        validateNick() {
-            const nickRegExp = /^[a-zA-Z0-9]{5,20}$/;
-            this.isNickValid = false;
-            if (!nickRegExp.test(this.c.nick)) {
-                this.errMsg.nick.invalid = '5~20자의 영문 소문자와 숫자만 사용 가능합니다';
-                this.errMsg.nick.success = '';
-                this.errMsg.nick.fail = '';
-            } else {
-                this.errMsg.nick.invalid = '';
-                this.errMsg.nick.fail = '';
-                this.errMsg.nick.success = '닉네임 중복 확인을 해주세요';
-                this.isNickValid = true;
-            }
-        },
-
-        btNickDupchkClickHandler() {
-            const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.nick}`
-            apiClient
-                .get(url, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    const isDuplicate = response.data;
-                    console.log(response)
-                    if (!isDuplicate) {
-                        this.errMsg.nick.success = '사용 가능한 닉네임입니다';
-                        this.errMsg.nick.fail = '';
-                    }
-                })
-                .catch(error => {
-                    this.errMsg.nick.fail =  this.errMsg.nick.fail = error.response.data.errors[0];
-                    this.errMsg.nick.success = '';
-                    this.isNickValid = false;
                     console.error(error);
+                    sweetAlert.warning(error.response.data.errors[0], '', '닫기');
                 });
         },
-        checkForm() {
-            if (this.c.id == null || !this.isIdValid) {
-                alert("아이디를 확인하세요");
-                return;
-            }
-            if (!this.isIdCheck) {
-                alert("아이디 중복체크를 하세요")
-                return;
-            }
-            if (this.c.pwd == null || this.c.pwd.trim() === "") {
-                alert("비밀번호를 확인하세요");
-                return;
-            }
-            if (this.pwdRe == null || this.pwdRe.trim() === "" || this.c.pwd == this.pwdRe) {
-                alert("비밀번호 재입력을 확인하세요");
+
+        btNameDupchkClickHandler() {
+            const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
+            if (!nameRegExp.test(this.c.name)) {
+                sweetAlert.warning("3~10자의 한글, 숫자, 영어만 \n 사용 가능합니다", '', '닫기')
                 return;
             }
 
-            if (this.c.nick == null || this.c.nick.trim() === "" || !this.isNickValid) {
-                alert("닉네임을 확인하세요");
-                return;
-            }
-            if (!this.privacyAgreed) {
-                alert("개인정보 수집 및 이용에 동의해주세요");
-                return;
-            }
-            // this.signupFormSubmitHandler();
+            const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.name}`
+            apiClient
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    const isDuplicate = response.data;
+                    if (!isDuplicate) {
+                        sweetAlert.success("사용 가능한 닉네임입니다", '', '닫기')
+                    } else {
+                        sweetAlert.warning("이미 사용중인 닉네임입니다", '', '닫기')
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기');
+                });
         },
         signupFormSubmitHandler(e) {
-            let data = {
-                memberInfo: this.intro,
+            if(this.c.id == null || this.c.id ==''
+                || this.c.name == null || this.c.name == '') {
+                    sweetAlert.warning("누락된 항목이 있습니다", '', '닫기')
+                    return
+                }
+
+            const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
+            if (!pwdRegExp.test(this.c.pwd)) {
+                sweetAlert.warning("비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다", '', '닫기')
+                return;
+            }
+            if (this.c.pwd != this.pwdRe) {
+                sweetAlert.warning("비밀번호 확인을 다시 입력해주세요", '', '닫기')
+                return;
+            }
+            const data = {
+                memberInfo: this.intro === '' ? null : this.intro,
                 memberId: this.c.id,
                 memberPwd: this.c.pwd,
-                memberName: this.c.nick,
+                memberName: this.c.name,
                 memberProfileImg: this.memberProfileImg
             }
-            // JSON.stringify(data)
             apiClient
                 .post(`${this.backURL}/auth/signup`, data, {
                     headers: {
@@ -358,17 +189,23 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
-                    alert("가입에 성공했습니다")
-                    location.href = '/login'
-
+                    sweetAlert.success("가입에 성공했습니다", '', '닫기').then(() => {
+                        location.href = '/login'
+                    })
                 })
                 .catch(error => {
-                    // alert(error.message)
-                    alert(error.response.data.errors[0]); // 서버에서 전송한 예외 객체
+                    sweetAlert.warning(error.response.data.errors[0], '', '닫기')
+                    return;
                 })
         }
-    },
+
+
+
+
+    }
+
 }
+
 
 </script>
 
@@ -395,7 +232,6 @@ export default {
     cursor: pointer;
 }
 
-/* COMMON */
 body {
     position: relative;
     width: 100%;
@@ -427,16 +263,10 @@ button:hover {
     background-color: var(--main4-hover-color);
 }
 
-button:disabled {
-    background-color: var(--main1-color);
-    color: var(--main2-color);
-}
-
 .info {
     margin-bottom: 22px;
 }
 
-/* box shape input field */
 .box {
     width: 100%;
     height: 50px;
@@ -457,31 +287,18 @@ button:disabled {
     outline: 1px solid var(--main2-color);
 }
 
-/* error msg */
-.info .error-msg {
-    position: absolute;
-    font-size: 11px;
-    color: var(--red-color);
-    margin: 0px 0 0 10px;
-}
 
-.info .error-msg.success {
-    color: var(--green-color);
-}
-
-
-/* select box */
 select.box {
     margin-left: 5px;
     padding-left: 10px;
     color: var(--main1-color);
 }
 
+
 option {
     font-size: 16px;
 }
 
-/* signup */
 .signup {
     position: relative;
     align-items: center;
@@ -504,8 +321,8 @@ option {
     width: 80%;
     flex-direction: column;
     align-items: center;
-    padding-top:20px;
-    padding-bottom:20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 /* HEADER */
@@ -543,8 +360,7 @@ section {
     font-size: 14px;
 }
 
-/* SECTION - info-nick*/
-.info#info-id #nick-check {
+.info#info-id #name-check {
     position: absolute;
     width: 90px;
     height: 40px;
@@ -561,6 +377,7 @@ section {
 /* SECTION - introduction */
 .info#info-introduction .box {
     height: 70px;
+    margin-bottom: -10px;
 }
 
 /* SECTION - privacy */
@@ -576,31 +393,27 @@ section {
 #info-agree {
     align-items: center;
     text-align: center;
-    padding-top: 5px;
+    padding-top: 8px;
 
 }
 
-/* SUBMIT */
 button#submit {
     width: 100%;
     height: 45px;
     border-radius: 3px;
-    box-shadow: 2px 2px 4px var(--main4-color);
+    box-shadow: 2px 2px 4px var(--main5-color);
     font-size: 15px;
+    margin-top: 10px;
+    background-color: var(--main5-hover-color);
+    border-color: var(--main5-hover-color);
 }
 
-/* RESULT */
-#result-fail {
-    width: 100%;
-    /* height: 20px; */
-    height: 15px;
-    margin-bottom: 5px;
-    text-align: center;
-    color: var(--red-color);
-    font-size: 13px;
+button#submit:disabled {
+    background-color: var(--main2-color);
+    border-color: var(--main2-color);
+    cursor: not-allowed;
 }
 
-/* TO SIGNIN */
 .exist {
     font-size: 13px;
     margin-top: 10px;
@@ -628,10 +441,9 @@ button#submit {
     margin: 0 auto;
 }
 
-/* 프로필 이미지 컨테이너 스타일 */
+
 #profile-input {
     width: 200px;
-    /* 아이콘의 가로 크기 */
     height: 200px;
     border-radius: 50%;
 
@@ -660,4 +472,14 @@ section {
     width: 100px;
 }
 
+#back-off {
+    width: 100%;
+    height: 100%;
+    display: fixed;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 </style>

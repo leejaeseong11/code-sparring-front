@@ -13,7 +13,7 @@
                 <img src="images/login/join.png" alt="join" class="join" @click="signUpForm()">
 
             </div>
-            <form id="joinForm" class="action-buttons">
+            <form id="joinForm" class="action-buttons" @keyup.enter="loginFormSubmitHandler">
                 <table>
                     <tr>
                         <td>
@@ -47,6 +47,7 @@
 
 <script>
 import axios from 'axios';
+import sweetAlert from '../../util/modal.js'
 export default {
     name: "Login",
     data() {
@@ -55,6 +56,13 @@ export default {
             pwd: '',
         }
     },
+    mounted() {
+        const accessToken = sessionStorage.getItem("accessToken");
+        if (accessToken) {
+            this.$router.replace("/"); // 메인 페이지의 경로로 수정
+        }
+    },
+
     methods: {
         signUpForm() {
             location.href = '/signup'
@@ -69,10 +77,10 @@ export default {
 
             axios
                 .post(url, JSON.stringify(data), {
-                    headers:{
-                        'Content-Type': 'application/json'       
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    withCredentials : true,
+                    withCredentials: true,
 
                 })
                 .then(responseData => {
@@ -81,11 +89,13 @@ export default {
                     console.log(responseData.data.accessToken)
                     console.log(responseData.data.refreshToken)
                     sessionStorage.setItem("accessToken", responseData.data.accessToken);
-                    // localStorage.setItem("accessToken", responseData.data.accessToken);
                     location.href = '/';
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.error('Error:', error);
+                    sweetAlert.warning("로그인 정보를 다시 확인하세요", "", "확인")
+                    // sweetAlert.warning(error.response.data.errors[0], "", "확인")
+
                 });
         }
     },

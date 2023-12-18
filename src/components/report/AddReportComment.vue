@@ -1,8 +1,8 @@
 <template>
     <div class="report-object" @click="close - modal">
         <div class="report-box">
-            <div class="report-title">문제번호</div>
-            <div class="report-title" id="report-content">{{ reportDetail.quizNo }}</div>
+            <div class="report-title" @click="redirectToQuizDetail">문제번호</div>
+            <div class="report-title" id="report-content" @click="redirectToQuizDetail">{{ reportDetail.quizNo }}</div>
             <div class="report-title">신고자</div>
             <div class="report-title" id="report-content">{{ reportDetail.memberName }}</div>
         </div>
@@ -58,6 +58,10 @@ export default {
         this.readReport();
     },
     methods: {
+        redirectToQuizDetail() {
+            const quizNo = this.reportDetail.quizNo;
+            location.href = '/quiz/' + quizNo
+        },
         closeModal() {
             this.$emit('close-modal');
         },
@@ -157,7 +161,7 @@ export default {
 
 #report-content {
     font-size: 1.2rem;
-    padding: 30px;
+    padding: 25px;
 }
 
 select.report-title,

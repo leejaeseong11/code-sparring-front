@@ -16,7 +16,7 @@
             <span class="mini-title">닉네임 변경</span>
             <div class="content-container">
                 <input class="input-box" type="text" v-model="editedMemberName">
-                <button id="dck-button" @click="btNickDupchkClickHandler">닉네임 중복확인</button>
+                <button id="dck-button" @click="btNameDupchkClickHandler">닉네임 중복확인</button>
             </div>
             <span id="info-info" style="font-size:0.9rem">*추후 변경가능</span>
         </div>
@@ -98,13 +98,13 @@ export default {
             console.log(index)
             this.editedProfileImg = index;
         },
-        btNickDupchkClickHandler() {
+        btNameDupchkClickHandler() {
             if (this.editedMemberName === this.loginMember.memberName) {
                 sweetAlert.warning("변경할 닉네임을 입력해주세요", '', '닫기')
                 return;
             }
-            const nickRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
-            if (!nickRegExp.test(this.editedMemberName)) {
+            const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
+            if (!nameRegExp.test(this.editedMemberName)) {
                 sweetAlert.warning("3~10자의  한글, 숫자, 영어만 사용 가능합니다", '', '닫기')
                 return;
             }
@@ -160,10 +160,6 @@ export default {
             if (!(this.editedMemberInfo === this.loginMember.memberInfo)) {
                 data.memberInfo = this.editedMemberInfo
             }
-            console.log("data.memberPwd", data.memberPwd)
-            console.log("data.memberName", data.memberName)
-            console.log("data.memberInfo", data.memberInfo)
-            console.log("data.memberProfileImg", data.memberProfileImg)
 
             if (data.memberPwd === null && data.memberName === null && data.memberInfo === null && data.memberProfileImg === null) {
                 sweetAlert.warning("변경 사항이 없습니다", '', '닫기')
