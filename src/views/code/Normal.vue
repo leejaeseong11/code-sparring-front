@@ -45,18 +45,16 @@
                 <Monaco 
                 @monacoSubmitEvent="setSubmitValue"
                 @monacoRunEvent="setRunValue"
-                :msgMemberButtonValue="this.msgMemberButtonValue"
+                :parentButtonValue="this.parentButtonValue"
                 v-bind:childQuizNoValue="quizNo"
                 />
             </div>
 
             <div id="relative-code-layout">
-                <!-- <div id="relative-code-title" class="title">상대코드</div> -->
                     <div id="relative-code-container">
                         <div id="member-title">
-                            <!-- {{ roomMemberList && roomMemberList.length > 0 ? roomMemberList[0].memberName : '1P' }} -->
                             {{ roomMemberList && roomMemberList.length > 0 && this.memberName === roomMemberList[0].memberName
-                                ? '나의코드('+this.memberName + ')'
+                                ? '1P('+this.memberName + ')'
                                 : '1P' }}
                         </div>
                         <div id="relative-code-content">
@@ -68,7 +66,7 @@
                         </div>
                         <div id="member-title">
                             {{ roomMemberList && roomMemberList.length > 1 && this.memberName === roomMemberList[1].memberName
-                                ? '나의코드('+this.memberName + ')'
+                                ? '2P('+this.memberName + ')'
                                 : '2P' }}
                         </div>
                         <div id="relative-code-content">
@@ -80,7 +78,7 @@
 
                         <div id="member-title"> 
                             {{ roomMemberList && roomMemberList.length > 2 && this.memberName === roomMemberList[2].memberName
-                                ? '나의코드('+this.memberName + ')'
+                                ? '3P('+this.memberName  + ')'
                                 : '3P' }}
                         </div>
                         <div id="relative-code-content">
@@ -92,7 +90,7 @@
 
                         <div id="member-title"> 
                             {{ roomMemberList && roomMemberList.length > 3 && this.memberName === roomMemberList[3].memberName
-                                ? '나의코드('+this.memberName + ')'
+                                ? '4P('+this.memberName + ')'
                                 : '4P' }}
                         </div>
                         <div id="relative-code-content">
@@ -137,10 +135,10 @@ export default {
             buttonValuePlayer3: '',
             buttonValuePlayer4: '',
             roomMemberList: [],
-            memberStatus: '',
             memberNo: '',
             memberName: '',
-            msgMemberButtonValue: '',
+            parentButtonValue: '',
+            count: 0,
             
         }
     },
@@ -156,22 +154,16 @@ export default {
         },
         setRunValue(dataFromChild){
             this.buttonValue = dataFromChild;
-            console.log('자식에서 받은 run데이터: ', dataFromChild);
             this.sendMessage()
         },
         setSubmitValue(dataFromChild){
             this.buttonValue = dataFromChild
-            console.log('자식에서 받은 submit데이터: ', dataFromChild)
             this.sendMessage()
         },
-        // handleMsgMemberButtonValue(msgMemberButtonValue) {
-        //     this.msgMemberButtonValue = msgMemberButtonValue;
-        // },
 
         connect(){
             this.socket = new WebSocket(this.socketURL)
 
-            console.log(this.memberName)
             this.socket.onopen = () => {
                 const enterMessage = {
                     type: 'ROOM_ENTER',
@@ -195,16 +187,14 @@ export default {
                     if (colonIndex !== -1) {
                         msgMemberName = rawData.substring(0, colonIndex).trim();
                         msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
-                        this.msgMemberButtonValue = msgMemberButtonValue
                         for(let i=0; i<this.roomMemberList.length; i++){
-                            console.log(this.roomMemberList[i].memberName)
                             if (this.roomMemberList[i].memberName === msgMemberName) {
                                 this[`buttonValuePlayer${i + 1}`] = msgMemberButtonValue;
                             }
                         }
-                    } else {
-                        console.log("No colon found in the data.");
                     }
+                    this.parentButtonValue = this.count + e.data;
+                    this.count++;
                     this.buttonValue = e.data;
                 }else if(
                     this.socket.readyState === WebSocket.CLOSING ||
@@ -236,7 +226,6 @@ export default {
             }
             this.socket.send(JSON.stringify(talkMessage))
             for(let i=0; i<this.roomMemberList.length; i++){
-                console.log(this.roomMemberList[i].memberName)
                 if (this.roomMemberList[i].memberName === this.memberName) {
                     this[`buttonValuePlayer${i + 1}`] = this.buttonValue;
                 }
@@ -365,7 +354,6 @@ export default {
             })
             .then((response) => {
                 this.memberName = response.data.memberName
-                console.log(this.memberName)
             })
         })
 
@@ -380,10 +368,6 @@ export default {
         .then((response) => {
             this.roomInfo = response.data
             this.roomMemberList = response.data.roomMemberList
-            
-            // this.memberNo와 같은 memberNo를 가진 요소 제거
-            // this.roomMemberList = this.roomMemberList.filter(member => member.memberNo !== this.memberNo);
-            console.log(this.roomMemberList)
         })
         .catch(async (error) => {
             const ok = await SweetAlert.error(error.response.data.errors[0])
@@ -405,7 +389,7 @@ export default {
         this.disconnect()
     },
     beforeDestroy() {
-        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        // 컴포넌트가 파괴되기전 이벤트 리스너 제거
         window.removeEventListener('beforeunload', this.beforeUnloadHandler);
     },
 }
@@ -449,11 +433,18 @@ body.flex-container {
     border: 3px solid var(--main5-color);
     border-radius: 10px;
 }
+#member-title{
+    width: 200px;
+    text-align: center;
+    white-space: nowrap; /* 텍스트를 한 줄에 나타내기 위해 */
+    overflow: hidden;    /* 넘치는 텍스트를 숨김 */
+    text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 추가 */
+}
 
 
 #problem-des-container {
     box-sizing: border-box;
-    height: 300px;
+    height: 33vh;
     margin-bottom: 10px;
     background-color: var(--white-color);
     border: 3px solid var(--main5-color);
@@ -472,7 +463,7 @@ body.flex-container {
 
 
 #testcase-des-container {
-    height: 250px;
+    height: 33vh;
     margin-bottom: 10px;
     background-color: var(--white-color);
     border: 3px solid var(--main5-color);
@@ -493,6 +484,7 @@ body.flex-container {
     width: 760px;
     margin-top: 90px;
     margin-right: 10px;
+    padding: 10px;
     /* margin-left: 10px;  */
     border: 3px solid var(--main5-color);
     border-radius: 10px;
@@ -555,7 +547,7 @@ body.flex-container {
 
 #relative-code-content {
     width: 200px;
-    height: 17vh;
+    height: 18vh;
     margin-bottom: 16px;
     border: 3px solid var(--main5-color);
     border-radius: 10px;
