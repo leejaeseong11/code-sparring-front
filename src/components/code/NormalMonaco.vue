@@ -92,6 +92,19 @@ export default defineComponent({
       .then((response) => {
         this.quizNo = response.data.quizNo
       })
+
+    //memberNo
+    const url2 = `${this.backURL}/mycode/memberNo`
+    apiClient
+      .get(url2, {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+      .then((response) => {
+          this.memberNo = response.data
+      })
+
   },
   mounted() {
     // 모나코에디터 시작
@@ -203,13 +216,14 @@ export default defineComponent({
       this.$emit('monacoSubmitEvent', this.buttonValue);
 
       const quizNo = this.quizNo  // 퀴즈번호
+      const memberNo = this.memberNo // 멤버번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
 
       // FormData 객체 생성
       const formData = new FormData();
 
       // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-      const dto = { memberNo: 1, quizNo };
+      const dto = { memberNo, quizNo };
       formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
       // 파일 데이터 추가
@@ -233,15 +247,6 @@ export default defineComponent({
           console.log(error)
           alert(error.message)
         })
-    },
-    disableButtons(buttonType, duration) {
-      setTimeout(() => {
-        if (buttonType === 'execution') {
-          this.executionDisabled = false;
-        } else if (buttonType === 'submit') {
-          this.submitDisabled = false;
-        }
-      }, duration);
     },
   },
   watch: {

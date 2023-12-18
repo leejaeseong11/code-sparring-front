@@ -1,5 +1,6 @@
 <template>
-  <div id="room-layout" class="row">
+  <div v-if="!this.startButton"   id="room-layout" class="row">
+    <!-- <div id="room-layout" class="row"> -->
     <div id="room-member-layout" class="col-6">
       <div>
         <div id="room-title-containers">
@@ -74,11 +75,13 @@
         <div id="room-quiz-title">선택된 문제</div>
         <ShowQuizSimply v-model:quizInfo="roomInfo" />
       </div>
-      <button id="game-start-button" @:click="gameStartButtonClickHandler">시 작 하 기</button>
+      <button id="game-start-button" @:click="gameStartButtonClickHandler" :disabled="!isRoomManager">시 작 하 기</button>
     </div>
   </div>
 
-  
+  <div v-else>
+    <Normal />
+  </div>
   
 </template>
 <script>
@@ -86,11 +89,12 @@ import { apiClient } from '@/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
+import Normal from '../../components/code/Normal.vue'
 import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'WaitingRoom',
-  components: { RoomMember, ShowQuizSimply, MemberProfile },
+  components: { RoomMember, ShowQuizSimply, MemberProfile, Normal},
   data() {
     return {
       message: '',
@@ -117,7 +121,8 @@ export default {
         tierPoint: 0,
         memberInfo: ''
       },
-      isRoomManager: false
+      isRoomManager: false,
+      startButton: '',
     }
   },
   methods: {
@@ -152,6 +157,9 @@ export default {
                 }
               })
           }
+          if (e.data.includes('start')){
+            this.startButton = e.data
+          }
           this.chatContentList.push(e.data)
           this.scrollToBottom()
         } else if (
@@ -175,20 +183,44 @@ export default {
     },
     sendMessage() {
       if (this.chatMessage == '') return
+      else{
+        var talkMessage = {
+          type: 'ROOM_TALK',
+          roomNo: this.roomNo,
+          sender: this.loginMemberName,
+          message: this.chatMessage
+        }
+        this.socket.send(JSON.stringify(talkMessage))
+        this.chatMessage = ''
+        this.scrollToBottom()
+      }
 
+    },
+    gameStartButtonClickHandler() {
+      this.startButton = 'start'
       var talkMessage = {
         type: 'ROOM_TALK',
         roomNo: this.roomNo,
         sender: this.loginMemberName,
-        message: this.chatMessage
+        message: this.startButton
       }
+      // console.log('sendMessage(): ' + this.startButton)
       this.socket.send(JSON.stringify(talkMessage))
-      this.chatMessage = ''
-      this.scrollToBottom()
+      this.startButton = ''
+      const url = `${this.backURL}/room/${this.roomNo}`
+      apiClient
+      .put(url,{
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        alert('서버 에러 발생')
+      })
     },
-    gameStartButtonClickHandler() {
-      this.$router.push({ path: `/normal/${this.$router.currentRoute.value.params.roomNo}` })
-    },
+
+
     roomOutButtonClickHandler() {
       this.disconnect()
       this.$router.push({ path: '/' })
