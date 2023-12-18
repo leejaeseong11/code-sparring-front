@@ -291,9 +291,9 @@ export default {
         },
 
         btNickDupchkClickHandler() {
-            const url = `${this.backURL}/auth/chkDupName`
+            const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.nick}`
             apiClient
-                .post(url, `memberName=${this.c.nick}`, {
+                .post(url, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -307,7 +307,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.errMsg.nick.fail = '이미 사용중인 닉네임입니다';
+                    this.errMsg.nick.fail =  this.errMsg.nick.fail = error.response.data.errors[0];
                     this.errMsg.nick.success = '';
                     this.isNickValid = false;
                     console.error(error);

@@ -103,9 +103,9 @@
         </ol>
       </div>
     </div>
-    <div class="modal-wrap" v-show="memberProfilePopup" @click="showQuizClickHandler">
+    <div class="modal-wrap" v-show="memberProfilePopup" @click="showMemberClickHandler">
       <div class="modal-container" @click.stop="">
-        <MemberProfile v-model:memberProfile="rankMember" @showQuiz="showQuizClickHandler" />
+        <MemberProfile v-model:memberProfile="rankMember" @showMember="showMemberClickHandler" />
       </div>
     </div>
 
@@ -367,7 +367,7 @@ export default {
       this.rankMatching = true
       this.connect()
     },
-    showQuizClickHandler() {
+    showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
       this.preventScroll()
     },

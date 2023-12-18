@@ -1,5 +1,9 @@
 <template>
-  <div v-if="member != null" class="room-member-profile-container">
+  <div
+    v-if="member != null"
+    class="room-member-profile-container"
+    :style="member != null ? 'cursor: pointer' : ''"
+  >
     <div class="room-member-profile">
       <font-awesome-icon
         v-show="member.hostStatus == 0"
@@ -32,21 +36,9 @@
   ></div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
-
 export default {
   name: 'RoomMember',
-  props: ['member'],
-  data() {
-    return {
-      isRoomManager: false
-    }
-  },
-  mounted() {
-    apiClient.get(`${this.backURL}/room-member`).then((response) => {
-      console.log(response)
-    })
-  }
+  props: ['member', 'isRoomManager']
 }
 </script>
 <style scoped>
