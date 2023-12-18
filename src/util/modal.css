@@ -1,0 +1,38 @@
+.btn-custom-primary {
+  padding: 6px 12px;
+  margin: 0 8px;
+
+  color: var(--main1-color);
+  background-color: var(--main4-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
+    border: none;
+  }
+  &:active {
+    color: var(--main1-color);
+    background-color: var(--main4-hover-color);
+    border: none;
+  }
+}
+.btn-custom-danger {
+  padding: 6px 12px;
+  margin: 0 8px;
+
+  color: var(--main1-color);
+  background-color: var(--red-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    border: none;
+    background-color: var(--red-hover-color);
+  }
+  &:active {
+    color: var(--main1-color);
+    background-color: var(--red-hover-color);
+  }
+}
