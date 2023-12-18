@@ -2,7 +2,7 @@
   <div id="main-layout" class="row">
     <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
     <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
-    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
+    <RankMatching v-if="rankMatching" id="matching-popup" :memberNo="loginMember.memberNo" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -365,7 +365,7 @@ export default {
     rankMatchingButtonClickHandler() {
       document.body.style.overflow = 'hidden'
       this.rankMatching = true
-      this.connect()
+      //this.connect()
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
