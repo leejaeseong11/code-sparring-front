@@ -137,7 +137,7 @@ export default {
           this.endPage = res.data.endPage
           this.totalPage = res.data.totalPage
         })
-        .catch(() => {
+        .catch((error) => {
           // alert('관리자 페이지를 조회할 수 없습니다')
           console.error('Error fetching reports:', error.message);
         })
