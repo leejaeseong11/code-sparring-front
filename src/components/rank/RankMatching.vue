@@ -1,7 +1,9 @@
 <template>
-  <div id="layout">
+  <div v-if="match" id="layout">
     <div id="header">
-      <div id="match-text">・・・ Matching ・・・</div>
+      <div style="color: var(--red-hover-color)">
+        ※ 강제종료 혹은 네트워크 오류 시 랭크에 불이익이 발생할 수 있습니다 ※
+      </div>
       <img
         src="../../../public/images/rank/matching.gif"
         id="matching-icon"
@@ -32,7 +34,10 @@
             alt="my-tier-icon"
           />
         </div>
-        <div id="member-score">{{ this.rankMember.winCnt }}승 {{ this.rankMember.loseCnt }}패 {{ this.rankMember.drawCnt }}무</div>
+        <div id="member-score">
+          {{ this.rankMember.winCnt }}승 {{ this.rankMember.loseCnt }}패
+          {{ this.rankMember.drawCnt }}무
+        </div>
       </div>
     </div>
 
@@ -45,7 +50,6 @@
 import { apiClient } from '@/axios-interceptor'
 export default {
   name: 'RankMatching',
-  props: ['memberNo'],
   data() {
     return {
       rankMember: {
@@ -60,11 +64,19 @@ export default {
         tierPoint: 0,
         memberInfo: ''
       },
+      rankRoom: {
+        roomNo: 0,
+        member2No: 0,
+        quizNo: 0,
+        readyCnt: 0
+      },
       tierImg: '',
       score: '',
       timerRunning: true,
       minutes: 0,
-      seconds: 0
+      seconds: 0,
+      match: false,
+      intervalId: null
     }
   },
   computed: {
@@ -84,24 +96,142 @@ export default {
       if (this.timerRunning) {
         setTimeout(this.updateTimer, 1000)
       }
+    },
+    setQuiz() {
+      apiClient.put(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`).then((res) => {
+        this.rankRoom = res.data
+      }).catch(()=>{
+        location.href = '/'
+      })
+    },
+    whileMatching1() {
+      if (this.minutes == 5) {
+        alert('대기시간이 지연되어 매칭을 종료합니다')
+        this.stopMatching()
+        location.href='/'
+      }
+      apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
+        this.rankRoom = res.data
+        if (
+          this.rankRoom.member2No != 0 &&
+          this.rankRoom.member2No != null &&
+          this.rankRoom.member2No != ''
+        ) {
+          this.stopMatching()
+          alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
+          this.setQuiz()
+
+          // rank room
+          location.href = '/quiz/add'
+        }
+      }).catch(()=>{
+        location.href='/'
+      })
+    },
+    whileMatching2() {
+      apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
+        this.rankRoom = res.data
+        if (
+          this.rankRoom.quizNo != 0 &&
+          this.rankRoom.quizNo != null &&
+          this.rankRoom.quizNo != ''
+        ) {
+          this.stopMatching()
+
+          // rank room
+          location.href = '/quiz/add'
+        }
+      }).catch(()=>{
+        location.href = '/'
+      })
+    },
+    startMatching1() {
+      this.intervalId = setInterval(this.whileMatching1, 1000)
+    },
+    startMatching2() {
+      this.intervalId = setInterval(this.whileMatching2, 1000)
+    },
+    stopMatching() {
+      clearInterval(this.intervalId)
+      if(this.rankRoom.readyCnt==0 || this.rankRoom.readyCnt=='' || this.rankRoom.readyCnt==null) {
+        apiClient.delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`).then(() => {
+        location.href = '/'
+      }).catch(()=>{
+        location.href = '/'
+      })
+      }
     }
   },
   created() {
-    this.updateTimer()
+    window.addEventListener('beforeunload', () => {
+      this.stopMatching()
+    })
+
     apiClient
-      .get(`${this.backURL}/member/${this.memberNo}`, {
+      .get(`${this.backURL}/member/my`, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
       .then((response) => {
         this.rankMember = response.data
-        const rank=this.rankMember.memberTier
-        if(rank=='BRONZE') this.tierImg='bronze'
-        else if(rank=='SILVER') this.tierImg='silver'
-        else if(rank=='GOLD') this.tierImg='gold'
-        else if(rank=='PLATINUM') this.tierImg='platinum'
+        const rank = this.rankMember.memberTier
+        if (rank == 'BRONZE') this.tierImg = 'bronze'
+        else if (rank == 'SILVER') this.tierImg = 'silver'
+        else if (rank == 'GOLD') this.tierImg = 'gold'
+        else if (rank == 'PLATINUM') this.tierImg = 'platinum'
+
+        var matching = confirm(
+          '매칭 성공 이후 퇴장 시 불이익이 발생할 수 있습니다. 랭크 매칭을 진행하시겠습니까?'
+        )
+        if (matching === false) {
+          location.href = '/'
+        } else {
+          this.match = true
+
+          apiClient
+            .get(`${this.backURL}/rankroom/match/${rank}`, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then((res) => {
+              this.rankRoom = res.data
+              if (this.rankRoom.member2No == null) {
+                var result = confirm('상대를 찾을 수 없습니다. 대기하시겠습니까?')
+                if (result === true) {
+                  this.updateTimer()
+                  this.startMatching1()
+                } else {
+                  apiClient
+                    .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
+                    .then(() => {
+                      location.href = '/'
+                    }).catch(()=>{
+                        location.href = '/'
+                    })
+                }
+              } else {
+                alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
+                this.updateTimer()
+                this.startMatching2()
+              }
+            })
+            .catch(() => {
+              location.href = '/'
+            })
+        }
+      }).catch(()=>{
+        location.href = '/'
       })
+  },
+  beforeUnmount() {
+    if(this.rankRoom.readyCnt==0 || this.rankRoom.readyCnt=='' || this.rankRoom.readyCnt==null) {
+        apiClient.delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`).then(() => {}).catch(()=>{
+            location.href = '/'
+        })
+    }
+    clearInterval(this.intervalId)
   }
 }
 </script>
@@ -114,12 +244,6 @@ export default {
   margin-top: 20px;
   text-align: center;
   padding-right: 10px;
-}
-
-#match-text {
-  padding-left: 15px;
-  margin-bottom: 10px;
-  color: var(--white-color);
 }
 
 #matching-icon {
