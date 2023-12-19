@@ -8,7 +8,6 @@
     <button :disabled="isButtonDisabled" @click="execution()" class="button">코드 실행하기</button>
     <button :disabled="isButtonDisabled" @click="submit()" class="button" id="submit">코드 제출하기</button>
     <div style="display: inline;"> 🚨주의! Main클래스를 변경하지 마세요! </div>
-
     <br>
   </div>
 </template>
@@ -94,7 +93,7 @@ export default defineComponent({
       })
 
     //memberNo
-    const url2 = `${this.backURL}/mycode/memberNo`
+    const url2 = `${this.backURL}/member/memberNo`
     apiClient
       .get(url2, {
           headers: {
@@ -111,10 +110,10 @@ export default defineComponent({
     this.initMonaco()
 
     // 붙여넣기 막기
-    this.editor.getDomNode().addEventListener('paste', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    }, true);
+    // this.editor.getDomNode().addEventListener('paste', (event) => {
+    //   event.stopPropagation();
+    //   event.preventDefault();
+    // }, true);
   },
   beforeUnmount() {
     this.editor && this.editor.dispose()
@@ -241,6 +240,11 @@ export default defineComponent({
         .then(response => {
           this.output = response.data.result
           this.gameResult = response.data.gameResult
+
+          this.gameResult = '1'
+          if(this.gameResult == '1'){
+            this.$emit('monacoWinMemberNo', this.memberNo);
+          }
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error => {

@@ -1,6 +1,13 @@
 <template lang="">
 
     <div id="code-layout" class="row">
+        <div v-if="this.gameEnd" id="back-off" @click="backOff"></div>
+        <GameEnd 
+            id="end-popup" 
+            v-if="this.gameEnd" 
+            @close-popup="backOff"
+            :resultMemberNo = "this.resultMemberNo"
+        />
         <body class="flex-container">
     
             <div id="code-side-layout">
@@ -41,6 +48,7 @@
                 <Monaco 
                 @monacoSubmitEvent="setSubmitValue"
                 @monacoRunEvent="setRunValue"
+                @monacoWinMemberNo="setWinMember"
                 :parentButtonValue="this.parentButtonValue"
                 v-bind:childQuizNoValue="quizNo"
                 />
@@ -80,9 +88,10 @@
 import Monaco from '../../components/code/RankMonaco.vue'
 import { apiClient } from '@/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
+import GameEnd from '../../components/game/GameEnd.vue'
 export default {
     name: 'rank',
-    components: { Monaco },
+    components: { Monaco, GameEnd },
     data() {
         return {
             rankNo: '',
@@ -106,6 +115,9 @@ export default {
             memberName: '',
             parentButtonValue: '',
             count: 0,
+            winMemberNo: '6',
+            resultMemberNo: '7',
+            gameEnd: false,
 
         }
     },
@@ -123,6 +135,22 @@ export default {
         setSubmitValue(dataFromChild){
             this.buttonValue = dataFromChild
             this.sendMessage()
+        },
+        backOff() {
+            this.gameEnd=false
+            document.body.style.overflow = 'auto'
+
+        },
+        setWinMember(dataFromChild){
+            this.winMemberNo = dataFromChild;
+            console.log(this.winMemberNo)
+            var winMember = {
+                type: 'CODE_STATUS',
+                codeRoomNo: this.roomNo,
+                codeSender: this.memberName,
+                codeStatus: this.winMemberNo + ',win'
+            }
+            this.socket.send(JSON.stringify(winMember))
         },
         connect(){
             this.socket = new WebSocket(this.socketURL)
@@ -157,6 +185,11 @@ export default {
                         else if(this.member2Name === msgMemberName){
                             this.buttonValuePlayer2 = msgMemberButtonValue
                         }
+                    }
+                    const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    if(colonIndex2 !== -1){
+                        this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
+                        this.gameEnd=true
                     }
                     this.parentButtonValue = this.count + e.data;
                     this.count++;

@@ -2,20 +2,19 @@
   <main>
     <div id="popup-area">
         <div id="header">
-      <img src="../../../public/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
       WINNER
-      <img src="../../../public/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
     </div>
     <div id="winner-img">
       <img
-        :src="'../../../public/images/icon/' + this.winNo + '.png'"
+        :src="'/images/icon/' + this.winNo + '.png'"
         id="win-profile-img"
         alt="win-member"
       />
     </div>
     <div id="win-content">
         <div id="winner-name">{{ this.winName }}</div>
-    <div id="time">{{ this.winTime }}</div>
     </div>
     <div id="button-div">
       <button id="close-button" @click="$emit('close-popup')">닫기</button>
@@ -24,6 +23,7 @@
 </main>
 </template>
 <script>
+import { apiClient } from '@/axios-interceptor'
 export default {
   name: 'GameEnd',
   data() {
@@ -32,6 +32,29 @@ export default {
       winName: '닉네임1212',
       winTime: '21:25'
     }
+  },
+  props: {
+    resultMemberNo: {
+        type: String,
+        default: ''
+    },
+  },
+  created() {
+    const url = `${this.backURL}/member/${this.resultMemberNo}`
+    apiClient
+    .get(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then((response) => {
+      this.winNo = response.data.memberProfileImg
+      this.winName = response.data.memberName
+    })
+
+  },
+  methods: {
+
   }
 }
 </script>
