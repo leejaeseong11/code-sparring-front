@@ -1,8 +1,19 @@
 <template>
   <div id="main-layout" class="row">
     <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
-    <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
-    <RankMatching v-if="rankMatching" id="matching-popup" :memberNo="loginMember.memberNo" @close-popup="backOff"></RankMatching>
+    <AddRoom
+      v-if="addRoomPopup"
+      id="addRoom-popup"
+      @close-popup="backOff"
+      :memberNo="loginMember.memberNo"
+      :memberName="loginMember.memberName"
+    />
+    <RankMatching
+      v-if="rankMatching"
+      id="matching-popup"
+      :memberNo="loginMember.memberNo"
+      @close-popup="backOff"
+    ></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -131,7 +142,7 @@
             class="btn-custom main-menu-button"
             @click="mypageButtonClickHandler"
           >
-            {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
+            {{ loginMember.authority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
           <button
             id="logout-button"
@@ -238,7 +249,8 @@ export default {
         memberName: '',
         memberNo: 0,
         memberProfileImg: 0,
-        memberTier: ''
+        memberTier: '',
+        authority: ''
       },
       addRoomPopup: false,
       rankMatching: false,
@@ -261,32 +273,16 @@ export default {
         })
     },
     createWaitingRoomclickHandler() {
-      // let data = {
-      //   quiz: {
-      //     quizNo: 1
-      //   },
-      //   // "roomPwd": "1234",
-      //   codeShare: 0,
-      //   roomTitle: '테스트방 in vue',
-      //   roomDt: new Date().toJSON()
-      // }
-      // data = JSON.stringify(data)
-      // axios
-      //   .post(`${this.backURL}/room`, data, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   .then((res) => {
-      //     console.log(res)
-      //     this.$router.push({ path: `/room/${res.data}` })
-      //   })
       document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
-      this.$router.push({ path: `/admin/quiz/all/1` })
+      if (this.loginMember.authority == 'ROLE_ADMIN') {
+        this.$router.push({ path: `/admin/quiz/all/1` })
+      } else {
+        this.$router.push({ path: `/profile/check/${this.loginMember.memberNo}` })
+      }
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
