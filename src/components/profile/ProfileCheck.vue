@@ -81,7 +81,11 @@ export default {
     },
     mounted() {
         apiClient
-            .get(`${this.backURL}/member/my`)
+            .get(`${this.backURL}/member/my`,{
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
             .then((response) => {
                 this.loginMember = response.data
             })

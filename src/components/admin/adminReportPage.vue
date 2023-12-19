@@ -26,7 +26,6 @@
             <AddReportComment v-if="reportModal" id="report-popup" @close-modal="offReportModal"
                 :reportNo="selectedReportNo" @report-deleted="handleReportDeleted"></AddReportComment>
 
-            {{ totalPage }} : {{ startPage }} : {{ endPage }}
             <div v-if="!reportModal" id="report-page">
                 <button v-if="startPage > 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
                 <button v-for="pg in endPage - startPage + 1" :key="pg"
@@ -34,10 +33,8 @@
                     :id="'pg' + (startPage + pg - 1)" @click="pgClick">
                     {{ startPage + pg - 1 }}
                 </button>&nbsp;
-                <button v-if="endPage < totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+                <button v-if="endPage < totalPages" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
             </div>
-
-
         </div>
     </main>
 </template>
@@ -54,12 +51,11 @@ export default {
             currentPage: 1,
             startPage: '',
             endPage: '',
-            totalPage: '',
+            totalPages: '',
             reportModal: false,
         }
     },
     mounted() {
-        console.log(this.$route.params.filter)
         const filter = this.$route.params.filter
         if (filter == 'all') {
             const onBt = document.getElementById('report-all')
@@ -83,9 +79,10 @@ export default {
                 .then((res) => {
                     console.log(res.data)
                     this.reportList = res.data.content
-                    this.totalPage = res.data.totalPages
+                    this.totalPages = res.data.totalPages
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
-                    this.endPage = Math.ceil(res.data.totalElements / 10);
+                    this.endPage = Math.min(this.startPage + 4, this.totalPages);
+
                 })
                 .catch((error) => {
                     console.error('Error fetching reports:', error.message);
@@ -112,14 +109,14 @@ export default {
                 })
                 .then((res) => {
                     this.reportList = res.data.content
+                    this.totalPages = res.data.totalPages;
                     this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
-                    this.endPage = Math.ceil(res.data.totalElements / 10);
-                    this.totalPage = res.data.totalPages;
-
+                    this.endPage = Math.min(this.startPage + 4, this.totalPages);
                 })
                 .catch(() => {
-                    window.history.back()
+                    console.error('Error fetching reports:', error.message);
                 })
+
         }
     },
     methods: {
@@ -128,7 +125,6 @@ export default {
             if (index !== -1) {
                 this.reportList.splice(index, 1);
             }
-
         },
         allReport() {
             location.href = '/admin/report/all/1'
@@ -157,13 +153,13 @@ export default {
             }
         },
 
-
         pgClick(e) {
             const pg = parseInt(e.target.id.replace("pg", ""));
-            this.currentPage = pg;
+            this.currentPage = pg
             const filter = this.$route.params.filter
             location.href = '/admin/report/' + filter + '/' + this.currentPage
         },
+
         pgPrevClick() {
             this.currentPage = Math.floor(((this.currentPage - 1) / 5)) * 5
             const filter = this.$route.params.filter
@@ -196,6 +192,7 @@ export default {
     }
 };
 </script>
+
 <style scoped>
 #layout {
     width: 100%;

@@ -11,12 +11,7 @@
         <div class="index" id="code-page" @click="movePage">제출한 코드</div>
         <div class="index" id="rank-history" @click="movePage">랭크 전적</div>
         <div id="etc-bt">
-          <img
-            src="../../../public/images/admin/home.png"
-            class="home-bt"
-            alt="home"
-            @click="movePage"
-          />
+          <img src="../../../public/images/admin/home.png" class="home-bt" alt="home" @click="movePage" />
           <button id="unregister" @click="onRemoveModal">회원 탈퇴</button>
         </div>
       </div>
@@ -29,7 +24,7 @@
     </div>
 
     <div v-if="removeModal" id="back-off" @click="offRemoveModal"></div>
-    <ProfileRemove v-if="removeModal" id="remove-popup" @close-modal="offRemoveModal"/>
+    <ProfileRemove v-if="removeModal" id="remove-popup" @close-modal="offRemoveModal" />
   </main>
 </template>
 <script>
@@ -39,9 +34,12 @@ import MyCode from '../../components/profile/MyCode.vue'
 import RankHistory from '../../components/profile/RankHistory.vue'
 import ProfileRemove from '../../components/profile/ProfileRemove.vue'
 
+import { apiClient } from '@/axios-interceptor'
+import sweetAlert from '../../util/modal.js'
+
 export default {
   name: 'MyPage',
-  components: { ProfileCheck, ProfileEdit, MyCode, RankHistory, ProfileRemove},
+  components: { ProfileCheck, ProfileEdit, MyCode, RankHistory, ProfileRemove },
   data() {
     return {
       memberNo: '',
@@ -50,27 +48,61 @@ export default {
       myCode: false,
       rankHistory: false,
       removeModal: false,
+      loginMember: {
+        memberNo: 0,
+        authority: '',
+      }
 
     }
   },
   methods: {
     movePage(e) {
-        const viewName=e.target.id
-        if(viewName=='profile-page') location.href='/profile/check/'+this.memberNo
-        else if(viewName=='profile-edit-page') location.href='/profile/edit/'+this.memberNo
-        else if(viewName=='code-page') location.href='/profile/code/'+this.memberNo
-        else if(viewName=='rank-history') location.href='/profile/rank/'+this.memberNo
-        else location.href='/'
+      const viewName = e.target.id
+      if (viewName == 'profile-page') location.href = '/profile/check/' + this.memberNo
+      else if (viewName == 'profile-edit-page') location.href = '/profile/edit/' + this.memberNo
+      else if (viewName == 'code-page') location.href = '/profile/code/' + this.memberNo
+      else if (viewName == 'rank-history') location.href = '/profile/rank/' + this.memberNo
+      else location.href = '/'
     },
     offRemoveModal() {
-            this.removeModal = false
+      this.removeModal = false
     },
     onRemoveModal() {
-            this.removeModal = true
+      this.removeModal = true
     },
+
+    getLoginNo() {
+      apiClient
+        .get(`${this.backURL}/member/my`, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          console.log('HTTP 응답:', response);
+          this.loginMember = response.data
+
+          this.memberNo = this.$route.params.memberNo;
+
+          if (this.loginMember.authority == "ROLE_ADMIN") {
+            console.log(this.loginMember.authority == "ROLE_ADMIN")
+            return;
+          }
+
+          if (this.loginMember.memberNo !== this.memberNo) {
+            sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() => {
+              window.history.back();
+            });
+          }
+        })
+        .catch((error) => {
+          sweetAlert.error(error.response.data.errors[0], '', '닫기')
+        });
+    }
   },
   mounted() {
-    this.memberNo=this.$route.params.memberNo
+    this.getLoginNo();
+    this.memberNo = this.$route.params.memberNo
     const viewName = this.$route.params.viewName
     this.myProfile = false
     this.profileEdit = false
@@ -217,27 +249,27 @@ export default {
 }
 
 #remove-popup {
-    padding: 10px;
-    position: fixed;
-    background-color: var(--white-color);
-    border: 8px solid var(--red-color);
-    border-radius: 10px;
-    width: 700px;
-    height: 330px;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 3;
+  padding: 10px;
+  position: fixed;
+  background-color: var(--white-color);
+  border: 8px solid var(--red-color);
+  border-radius: 10px;
+  width: 700px;
+  height: 330px;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
 }
 
 #back-off {
-    width: 100%;
-    height: 100%;
-    display: fixed;
-    position: fixed;
-    top: 0%;
-    left: 0%;
-    z-index: 2;
-    background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  top: 0%;
+  left: 0%;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

@@ -41,12 +41,8 @@ apiClient.interceptors.response.use(res => {
 
         if (error.response?.status === 500) {
             console.error("500 Internal Server Error 발생 :", error.response)
-            console.error(error.response.data.errors[0])
-            console.log("500 Internal Server Error :", error)
-                        sweetAlert.error(error.response.data.errors[0], '', '닫기').then(() =>{
-                // window.history.back();
+            sweetAlert.error(error.response.data.errors[0], '', '닫기').then(() =>{
             })
-
         }
         return Promise.reject(error);
     }
