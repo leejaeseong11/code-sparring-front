@@ -1,7 +1,7 @@
 <template>
   <div id="layout">
     <div id="title-div">
-      <input id="title-input" placeholder="방 제목을 입력하세요" v-model="this.roomTitle" />
+      <input id="title-input" :placeholder="memberName + '의 방'" v-model="this.roomTitle" />
     </div>
 
     <div id="header-div">
@@ -111,13 +111,13 @@ import { apiClient } from '@/axios-interceptor'
 
 export default {
   name: 'AddRoom',
-  props: ['memberNo'],
+  props: ['memberNo', 'memberName'],
   data() {
     return {
       quizSelect: false,
       tier: 'ALL',
       quizList: [],
-      roomTitle: '',
+      roomTitle: null,
       quizNo: '',
       quiz: [],
       codeShare: false,
@@ -183,10 +183,7 @@ export default {
       this.quizSelect = false
     },
     clickAddRoom() {
-      console.log('?')
-      if (this.roomTitle == '') {
-        alert('방 제목을 입력하세요')
-      } else if ((this.secret == true) & (this.roomPwd == '')) {
+      if ((this.secret == true) & (this.roomPwd == '')) {
         alert('방 비밀번호를 입력하세요')
       } else if (this.quizNo == '') {
         alert('문제를 선택하세요')
@@ -231,7 +228,7 @@ export default {
       .then((res) => {
         this.quizList = res.data
       })
-      .catch((e) => {
+      .catch(() => {
         alert('문제를 조회할 수 없습니다')
       })
   }

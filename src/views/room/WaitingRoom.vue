@@ -199,25 +199,38 @@ export default {
         roomNo: this.roomNo,
         sender: this.loginMemberName
       }
-      if (this.isRoomManager || this.roomMemberList.length == 1) {
-        apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-          this.isRoomManager = false
-          const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-          if (ok) {
+
+      apiClient.get(`${this.backURL}/room-member/${this.loginMemberNo}`).then((res) => {
+        if (res.data) {
+          if (this.isRoomManager || this.roomMemberList.length == 1) {
+            let deleteCount = this.roomMemberList.length
+            this.roomMemberList.forEach((roomMember) => {
+              deleteCount -= 1
+              apiClient.delete(`${this.backURL}/room-member/${roomMember.memberNo}`).then(() => {
+                if (deleteCount == 0) {
+                  apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
+                    this.isRoomManager = false
+                    const ok = await SweetAlert.warning('방이 삭제되었습니다.')
+                    if (ok) {
+                      this.socket.send(JSON.stringify(outMessage))
+                      if (this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.close()
+                      }
+                      this.$router.push({ path: '/' })
+                    }
+                  })
+                }
+              })
+            })
+          } else {
             this.socket.send(JSON.stringify(outMessage))
             if (this.socket.readyState === WebSocket.OPEN) {
               this.socket.close()
             }
             this.$router.push({ path: '/' })
           }
-        })
-      } else {
-        this.socket.send(JSON.stringify(outMessage))
-        if (this.socket.readyState === WebSocket.OPEN) {
-          this.socket.close()
         }
-        this.$router.push({ path: '/' })
-      }
+      })
     },
     sendMessage() {
       if (this.chatMessage == '') return
@@ -286,9 +299,7 @@ export default {
     },
 
     roomOutButtonClickHandler() {
-      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-        this.disconnect()
-      })
+      this.disconnect()
     },
     scrollToBottom() {
       this.$nextTick(() => {

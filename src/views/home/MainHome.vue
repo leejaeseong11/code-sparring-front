@@ -6,6 +6,7 @@
       id="addRoom-popup"
       @close-popup="backOff"
       :memberNo="loginMember.memberNo"
+      :memberName="loginMember.memberName"
     />
     <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
