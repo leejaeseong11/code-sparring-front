@@ -78,9 +78,6 @@ export default {
     codeClickHandler(event) {
       const clickedElement = event.currentTarget;
       const quizNoValue = clickedElement.dataset.quizno;
-
-      console.log('1. this.memberNo:', this.memberNo);
-      console.log('2. quizNo:', quizNoValue);
       this.$router.push({ path: `/code/${this.memberNo}/${quizNoValue}` });
     },
   },

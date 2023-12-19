@@ -5,60 +5,12 @@
       <span v-html="replaceNewlines(this.output)"></span>
     </div>
     <button @click="_setValue(this.value)" class="button">리셋하기</button>
-    <button @click="execution()" class="button">코드 실행하기</button>
-    <button @click="submit()" class="button" id="submit">코드 제출하기</button>
-    <div style="display: inline;"> *주의! Main클래스를 변경하지 마세요! </div>
+    <button :disabled="isButtonDisabled" @click="execution()" class="button">코드 실행하기</button>
+    <button :disabled="isButtonDisabled" @click="submit()" class="button" id="submit">코드 제출하기</button>
+    <div style="display: inline;"> 🚨주의! Main클래스를 변경하지 마세요! </div>
     <br>
   </div>
 </template>
-
-
-<style>
-.monaco-editor-vue3 {
-  overflow: hidden;
-  margin-top: 5px;
-}
-
-#outputDiv {
-  background-color: var(--white-color);
-  height: 200px;
-
-  border: 3px solid var(--main5-color);
-  border-radius: 10px;
-
-  padding: 8px;
-  font-size: 0.9rem;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.button {
-  padding: 8px;
-  margin: 5px;
-  font-size: 1.0rem;
-
-  color: var(--main1-color);
-  background-color: var(--main4-color);
-  border: none;
-  border-radius: 6px;
-
-  &:hover {
-    background-color: var(--main4-hover-color);
-  }
-}
-
-#submit {
-  color: var(--main1-color);
-  background-color: var(--red-color);
-  border: none;
-  border-radius: 6px;
-
-  &:hover {
-    background-color: var(--red-hover-color);
-  }
-}
-</style>
   
 <script>
 import { apiClient } from '@/axios-interceptor'
@@ -75,6 +27,8 @@ export default defineComponent({
       output: '',
       rankNo: '',
       gameResult: '',
+      buttonValue: '',
+      isButtonDisabled: false,
     };
   },
   props: {
@@ -96,6 +50,10 @@ export default defineComponent({
           // paste: { enabled: false, showPasteSelector: 'never'}
         }
       },
+    },
+    parentButtonValue: {
+        type: String,
+        default: ''
     },
   },
 
@@ -136,8 +94,17 @@ export default defineComponent({
       })
 
 
-    //********************memberNo 얻어오기****************************
-
+    //memberNo
+    const url2 = `${this.backURL}/mycode/memberNo`
+    apiClient
+      .get(url2, {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+      .then((response) => {
+          this.memberNo = response.data
+      })
 
   },
   mounted() {
@@ -195,7 +162,6 @@ export default defineComponent({
     _getValue() {
       let editor = this._getEditor()
       if (!editor) return ''
-      console.log(editor.getValue())
       return editor.getValue()
     },
     _getEditor() {
@@ -211,6 +177,8 @@ export default defineComponent({
       return text.replace(/\n/g, '<br>');
     },
     execution() {
+      this.buttonValue = '코드 실행!';
+      this.$emit('monacoRunEvent', this.buttonValue);
 
       const quizNo = this.quizNo // 퀴즈번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
@@ -244,16 +212,19 @@ export default defineComponent({
         })
     },
     submit() {
+      this.buttonValue = '코드 제출!';
+      this.$emit('monacoSubmitEvent', this.buttonValue);
 
       const quizNo = this.quizNo  // 퀴즈번호
       const rankNo = this.rankNo  // 랭크번호
+      const memberNo = this.memberNo // 멤버번호
       const fileContent = this._getValue();
 
       // FormData 객체 생성
       const formData = new FormData();
 
       // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-      const dto = { memberNo: 1, quizNo, rankNo };
+      const dto = { memberNo, quizNo, rankNo };
       formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
       // 파일 데이터 추가
@@ -273,20 +244,20 @@ export default defineComponent({
           this.gameResult = response.data.gameResult
 
           //게임 결과 update
-          const data = {
-            gameResult: this.gameResult
-          }
-          const url2 = `${this.backURL}/rankgame/${this.rankNo}`
-          apiClient
-            .put(url2, JSON.stringify(data), {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .catch(error => {
-              console.log('Server Error:', error);
-                alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
-            });
+          // const data = {
+          //   gameResult: this.gameResult
+          // }
+          // const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+          // apiClient
+          //   .put(url2, JSON.stringify(data), {
+          //     headers: {
+          //       'Content-Type': 'application/json'
+          //     }
+          //   })
+          //   .catch(error => {
+          //     console.log('Server Error:', error);
+          //       alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
+          //   });
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error => {
@@ -322,6 +293,76 @@ export default defineComponent({
     theme() {
       monaco.editor.setTheme(this.theme)
     },
+    parentButtonValue(newValue) {
+      const rawData = newValue;
+      const colonIndex = rawData.indexOf(':');
+      var msgMemberButtonValue = ''
+
+      if (colonIndex !== -1) {
+          msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
+      }
+
+      if (msgMemberButtonValue === '코드 실행!') {
+        this.isButtonDisabled = true;
+        setTimeout(() => {
+          this.isButtonDisabled = false;
+        }, 5000);
+      } else if (msgMemberButtonValue === '코드 제출!') {
+        this.isButtonDisabled = true;
+        setTimeout(() => {
+          this.isButtonDisabled = false;
+        }, 10000);
+      }
+      
+    },
   },
 })
 </script>
+
+
+<style>
+.monaco-editor-vue3 {
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+#outputDiv {
+  background-color: var(--white-color);
+  height: 200px;
+
+  border: 3px solid var(--main5-color);
+  border-radius: 10px;
+
+  padding: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.button {
+  padding: 8px;
+  margin: 5px;
+  font-size: 1.0rem;
+
+  color: var(--main1-color);
+  background-color: var(--main4-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: var(--main4-hover-color);
+  }
+}
+
+#submit {
+  color: var(--main1-color);
+  background-color: var(--red-color);
+  border: none;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: var(--red-hover-color);
+  }
+}
+</style>

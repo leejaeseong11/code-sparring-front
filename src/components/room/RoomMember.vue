@@ -10,7 +10,11 @@
         id="room-manager-icon"
         :icon="['fas', 'crown']"
       />
-      <button v-show="(member.hostStatus == 1) & isRoomManager" class="room-resign-button">
+      <button
+        v-show="(member.hostStatus == 1) & isRoomManager"
+        class="room-resign-button"
+        @click="resignRoomMemberEventEmit($event)"
+      >
         x
       </button>
       <img
@@ -38,7 +42,13 @@
 <script>
 export default {
   name: 'RoomMember',
-  props: ['member', 'isRoomManager']
+  props: ['member', 'isRoomManager'],
+  methods: {
+    resignRoomMemberEventEmit($event) {
+      this.$emit('resignRoomMember')
+      $event.stopPropagation()
+    }
+  }
 }
 </script>
 <style scoped>

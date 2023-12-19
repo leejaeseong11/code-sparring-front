@@ -8,9 +8,9 @@
                 <div id="problem-des-container">
                     <div id="problem-des-content">
                         <textarea
-                        class="readonlyTextarea"
-                        :value="this.quizContent"
-                        readonly></textarea>
+                            class="readonlyTextarea"
+                            :value="this.quizContent"
+                            readonly></textarea>
                     </div>
                 </div>
     
@@ -38,37 +38,74 @@
     
     
             <div class="monaco">
-                <Monaco v-bind:childQuizNoValue="quizNo"/>
+                <Monaco 
+                @monacoSubmitEvent="setSubmitValue"
+                @monacoRunEvent="setRunValue"
+                :parentButtonValue="this.parentButtonValue"
+                v-bind:childQuizNoValue="quizNo"
+                />
             </div>
     
             <div id="relative-code-layout">
-                <div id="relative-code-title" class="title">상대코드</div>
                 <div id="relative-code-container">
-                    <div id="relative-code-content">1P</div>
-                    <div id="relative-code-content">2P</div>
-                    <div id="relative-code-content">3P</div>
+
+                    <div id="member-title">
+                        {{ '1P('+this.member1Name + ')'}}
+                    </div>
+                    <div id="relative-code-content">
+                        <div v-if="this.buttonValuePlayer1">
+                            {{ this.buttonValuePlayer1 }}
+                        </div>
+                        <div v-else>1P 작성중...</div>
+                    </div>
+
+                    <div id="member-title">
+                        {{ '2P('+this.member2Name + ')' }}
+                    </div>
+                    <div id="relative-code-content">
+                        <div v-if="this.buttonValuePlayer2">
+                            {{ this.buttonValuePlayer2 }}
+                        </div>
+                        <div v-else>2P 작성중...</div>
+                    </div>
+
                 </div>
             </div>
         </body>
     
     </div>
-    </template>
+</template>
     
 <script>
 import Monaco from '../../components/code/RankMonaco.vue'
 import { apiClient } from '@/axios-interceptor'
+import SweetAlert from '../../util/modal.js'
 export default {
     name: 'rank',
     components: { Monaco },
     data() {
         return {
+            rankNo: '',
             quizNo: '',
             testcaseNo: '',
             testcaseList: [],
             quizContent: '',
+            quizTitle: '',
             timerRunning: true,
             minutes: 60,
             seconds: 0,
+            socket: null,
+            buttonValue: '',
+            buttonValuePlayer1: '',
+            buttonValuePlayer2: '',
+            member1No: '',
+            member2No: '',
+            member1Name: '',
+            member2Name: '',
+            memberNo: '',
+            memberName: '',
+            parentButtonValue: '',
+            count: 0,
 
         }
     },
@@ -79,6 +116,103 @@ export default {
     },
 
     methods: {
+        setRunValue(dataFromChild){
+            this.buttonValue = dataFromChild;
+            this.sendMessage()
+        },
+        setSubmitValue(dataFromChild){
+            this.buttonValue = dataFromChild
+            this.sendMessage()
+        },
+        connect(){
+            this.socket = new WebSocket(this.socketURL)
+
+            this.socket.onopen = () => {
+                const enterMessage = {
+                    type: 'CODE_ENTER',
+                    codeRoomNo: this.rankNo,
+                    codeSender: this.memberName
+                }
+                this.socket.send(JSON.stringify(enterMessage))
+            }
+
+            this.socket.onclose = () => { }
+            this.socket.onerror = () => { }
+
+            this.socket.onmessage = (e) => {
+                if(this.socket.readyState === WebSocket.OPEN){
+
+                    const rawData = e.data;
+                    const colonIndex = rawData.indexOf(':');
+                    var msgMemberName = ''
+                    var msgMemberButtonValue = ''
+                    //test1: run
+                    if (colonIndex !== -1) {
+                        msgMemberName = rawData.substring(0, colonIndex).trim();
+                        msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
+
+                        if(this.member1Name === msgMemberName){
+                            this.buttonValuePlayer1 = msgMemberButtonValue
+                        }
+                        else if(this.member2Name === msgMemberName){
+                            this.buttonValuePlayer2 = msgMemberButtonValue
+                        }
+                    }
+                    this.parentButtonValue = this.count + e.data;
+                    this.count++;
+                    this.buttonValue = e.data;
+                }else if(
+                    this.socket.readyState === WebSocket.CLOSING ||
+                    this.socket.readyState === WebSocket.CLOSED
+                ){
+                    this.connect()
+                }
+
+            }
+        },
+        disconnect(){
+            if(this.socket.readyState === WebSocket.OPEN) {
+                const outMessage = {
+                    type: 'CODE_QUIT',
+                    codeRoomNo: this.rankNo,
+                    codeSender: this.memberName
+                }
+                this.socket.send(JSON.stringify(outMessage))
+                this.socket.close()
+            }
+        },
+        sendMessage(){
+            if(this.buttonValue == '') return
+            var talkMessage = {
+                type: 'CODE_STATUS',
+                codeRoomNo: this.rankNo,
+                codeSender: this.memberName,
+                codeStatus: this.buttonValue
+            }
+            this.socket.send(JSON.stringify(talkMessage))
+
+            if(this.member1Name ===  this.memberName){
+                this.buttonValuePlayer1 = this.buttonValue
+            }
+            else if(this.member2Name === this.memberName){
+                this.buttonValuePlayer2 = this.buttonValue
+            }
+            this.buttonValue = ''
+        },
+        unLoadEvent: function (event) {
+            const outMessage = {
+                type: 'CODE_QUIT',
+                codeRoomNo: this.rankNo,
+                codeSender: this.memberName
+            }
+            this.socket.send(JSON.stringify(outMessage))
+
+            if (this.socket.readyState === WebSocket.OPEN) {
+                this.socket.close()
+            }
+            event.preventDefault()
+            event.returnValue = ''
+        },
         exitButtonClickHandler() {
             this.$router.push({ path: `/` })
         },
@@ -129,9 +263,10 @@ export default {
         window.addEventListener('beforeunload', this.beforeUnloadHandler);
         //타이머 시작
         this.updateTimer();
+        this.rankNo = this.$router.currentRoute.value.params.rankNo
 
-
-        const url = `${this.backURL}/rankgame/${this.$router.currentRoute.value.params.rankNo}`
+        // quizNo
+        const url = `${this.backURL}/rankgame/${this.rankNo}`
         apiClient
             .get(url, {
                 headers: {
@@ -141,6 +276,7 @@ export default {
             .then((response) => {
                 this.quizNo = response.data.quizNo
 
+                //  quizContent, quizTitle
                 const url2 = `${this.backURL}/quiz/${this.quizNo}`
                 apiClient
                     .get(url2, {
@@ -150,12 +286,13 @@ export default {
                     })
                     .then((response) => {
                         this.quizContent = response.data.quizContent
+                        this.quizTitle = response.data.quizTitle
                     })
                     .catch(() => {
                         alert('문제 조회에 실패하였습니다')
                     })
 
-
+                // testcaseList
                 const url3 = `${this.backURL}/submit/${this.quizNo}`
                 apiClient
                     .get(url3, {
@@ -173,10 +310,66 @@ export default {
             .catch(() => {
                 alert('문제 정보 조회에 실패하였습니다')
             })
+            //memberNo
+            const url4 = `${this.backURL}/mycode/memberNo`
+            apiClient
+            .get(url4, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                this.memberNo = response.data
+
+                //memberName
+                const url5 = `${this.backURL}/member/${this.memberNo}`
+                apiClient
+                .get(url5, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    this.memberName = response.data.memberName
+                })
+            })
 
     },
+    mounted(){
+        const url = `${this.backURL}/rankgame/${this.rankNo}`
+        apiClient
+        .get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.member1No = response.data.member1No
+            this.member2No = response.data.member2No
+            this.member1Name = response.data.member1Name
+            this.member2Name = response.data.member2Name
+        })
+        .catch(async (error) => {
+            const ok = await SweetAlert.error(error.response.data.errors[0])
+            if (ok) {
+                this.$router.push({ path: '/' })
+            }
+        })
+        window.addEventListener('beforeunload', this.unLoadEvent)
+        this.rankNo = this.$router.currentRoute.value.params.rankNo
+        this.connect()
+    },
+    beforeUnmount() {
+        const outMessage = {
+            type: 'CODE_QUIT',
+            codeRoomNo: this.rankNo,
+            codeSender: this.memberName
+        }
+        this.socket.send(JSON.stringify(outMessage))
+        this.disconnect()
+    },
     beforeDestroy() {
-        // 컴포넌트가 파괴되기 전에 이벤트 리스너를 제거하는 것이 좋습니다.
+        // 컴포넌트가 파괴되기전 이벤트 리스너 제거
         window.removeEventListener('beforeunload', this.beforeUnloadHandler);
         },
     }
@@ -221,11 +414,18 @@ export default {
       border: 3px solid var(--main5-color);
       border-radius: 10px;
     }
+    #member-title{
+        width: 200px;
+        text-align: center;
+        white-space: nowrap; /* 텍스트를 한 줄에 나타내기 위해 */
+        overflow: hidden;    /* 넘치는 텍스트를 숨김 */
+        text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 추가 */
+    }
     
     
     #problem-des-container{
         box-sizing: border-box;
-        height: 300px;
+        height: 33vh;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -244,7 +444,7 @@ export default {
     
     
     #testcase-des-container{
-        height: 300px;
+        height: 33vh;
         margin-bottom: 10px;
         background-color: var(--white-color);
         border: 3px solid var(--main5-color);
@@ -297,7 +497,6 @@ export default {
     #relative-code-layout{
         width: 260px;
         padding: 10px;
-        
         margin-top: 90px;
         margin-right: 10px;
     
@@ -326,7 +525,7 @@ export default {
     
     #relative-code-content{
         width: 200px;
-        height: 26vh;
+        height: 40vh;
         margin-bottom: 16px;
         border: 3px solid var(--main5-color);
         border-radius: 10px;
