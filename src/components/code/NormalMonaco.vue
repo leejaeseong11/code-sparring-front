@@ -5,9 +5,10 @@
       <span v-html="replaceNewlines(this.output)"></span>
     </div>
     <button @click="_setValue(this.value)" class="button">리셋하기</button>
-    <button @click="execution()" class="button">코드 실행하기</button>
-    <button @click="submit()" class="button" id="submit">코드 제출하기</button>
-    <div style="display: inline;"> *주의! Main클래스를 변경하지 마세요! </div>
+    <button :disabled="isButtonDisabled" @click="execution()" class="button">코드 실행하기</button>
+    <button :disabled="isButtonDisabled" @click="submit()" class="button" id="submit">코드 제출하기</button>
+    <div style="display: inline;"> 🚨주의! Main클래스를 변경하지 마세요! </div>
+
     <br>
   </div>
 </template>
@@ -26,6 +27,8 @@ export default defineComponent({
       memberNo: '',
       output: '',
       gameResult: '',
+      buttonValue: '',
+      isButtonDisabled: false,
     };
   },
   props: {
@@ -44,9 +47,12 @@ export default defineComponent({
       default() {
         return {
           minimap: { enabled: false, },
-          // paste: { enabled: false, showPasteSelector: 'never'}
         }
       },
+    },
+    parentButtonValue: {
+        type: String,
+        default: ''
     },
   },
 
@@ -66,9 +72,7 @@ export default defineComponent({
         'text-align': 'left',
         'align-items': 'center',
         'margin-left': '15px',
-        // 'background-color': 'black',
-        // 'border': '3px solid var(--main5-color)',
-        // 'border-radius': '10px'
+
       }
     })
     return {
@@ -76,9 +80,7 @@ export default defineComponent({
     }
   },
   created() {
-    // room에서 roomNo에 해당하는 quizNo 가져오기
-    // 문제내용 가져오기
-    // 테스트케이스 가져오기
+    // roomNo에 해당하는 quizNo 가져오기
     const url = `${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`
 
     apiClient
@@ -90,8 +92,22 @@ export default defineComponent({
       .then((response) => {
         this.quizNo = response.data.quizNo
       })
+
+    //memberNo
+    const url2 = `${this.backURL}/mycode/memberNo`
+    apiClient
+      .get(url2, {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      })
+      .then((response) => {
+          this.memberNo = response.data
+      })
+
   },
   mounted() {
+    // 모나코에디터 시작
     this.initMonaco()
 
     // 붙여넣기 막기
@@ -146,7 +162,6 @@ export default defineComponent({
     _getValue() {
       let editor = this._getEditor()
       if (!editor) return ''
-      console.log(editor.getValue())
       return editor.getValue()
     },
     _getEditor() {
@@ -162,6 +177,8 @@ export default defineComponent({
       return text.replace(/\n/g, '<br>');
     },
     execution() {
+      this.buttonValue = '코드 실행!';
+      this.$emit('monacoRunEvent', this.buttonValue);
 
       const quizNo = this.quizNo // 퀴즈번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
@@ -195,15 +212,18 @@ export default defineComponent({
         })
     },
     submit() {
+      this.buttonValue = '코드 제출!';
+      this.$emit('monacoSubmitEvent', this.buttonValue);
 
       const quizNo = this.quizNo  // 퀴즈번호
+      const memberNo = this.memberNo // 멤버번호
       const fileContent = this._getValue();  // 실행할 코드 내용을 지정해야 합니다.
 
       // FormData 객체 생성
       const formData = new FormData();
 
       // dto 객체 생성 및 JSON 문자열로 변환 후 formData에 추가
-      const dto = { memberNo: 1, quizNo };
+      const dto = { memberNo, quizNo };
       formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }), 'dto.json');
 
       // 파일 데이터 추가
@@ -227,7 +247,7 @@ export default defineComponent({
           console.log(error)
           alert(error.message)
         })
-    }
+    },
   },
   watch: {
     options: {
@@ -253,6 +273,28 @@ export default defineComponent({
     },
     theme() {
       monaco.editor.setTheme(this.theme)
+    },
+    parentButtonValue(newValue) {
+      const rawData = newValue;
+      const colonIndex = rawData.indexOf(':');
+      var msgMemberButtonValue = ''
+
+      if (colonIndex !== -1) {
+          msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
+      }
+
+      if (msgMemberButtonValue === '코드 실행!') {
+        this.isButtonDisabled = true;
+        setTimeout(() => {
+          this.isButtonDisabled = false;
+        }, 5000);
+      } else if (msgMemberButtonValue === '코드 제출!') {
+        this.isButtonDisabled = true;
+        setTimeout(() => {
+          this.isButtonDisabled = false;
+        }, 10000);
+      }
+      
     },
   },
 })
