@@ -14,7 +14,6 @@ import Rank from '@/views/code/Rank.vue'
 
 import MyPage from '@/views/member/MyPage.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -39,7 +38,7 @@ const router = createRouter({
       name: 'Signup',
       component: Signup
     },
-    
+
     {
       path: '/login',
       name: 'Login',
