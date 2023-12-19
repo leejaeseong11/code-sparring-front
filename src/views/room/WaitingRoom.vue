@@ -198,7 +198,7 @@ export default {
         roomNo: this.roomNo,
         sender: this.loginMemberName
       }
-      if (this.isRoomManager) {
+      if (this.isRoomManager || this.roomMemberList.length == 1) {
         console.log('i am manager')
         apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
           console.log('lests delete')
@@ -234,16 +234,17 @@ export default {
         this.chatMessage = ''
         this.scrollToBottom()
       } else {
-        apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(async () => {
           console.log('dlele room ok')
-          this.connect()
-          setTimeout(() => {}, 3000)
           if (
             this.socket.readyState === WebSocket.CLOSED ||
             this.socket.readyState === WebSocket.CLOSING
           ) {
-            const ok = SweetAlert.error('서버와의 연결이 종료되었습니다. 다시 접속해주세요.')
+            const ok = await SweetAlert.error(
+              '입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.'
+            )
             if (ok) {
+              setTimeout(() => {}, 3000)
               this.$router.push({ path: '/' })
             }
           }
@@ -306,7 +307,7 @@ export default {
         sender: this.loginMemberName
       }
       apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-        if (this.isRoomManager) {
+        if (this.isRoomManager || this.roomMemberList.length == 1) {
           apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
             this.socket.send(JSON.stringify(outMessage))
 
@@ -433,7 +434,7 @@ export default {
     }
     apiClient.get(`${this.backURL}/room-member/${this.loginMemberNo}`).then((res) => {
       if (res.data) {
-        if (this.isRoomManager) {
+        if (this.isRoomManager || this.roomMemberList.length == 1) {
           let deleteCount = this.roomMemberList.length
           this.roomMemberList.forEach((roomMember) => {
             apiClient.delete(`${this.backURL}/room-member/${roomMember.memberNo}`).then(() => {
