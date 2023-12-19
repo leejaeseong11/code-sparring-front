@@ -208,15 +208,19 @@ export default {
               deleteCount -= 1
               apiClient.delete(`${this.backURL}/room-member/${roomMember.memberNo}`).then(() => {
                 if (deleteCount == 0) {
-                  apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-                    this.isRoomManager = false
-                    const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-                    if (ok) {
-                      this.socket.send(JSON.stringify(outMessage))
-                      if (this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.close()
-                      }
-                      this.$router.push({ path: '/' })
+                  apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((res) => {
+                    if (res) {
+                      apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async (res) => {
+                        this.isRoomManager = false
+                        const ok = await SweetAlert.warning('방이 삭제되었습니다.')
+                        if (ok) {
+                          this.socket.send(JSON.stringify(outMessage))
+                          if (this.socket.readyState === WebSocket.OPEN) {
+                            this.socket.close()
+                          }
+                          this.$router.push({ path: '/' })
+                        }
+                      })
                     }
                   })
                 }
