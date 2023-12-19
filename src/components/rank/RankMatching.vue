@@ -50,6 +50,7 @@
 import { apiClient } from '@/axios-interceptor'
 export default {
   name: 'RankMatching',
+  props: ['memberNo'],
   data() {
     return {
       rankMember: {
@@ -137,7 +138,10 @@ export default {
         .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
         .then((res) => {
           this.rankRoom = res.data
-          if (
+          if(this.rankRoom.member2No!=this.memberNo) {
+            alert('상대와의 연결이 종료되었습니다. 메인으로 돌아갑니다.')
+            location.href='/'
+          } else if (
             this.rankRoom.quizNo != 0 &&
             this.rankRoom.quizNo != null &&
             this.rankRoom.quizNo != ''
