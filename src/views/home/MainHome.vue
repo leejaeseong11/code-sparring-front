@@ -13,7 +13,7 @@
       id="matching-popup"
       :memberNo="loginMember.memberNo"
       @close-popup="backOff"
-    ></RankMatching>
+    />
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
