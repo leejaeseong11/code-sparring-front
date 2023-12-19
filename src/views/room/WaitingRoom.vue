@@ -210,7 +210,7 @@ export default {
                 if (deleteCount == 0) {
                   apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((res) => {
                     if (res) {
-                      apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async (res) => {
+                      apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
                         this.isRoomManager = false
                         const ok = await SweetAlert.warning('방이 삭제되었습니다.')
                         if (ok) {

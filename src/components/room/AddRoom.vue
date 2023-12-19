@@ -375,19 +375,20 @@ textarea {
 .tier-BRONZE,
 .tier-SILVER,
 .tier-GOLD,
-.tier-PLATINUM {
+.tier-PLATINUM,
+.quizTier {
   width: 15%;
   margin-left: 10px;
 }
 
 .submitCnt {
   width: 15%;
-  margin-left: 30px;
+  /* margin-left: 30px; */
 }
 
 .correctPercent {
   width: 15%;
-  margin-left: 5px;
+  /* margin-left: 5px; */
 }
 
 .quizSort {
@@ -484,7 +485,8 @@ textarea {
 .tier-BRONZE,
 .tier-SILVER,
 .tier-GOLD,
-.tier-PLATINUM {
+.tier-PLATINUM,
+.quizTier {
   width: 15%;
   margin-left: 10px;
 }

@@ -8,7 +8,12 @@
       :memberNo="loginMember.memberNo"
       :memberName="loginMember.memberName"
     />
-    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
+    <RankMatching
+      v-if="rankMatching"
+      id="matching-popup"
+      :memberNo="loginMember.memberNo"
+      @close-popup="backOff"
+    ></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -356,7 +361,7 @@ export default {
     rankMatchingButtonClickHandler() {
       document.body.style.overflow = 'hidden'
       this.rankMatching = true
-      this.connect()
+      //this.connect()
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
