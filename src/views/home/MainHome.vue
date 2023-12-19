@@ -137,7 +137,7 @@
             class="btn-custom main-menu-button"
             @click="mypageButtonClickHandler"
           >
-            {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
+            {{ loginMember.authority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
           <button
             id="logout-button"
@@ -244,7 +244,8 @@ export default {
         memberName: '',
         memberNo: 0,
         memberProfileImg: 0,
-        memberTier: ''
+        memberTier: '',
+        authority: ''
       },
       addRoomPopup: false,
       rankMatching: false,
@@ -272,7 +273,11 @@ export default {
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
-      this.$router.push({ path: `/admin/quiz/all/1` })
+      if (this.loginMember.authority == 'ROLE_ADMIN') {
+        this.$router.push({ path: `/admin/quiz/all/1` })
+      } else {
+        this.$router.push({ path: `/profile/check/${this.loginMember.memberNo}` })
+      }
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
