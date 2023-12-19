@@ -1,32 +1,32 @@
 <template>
   <div class="popup-container" v-if="showPopup">
     <div class="icon-container" id="iconContainer">
-      <div v-for="i in 10" :key="i" class="icon" @click="selectProfileImage(i - 1)">
-        <img :src="'/images/icon/' + (i - 1) + '.png'" :alt="'Icon ' + (i - 1)" />
+      <div v-for="i in 10" :key="i" class="icon" @click="selectProfileImage(i-1)">
+        <img :src="'/images/icon/' + (i - 1) + '.png'" :alt="'Icon ' + (i - 1)"/>
       </div>
     </div>
-    <button class="close-button" @click="closePopup">프로필 변경 닫기</button>
+      <button class="close-button" @click="closePopup">프로필 변경 닫기</button>
+
   </div>
 </template>
 
 <script>
 export default {
   name: 'ProfileImgPopup',
-  // props: ["pImg"],
   data() {
     return {
-      showPopup: true
+      showPopup: true,
     }
   },
   methods: {
     closePopup() {
-      this.$emit('close')
+      this.showPopup = false
+      this.$emit('close-modal')
     },
     selectProfileImage(index) {
-      console.log('Selected profile image:', index)
       this.$emit('selected', index)
       this.closePopup()
-    }
+    },
   }
 }
 </script>
@@ -37,7 +37,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--main2-color);
+  background-color: var(--white-color);
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -76,5 +76,13 @@ body {
 .close-button {
   margin-top: 8px;
   padding: 5px;
+  color: var(--main1-color);
+    background-color: var(--main4-color);
+    border-color: var(--main4-color);
+
+    &:hover {
+        background-color: var(--main4-hover-color);
+        border-color: var(--main4-hover-color);
+    }
 }
 </style>

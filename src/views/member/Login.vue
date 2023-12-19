@@ -2,60 +2,65 @@
   <div id="logoOff"></div>
   <div class="video-background">
     <video autoplay muted loop id="myVideo">
-      <source src="/images/login/mainBackGround.mp4" type="video/mp4" />
+      <source src="/images/login/mainBackGround.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
 
     <div class="login">
       <div class="action-buttons">
-        <img src="/images/login/join.png" alt="join" class="join" @click="signUpForm()" />
+        <img src="/images/login/join.png" alt="join" class="join" @click="signUpForm()">
+
       </div>
-      <form id="joinForm" class="action-buttons">
+      <form id="joinForm" class="action-buttons" @keyup.enter="loginFormSubmitHandler">
         <table>
           <tr>
             <td>
-              <h2 style="margin-bottom: 5px">ID&nbsp;</h2>
+              <h2 style="margin-bottom: 5px;">ID&nbsp;</h2>
             </td>
             <td>
-              <span style="top: -3px">
-                <input type="text" name="id" id="i" v-model="id" />
+              <span style="top: -3px;">
+                <input type="text" name="id" id="i" v-model="id">
               </span>
             </td>
           </tr>
           <tr>
             <td>
-              <h2 style="margin-top: 5px">PW&nbsp;&nbsp;</h2>
+              <h2 style="margin-top: 5px;">PW&nbsp;&nbsp;</h2>
             </td>
             <td>
-              <span style="top: 3px">
-                <input type="password" name="pwd" id="p" v-model="pwd" />
+              <span style="top: 3px;">
+                <input type="password" name="pwd" id="p" v-model="pwd">
               </span>
             </td>
           </tr>
         </table>
         <div class="action-buttons">
-          <img
-            src="/images/login/start.png"
-            alt="start"
-            class="start"
-            @click="loginFormSubmitHandler()"
-          />
+          <img src="/images/login/start.png" alt="start" class="start" @click="loginFormSubmitHandler()">
         </div>
       </form>
+
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import sweetAlert from '../../util/modal.js'
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
       id: '',
-      pwd: ''
+      pwd: '',
     }
   },
+  mounted() {
+    const accessToken = sessionStorage.getItem("accessToken")
+    if (accessToken) {
+      this.$router.replace("/") // 메인 페이지의 경로로 수정
+    }
+  },
+
   methods: {
     signUpForm() {
       location.href = '/signup'
@@ -73,23 +78,22 @@ export default {
           headers: {
             'Content-Type': 'application/json'
           },
-          withCredentials: true
+          withCredentials: true,
+
         })
-        .then((responseData) => {
-          console.log(responseData)
+        .then(responseData => {
           // Access Token을 세션 스토리지에 저장
-          console.log(responseData.data.accessToken)
-          console.log(responseData.data.refreshToken)
-          sessionStorage.setItem('accessToken', responseData.data.accessToken)
-          // localStorage.setItem("accessToken", responseData.data.accessToken);
+          sessionStorage.setItem("accessToken", responseData.data.accessToken)
           location.href = '/'
         })
         .catch((error) => {
           console.error('Error:', error)
+          sweetAlert.warning("로그인 정보를 다시 확인하세요", "", "확인")
         })
     }
-  }
+  },
 }
+
 </script>
 <style scoped>
 #logoOff {
