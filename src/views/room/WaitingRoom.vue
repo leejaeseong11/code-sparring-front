@@ -200,8 +200,8 @@ export default {
         this.socket.send(JSON.stringify(outMessage))
         if (this.socket.readyState === WebSocket.OPEN) {
           this.socket.close()
-          this.$router.push({ path: '/' })
         }
+        this.$router.push({ path: '/' })
       }
     },
     sendMessage() {
@@ -218,11 +218,24 @@ export default {
         this.chatMessage = ''
         this.scrollToBottom()
       } else {
-        this.disconnect()
+        apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+          console.log('dlele room ok')
+          this.connect()
+          setTimeout(() => {}, 3000)
+          if (
+            this.socket.readyState === WebSocket.CLOSED ||
+            this.socket.readyState === WebSocket.CLOSING
+          ) {
+            const ok = SweetAlert.error('서버와의 연결이 종료되었습니다. 다시 접속해주세요.')
+            if (ok) {
+              this.$router.push({ path: '/' })
+            }
+          }
+        })
       }
     },
     quitMember(memberName, memberNo) {
-      apiClient.delete(`${this.backURL}/room-member/${memberNo}/${this.roomNo}`).then(() => {
+      apiClient.delete(`${this.backURL}/room-member/${memberNo}`).then(() => {
         if (this.socket.readyState === WebSocket.OPEN) {
           const outMessage = {
             type: 'ROOM_OUT',
@@ -238,12 +251,10 @@ export default {
     },
     roomOutButtonClickHandler() {
       console.log('dlele room')
-      apiClient
-        .delete(`${this.backURL}/room-member/${this.loginMemberNo}/${this.roomNo}`)
-        .then(() => {
-          console.log('dlele room ok')
-          this.disconnect()
-        })
+      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        console.log('dlele room ok')
+        this.disconnect()
+      })
     },
     scrollToBottom() {
       this.$nextTick(() => {
@@ -257,30 +268,28 @@ export default {
         roomNo: this.roomNo,
         sender: this.loginMemberName
       }
-      apiClient
-        .delete(`${this.backURL}/room-member/${this.loginMemberNo}/${this.roomNo}`)
-        .then(() => {
-          if (this.isRoomManager) {
-            apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-              this.socket.send(JSON.stringify(outMessage))
-
-              this.isRoomManager = false
-              const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-              if (ok) {
-                if (this.socket.readyState === WebSocket.OPEN) {
-                  this.socket.close()
-                }
-              }
-            })
-          } else {
+      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        if (this.isRoomManager) {
+          apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
             this.socket.send(JSON.stringify(outMessage))
 
-            if (this.socket.readyState === WebSocket.OPEN) {
-              this.socket.close()
+            this.isRoomManager = false
+            const ok = await SweetAlert.warning('방이 삭제되었습니다.')
+            if (ok) {
+              if (this.socket.readyState === WebSocket.OPEN) {
+                this.socket.close()
+              }
             }
+          })
+        } else {
+          this.socket.send(JSON.stringify(outMessage))
+
+          if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.close()
           }
-          this.$router.push({ path: '/' })
-        })
+        }
+        this.$router.push({ path: '/' })
+      })
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
