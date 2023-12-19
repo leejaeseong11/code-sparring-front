@@ -483,7 +483,8 @@ export default {
 }
 
 #profile-image {
-  width: 50%;
+  width: 140px;
+  height: 140px;
   margin: 12px;
 }
 

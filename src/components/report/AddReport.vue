@@ -19,9 +19,9 @@
         </div>
         <div id="bt-area">
             <div></div>
-            <div>
-                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
+            <div class="button-container">
                 <button id="add-bt" @click="addReprot">제출</button>
+                <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
             </div>
         </div>
     </div>
@@ -41,19 +41,19 @@ export default {
   },
   methods: {
     closeModal() {
-      this.$emit('close-modal');
+      this.$emit('close-modal')
     },
     addReprot() {
         if (!this.reportType) {
         sweetAlert.warning('신고사유을 선택해주세요!', '', '확인')(() =>{
-            this.$refs.reportTypeInput.focus();
-            return;
+            this.$refs.reportTypeInput.focus()
+            return
             })
         }
         if (!this.reportContent) {
         sweetAlert.warning('신고내용을 입력해주세요!', '', '확인')(() =>{
-            this.$refs.reportContentInput.focus();
-            return;
+            this.$refs.reportContentInput.focus()
+            return
             })
         }
         const url=`${this.backURL}/report`
@@ -70,7 +70,7 @@ export default {
                 })
                 .then(() => {
                     sweetAlert.success("신고제출이 완료되었습니다", "", "확인")
-                    this.$emit('close-modal');
+                    this.$emit('close-modal')
                 }).catch(()=>{
                     sweetAlert.warning("신고제출이 실패하였습니다", "", "확인")
         })
@@ -129,9 +129,11 @@ textarea.report-title {
     gap: 8px;
 }
 
-#bt-area {
+.button-container {
+    grid-area: button-container;
     display: flex;
     justify-content: center;
+    gap: 10px;
 }
 
 button {
@@ -145,7 +147,6 @@ button {
 #cancle-bt {
     background-color: var(--red-color);
     border-color: var(--red-color);
-    margin-right: 10px;
 
     &:hover {
         background-color: var(--red-hover-color);
