@@ -21,7 +21,9 @@
             </div>
             <div v-else class="room-member-number">0/4</div>
             <button
-              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              :class="{
+                'button-disabled': roomInfo.roomStatus == 0 || roomInfo.roomStatus == null
+              }"
               class="btn-custom-primary see-quiz-button"
               v-bind:disabled="roomInfo.roomStatus == 0"
               @click="showQuizClickHandler"
@@ -45,7 +47,9 @@
               </div>
             </div>
             <button
-              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              :class="{
+                'button-disabled': roomInfo.roomStatus == 0 || roomInfo.roomStatus == null
+              }"
               class="btn-custom-primary enter-button"
               v-bind:disabled="roomInfo.roomStatus == 0"
               @:click="enterButtonClickHandler"
