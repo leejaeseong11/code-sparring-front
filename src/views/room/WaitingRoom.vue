@@ -654,6 +654,9 @@ pre {
     background-color: var(--main4-hover-color);
   }
 }
+#game-start-button:disabled {
+  background-color: var(--main4-hover-color);
+}
 
 .room-info-code-open {
   display: flex;
