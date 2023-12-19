@@ -13,7 +13,7 @@
       id="matching-popup"
       :memberNo="loginMember.memberNo"
       @close-popup="backOff"
-    ></RankMatching>
+    />
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -166,7 +166,6 @@
               id="room-number-search-input"
               type="text"
               placeholder="방 번호 검색"
-              v-model="inputRoomNo"
               @input="searchRoomInputChangeHandler($event)"
             />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
@@ -216,7 +215,7 @@ import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
 import RankMatching from '../../components/rank/RankMatching.vue'
-import sweetAlert from '../../util/modal.js'
+import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
@@ -319,16 +318,19 @@ export default {
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
-        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        SweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
         $event.preventDefault()
       }
     },
     searchRoomInputChangeHandler($event) {
       const inputValue = $event.target.value
-      if (inputValue == '') return
+      if (inputValue == '') {
+        this.inputRoomNo = ''
+        return
+      }
       if (!/^[0-9]+$/.test(inputValue)) {
         $event.target.value = this.inputRoomNo
-        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        SweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
       } else {
         this.inputRoomNo = inputValue
         this.searchRoomByRoomNo()
