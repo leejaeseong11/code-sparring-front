@@ -48,11 +48,11 @@ export default {
     },
     methods: {
         closeModal() {
-            this.$emit('close-modal');
+            this.$emit('close-modal')
         },
 
         submitRemove() {
-            const url = `${this.backURL}/member/my/withdraw`;
+            const url = `${this.backURL}/member/my/withdraw`
             const data = {
                 memberPwd: this.password
             }
@@ -64,8 +64,8 @@ export default {
                 })
                 .then(() => {
                     sweetAlert.success("회원탈퇴가 완료되었습니다", "", "확인").then(() => {
-                        window.sessionStorage.removeItem('accessToken');
-                        window.location.href = '/login';
+                        window.sessionStorage.removeItem('accessToken')
+                        window.location.href = '/login'
                     })
 
                 })

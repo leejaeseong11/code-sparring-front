@@ -80,12 +80,12 @@ export default {
                     console.log(res.data)
                     this.reportList = res.data.content
                     this.totalPages = res.data.totalPages
-                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
-                    this.endPage = Math.min(this.startPage + 4, this.totalPages);
+                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1
+                    this.endPage = Math.min(this.startPage + 4, this.totalPages)
 
                 })
                 .catch((error) => {
-                    console.error('Error fetching reports:', error.message);
+                    console.error('Error fetching reports:', error.message)
                     // alert('신고목록을 조회할 수 없습니다')
                 })
         } else if (filter == 'unprocessed') {
@@ -109,21 +109,21 @@ export default {
                 })
                 .then((res) => {
                     this.reportList = res.data.content
-                    this.totalPages = res.data.totalPages;
-                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1;
-                    this.endPage = Math.min(this.startPage + 4, this.totalPages);
+                    this.totalPages = res.data.totalPages
+                    this.startPage = Math.floor((this.currentPage - 1) / 5) * 5 + 1
+                    this.endPage = Math.min(this.startPage + 4, this.totalPages)
                 })
                 .catch(() => {
-                    console.error('Error fetching reports:', error.message);
+                    console.error('Error fetching reports:', error.message)
                 })
 
         }
     },
     methods: {
         handleReportDeleted() {
-            const index = this.reportList.findIndex((report) => report.reportNo === this.selectedReportNo);
+            const index = this.reportList.findIndex((report) => report.reportNo === this.selectedReportNo)
             if (index !== -1) {
-                this.reportList.splice(index, 1);
+                this.reportList.splice(index, 1)
             }
         },
         allReport() {
@@ -134,27 +134,27 @@ export default {
         },
         searchReport(e) {
             if (this.reportModal) {
-                if (e.target.id == 'search-icon') return;
-                const onBt = document.getElementById('report-all');
-                onBt.style.opacity = '100%';
-                this.reportModal = false;
+                if (e.target.id == 'search-icon') return
+                const onBt = document.getElementById('report-all')
+                onBt.style.opacity = '100%'
+                this.reportModal = false
             } else {
                 if (e.target.id == 'search-icon') {
-                    const onBt = document.getElementById('report-all');
-                    onBt.style.opacity = '50%';
-                    const offBt = document.getElementById('report-upc');
-                    offBt.style.opacity = '50%';
-                    this.reportModal = false;
+                    const onBt = document.getElementById('report-all')
+                    onBt.style.opacity = '50%'
+                    const offBt = document.getElementById('report-upc')
+                    offBt.style.opacity = '50%'
+                    this.reportModal = false
 
-                    const searchText = document.getElementById('search-text').value;
-                    const filteredReports = this.reportList.filter(report => report.reportNo == searchText);
-                    this.reportList = filteredReports;
+                    const searchText = document.getElementById('search-text').value
+                    const filteredReports = this.reportList.filter(report => report.reportNo == searchText)
+                    this.reportList = filteredReports
                 }
             }
         },
 
         pgClick(e) {
-            const pg = parseInt(e.target.id.replace("pg", ""));
+            const pg = parseInt(e.target.id.replace("pg", ""))
             this.currentPage = pg
             const filter = this.$route.params.filter
             location.href = '/admin/report/' + filter + '/' + this.currentPage
@@ -174,23 +174,23 @@ export default {
         formatReportType(reportType) {
             switch (reportType) {
                 case 1:
-                    return '테스트케이스 추가요청';
+                    return '테스트케이스 추가요청'
                 case 2:
-                    return '문제 오류 제보';
+                    return '문제 오류 제보'
                 case 3:
-                    return '기타';
+                    return '기타'
             }
         },
         reportView(report) {
             console.log(report.reportNo)
-            this.selectedReportNo = report.reportNo;
+            this.selectedReportNo = report.reportNo
             this.reportModal = true
         },
         offReportModal() {
             this.reportModal = false
         },
     }
-};
+}
 </script>
 
 <style scoped>

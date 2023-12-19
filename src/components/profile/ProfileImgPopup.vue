@@ -1,9 +1,8 @@
 <template>
-  
   <div class="popup-container" v-if="showPopup">
     <div class="icon-container" id="iconContainer">
       <div v-for="i in 10" :key="i" class="icon" @click="selectProfileImage(i-1)">
-        <img :src="'/images/icon/' + (i - 1) + '.png'" :alt="'Icon ' + (i - 1)">
+        <img :src="'/images/icon/' + (i - 1) + '.png'" :alt="'Icon ' + (i - 1)"/>
       </div>
     </div>
       <button class="close-button" @click="closePopup">프로필 변경 닫기</button>
@@ -21,13 +20,12 @@ export default {
   },
   methods: {
     closePopup() {
-      this.showPopup = false;
-      this.$emit("close-modal");
+      this.showPopup = false
+      this.$emit('close-modal')
     },
     selectProfileImage(index) {
-      // console.log("Selected profile image:", index);
-      this.$emit("selected", index);
-      this.closePopup();
+      this.$emit('selected', index)
+      this.closePopup()
     },
   }
 }
@@ -87,5 +85,4 @@ body {
         border-color: var(--main4-hover-color);
     }
 }
-
 </style>

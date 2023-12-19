@@ -3,7 +3,6 @@
     <div class="header">
       <div class="header-text">마이페이지</div>
     </div>
-
     <div class="content-box">
       <div class="index-bar">
         <div class="index" id="profile-page" @click="movePage">내 정보 확인</div>
@@ -79,27 +78,27 @@ export default {
           }
         })
         .then((response) => {
-          console.log('HTTP 응답:', response);
+          console.log('HTTP 응답:', response)
           this.loginMember = response.data
-          this.memberNo = this.$route.params.memberNo;
+          this.memberNo = this.$route.params.memberNo
 
           if (this.loginMember.authority == "ROLE_ADMIN") {
-            return;
+            return
           }
 
           if (this.loginMember.memberNo != this.memberNo) {
             sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() => {
-              window.history.back();
-            });
+              window.history.back()
+            })
           }
         })
         .catch((error) => {
           sweetAlert.error(error.response.data.errors[0], '', '닫기')
-        });
+        })
     }
   },
   mounted() {
-    this.getLoginNo();
+    this.getLoginNo()
     this.memberNo = this.$route.params.memberNo
     const viewName = this.$route.params.viewName
     this.myProfile = false

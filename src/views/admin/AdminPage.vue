@@ -3,7 +3,6 @@
       <div class="header">
         <div class="header-text">관리자페이지</div>
       </div>
-  
       <div class="content-box">
         <div class="index-bar">
           <div class="quiz-page" id="quiz-page" @click="OnQuizPage">문제 조회</div>

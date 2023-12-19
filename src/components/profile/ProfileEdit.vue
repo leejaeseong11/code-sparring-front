@@ -71,7 +71,7 @@ export default {
         }
     },
     mounted() {
-        this.create();
+        this.create()
     },
     methods: {
         create() {
@@ -92,21 +92,21 @@ export default {
             this.profileModal = false
         },
         profileImgView() {
-            this.profileModal = true;
+            this.profileModal = true
         },
         updateEditedProfileImg(index) {
             console.log(index)
-            this.editedProfileImg = index;
+            this.editedProfileImg = index
         },
         btNameDupchkClickHandler() {
             if (this.editedMemberName === this.loginMember.memberName) {
                 sweetAlert.warning("변경할 닉네임을 입력해주세요", '', '닫기')
-                return;
+                return
             }
-            const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
+            const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/
             if (!nameRegExp.test(this.editedMemberName)) {
                 sweetAlert.warning("3~10자의  한글, 숫자, 영어만 \n 사용 가능합니다", '', '닫기')
-                return;
+                return
             }
 
             const url = `${this.backURL}/auth/chkDupName?memberName=${this.editedMemberName}`
@@ -117,7 +117,7 @@ export default {
                     },
                 })
                 .then(response => {
-                    const isDuplicate = response.data;
+                    const isDuplicate = response.data
                     if (!isDuplicate) {
                         sweetAlert.success("사용 가능한 닉네임입니다", '', '닫기')
                     } else {
@@ -125,9 +125,9 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기');
-                });
+                    console.error(error)
+                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기')
+                })
         },
         editInfo() {
             const data = {
@@ -144,16 +144,16 @@ export default {
                 const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
                 if (!pwdRegExp.test(this.editedMemberPwd)) {
                     sweetAlert.warning("비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다", '', '닫기')
-                    return;
+                    return
                 }
                 if (this.editedMemberPwd != this.checkPwd) {
                     sweetAlert.warning("비밀번호 확인을 다시 입력해주세요", '', '닫기')
-                    return;
+                    return
                 }
                 data.memberPwd = this.editedMemberPwd
             }
             if (!(this.editedProfileImg === this.loginMember.memberProfileImg)) {
-                data.memberProfileImg = this.editedProfileImg;
+                data.memberProfileImg = this.editedProfileImg
             }
 
             if (!(this.editedMemberInfo === this.loginMember.memberInfo)) {
@@ -162,7 +162,7 @@ export default {
 
             if (data.memberPwd === null && data.memberName === null && data.memberInfo === null && data.memberProfileImg === null) {
                 sweetAlert.warning("변경 사항이 없습니다", '', '닫기')
-                return;
+                return
             }
             apiClient
                 .put(`${this.backURL}/member/my`, data, {
@@ -171,7 +171,7 @@ export default {
                     }
                 })
                 .then(response => {
-                    console.log(response);
+                    console.log(response)
                     sweetAlert.success("내 정보 수정이 완료되었습니다", "", "확인")
                 })
                 .catch(error => {

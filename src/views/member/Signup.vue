@@ -69,7 +69,7 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import sweetAlert from '../../util/modal.js'
-import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue';
+import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue'
 
 export default {
     name: "Signup",
@@ -90,24 +90,24 @@ export default {
     },
     methods: {
         offProfileModal() {
-            this.profileModal = false;
+            this.profileModal = false
         },
         onProfileModal() {
-            this.profileModal = true;
+            this.profileModal = true
         },
         handleSelectedProfileImage(index) {
-            this.memberProfileImg = index;
-            this.onProfileModal();
+            this.memberProfileImg = index
+            this.onProfileModal()
         },
         gotoLogin() {
-            this.$router.push('/login');
+            this.$router.push('/login')
         },
 
         btIdDupchkClickHandler() {
-            const idRegExp = /^[a-zA-Z0-9]{4,15}$/;
+            const idRegExp = /^[a-zA-Z0-9]{4,15}$/
             if (!idRegExp.test(this.c.id)) {
                 sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
-                return;
+                return
             }
 
             const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
@@ -118,7 +118,7 @@ export default {
                     },
                 })
                 .then(response => {
-                    const isDuplicate = response.data;
+                    const isDuplicate = response.data
                     if (!isDuplicate) {
                         sweetAlert.success("사용 가능한 아이디입니다", '', '닫기')
                     } else {
@@ -126,16 +126,16 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    sweetAlert.warning(error.response.data.errors[0], '', '닫기');
-                });
+                    console.error(error)
+                    sweetAlert.warning(error.response.data.errors[0], '', '닫기')
+                })
         },
 
         btNameDupchkClickHandler() {
-            const nameRegExp = /^[a-zA-Z0-9]{4,15}$/;
+            const nameRegExp = /^[a-zA-Z0-9]{4,15}$/
             if (!nameRegExp.test(this.c.name)) {
                 sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
-                return;
+                return
             }
 
             const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.name}`
@@ -146,7 +146,7 @@ export default {
                     },
                 })
                 .then(response => {
-                    const isDuplicate = response.data;
+                    const isDuplicate = response.data
                     if (!isDuplicate) {
                         sweetAlert.success("사용 가능한 닉네임입니다", '', '닫기')
                     } else {
@@ -154,9 +154,9 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기');
-                });
+                    console.error(error)
+                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기')
+                })
         },
         signupFormSubmitHandler(e) {
             if(this.c.id == null || this.c.id ==''
@@ -168,11 +168,11 @@ export default {
             const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
             if (!pwdRegExp.test(this.c.pwd)) {
                 sweetAlert.warning("비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다", '', '닫기')
-                return;
+                return
             }
             if (this.c.pwd != this.pwdRe) {
                 sweetAlert.warning("비밀번호 확인을 다시 입력해주세요", '', '닫기')
-                return;
+                return
             }
             const data = {
                 memberInfo: this.intro === '' ? null : this.intro,
@@ -188,14 +188,14 @@ export default {
                     }
                 })
                 .then(response => {
-                    console.log(response);
+                    console.log(response)
                     sweetAlert.success("가입에 성공했습니다", '', '닫기').then(() => {
                         location.href = '/login'
                     })
                 })
                 .catch(error => {
                     sweetAlert.warning(error.response.data.errors[0], '', '닫기')
-                    return;
+                    return
                 })
         }
 
@@ -205,8 +205,6 @@ export default {
     }
 
 }
-
-
 </script>
 
 <style scoped>
