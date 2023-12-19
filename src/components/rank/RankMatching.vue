@@ -100,8 +100,10 @@ export default {
     },
     setQuiz() {
       apiClient
-        .put(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`)
-        .then(() => {})
+        .get(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`)
+        .then(res => {
+            location.href = '/rank/' + res.data
+        })
         .catch(() => {
           location.href = '/'
         })
@@ -124,12 +126,6 @@ export default {
             this.stopMatching()
             alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
             this.setQuiz()
-
-            apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
-              this.rankRoom.rankNo = res.data.rankNo
-            })
-            alert(this.rankRoom.rankNo)
-            location.href = '/rank/' + this.rankRoom.rankNo
           }
         })
         .catch(() => {
