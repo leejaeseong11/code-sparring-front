@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!this.startButton"   id="room-layout" class="row">
+  <div v-if="!this.startButton" id="room-layout" class="row">
     <!-- <div id="room-layout" class="row"> -->
     <div id="room-member-layout" class="col-6">
       <div>
@@ -23,15 +23,17 @@
             </div>
           </div>
         </div>
-        <div></div>
       </div>
       <div id="room-member-container">
         <template v-for="index in 4" :key="'member' + index">
           <RoomMember
             v-if="index <= roomMemberList.length"
             v-model:member="roomMemberList[index - 1]"
-            @click="showProfileDetailClickHandler(roomMemberList[index - 1].memberNo)"
+            @click="showProfileDetailClickHandler(roomMemberList[index - 1].memberNo, $event)"
             :isRoomManager="isRoomManager"
+            @resignRoomMember="
+              quitMember(roomMemberList[index - 1].memberName, roomMemberList[index - 1].memberNo)
+            "
           />
           <RoomMember v-else v-model:member="nullMember" />
         </template>
@@ -75,14 +77,19 @@
         <div id="room-quiz-title">선택된 문제</div>
         <ShowQuizSimply v-model:quizInfo="roomInfo" />
       </div>
-      <button id="game-start-button" @:click="gameStartButtonClickHandler" :disabled="!isRoomManager">시 작 하 기</button>
+      <button
+        id="game-start-button"
+        @:click="gameStartButtonClickHandler"
+        :disabled="!isRoomManager"
+      >
+        시 작 하 기
+      </button>
     </div>
   </div>
 
   <div v-else>
     <Normal />
   </div>
-  
 </template>
 <script>
 import { apiClient } from '@/axios-interceptor'
@@ -94,7 +101,7 @@ import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'WaitingRoom',
-  components: { RoomMember, ShowQuizSimply, MemberProfile, Normal},
+  components: { RoomMember, ShowQuizSimply, MemberProfile, Normal },
   data() {
     return {
       message: '',
@@ -122,7 +129,7 @@ export default {
         memberInfo: ''
       },
       isRoomManager: false,
-      startButton: '',
+      startButton: ''
     }
   },
   methods: {
@@ -140,28 +147,44 @@ export default {
 
       this.socket.onclose = () => {}
 
-      this.socket.onerror = () => {}
+      this.socket.onerror = async (err) => {
+        const ok = await SweetAlert.warning(err)
+        if (ok) {
+          this.$router.push({ path: '/' })
+        }
+      }
 
-      this.socket.onmessage = (e) => {
+      this.socket.onmessage = async (e) => {
         if (this.socket.readyState === WebSocket.OPEN) {
-          if (e.data.includes('님이 입장했습니다.') || e.data.includes('님이 퇴장했습니다.')) {
-            apiClient
-              .get(`${this.backURL}/room/${this.roomNo}`)
-              .then((response) => {
-                this.roomMemberList = response.data.roomMemberList
-              })
-              .catch(async (error) => {
-                const ok = await SweetAlert.error(error.response.data.errors[0])
-                if (ok) {
-                  this.$router.push({ path: '/' })
-                }
-              })
+          if (e.data.includes('님이 강제 퇴장되었습니다.')) {
+            const resignedMemberName = e.data.replace('님이 강제 퇴장되었습니다.', '')
+            if (resignedMemberName == this.loginMemberName) {
+              const ok = await SweetAlert.warning('방에서 강제 퇴장당했습니다.')
+              this.disconnect()
+              if (ok) {
+                this.$router.push({ path: '/' })
+              }
+            }
+          } else {
+            if (e.data.includes('님이 입장했습니다.') || e.data.includes('님이 퇴장했습니다.')) {
+              apiClient
+                .get(`${this.backURL}/room/${this.roomNo}`)
+                .then((response) => {
+                  this.roomMemberList = response.data.roomMemberList
+                })
+                .catch(async (error) => {
+                  const ok = await SweetAlert.error(error.response.data.errors[0])
+                  if (ok) {
+                    this.$router.push({ path: '/' })
+                  }
+                })
+            }
+            this.chatContentList.push(e.data)
+            this.scrollToBottom()
           }
-          if (e.data.includes('start')){
+          if (e.data.includes('start')) {
             this.startButton = e.data
           }
-          this.chatContentList.push(e.data)
-          this.scrollToBottom()
         } else if (
           this.socket.readyState === WebSocket.CLOSING ||
           this.socket.readyState === WebSocket.CLOSED
@@ -171,19 +194,35 @@ export default {
       }
     },
     disconnect() {
-      if (this.socket.readyState === WebSocket.OPEN) {
-        const outMessage = {
-          type: 'ROOM_QUIT',
-          roomNo: this.roomNo,
-          sender: this.loginMemberName
-        }
+      const outMessage = {
+        type: 'ROOM_QUIT',
+        roomNo: this.roomNo,
+        sender: this.loginMemberName
+      }
+      if (this.isRoomManager || this.roomMemberList.length == 1) {
+        apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
+          this.isRoomManager = false
+          const ok = await SweetAlert.warning('방이 삭제되었습니다.')
+          if (ok) {
+            this.socket.send(JSON.stringify(outMessage))
+            if (this.socket.readyState === WebSocket.OPEN) {
+              this.socket.close()
+            }
+            this.$router.push({ path: '/' })
+          }
+        })
+      } else {
         this.socket.send(JSON.stringify(outMessage))
-        this.socket.close()
+        if (this.socket.readyState === WebSocket.OPEN) {
+          this.socket.close()
+        }
+        this.$router.push({ path: '/' })
       }
     },
     sendMessage() {
       if (this.chatMessage == '') return
-      else{
+
+      if (this.socket.readyState === WebSocket.OPEN) {
         var talkMessage = {
           type: 'ROOM_TALK',
           roomNo: this.roomNo,
@@ -193,8 +232,34 @@ export default {
         this.socket.send(JSON.stringify(talkMessage))
         this.chatMessage = ''
         this.scrollToBottom()
+      } else {
+        apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(async () => {
+          if (
+            this.socket.readyState === WebSocket.CLOSED ||
+            this.socket.readyState === WebSocket.CLOSING
+          ) {
+            const ok = await SweetAlert.error(
+              '입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.'
+            )
+            if (ok) {
+              setTimeout(() => {}, 3000)
+              this.$router.push({ path: '/' })
+            }
+          }
+        })
       }
-
+    },
+    quitMember(memberName, memberNo) {
+      apiClient.delete(`${this.backURL}/room-member/${memberNo}`).then(() => {
+        if (this.socket.readyState === WebSocket.OPEN) {
+          const outMessage = {
+            type: 'ROOM_OUT',
+            roomNo: this.roomNo,
+            sender: memberName
+          }
+          this.socket.send(JSON.stringify(outMessage))
+        }
+      })
     },
     gameStartButtonClickHandler() {
       this.startButton = 'start'
@@ -209,21 +274,21 @@ export default {
       this.startButton = ''
       const url = `${this.backURL}/room/${this.roomNo}`
       apiClient
-      .put(url,{
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .catch(error => {
-        console.log(error)
-        alert('서버 에러 발생')
-      })
+        .put(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          alert('서버 에러 발생')
+        })
     },
 
-
     roomOutButtonClickHandler() {
-      this.disconnect()
-      this.$router.push({ path: '/' })
+      apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+        this.disconnect()
+      })
     },
     scrollToBottom() {
       this.$nextTick(() => {
@@ -231,20 +296,32 @@ export default {
         roomChat.scrollTop = roomChat.scrollHeight
       })
     },
-    unLoadEvent: function () {
+    unLoadEvent() {
       const outMessage = {
         type: 'ROOM_QUIT',
         roomNo: this.roomNo,
         sender: this.loginMemberName
       }
-      this.socket.send(JSON.stringify(outMessage))
-
-      if (this.socket.readyState === WebSocket.OPEN) {
-        this.socket.close()
-      }
-
       apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-        this.disconnect()
+        if (this.isRoomManager || this.roomMemberList.length == 1) {
+          apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
+            this.socket.send(JSON.stringify(outMessage))
+
+            this.isRoomManager = false
+            const ok = await SweetAlert.warning('방이 삭제되었습니다.')
+            if (ok) {
+              if (this.socket.readyState === WebSocket.OPEN) {
+                this.socket.close()
+              }
+            }
+          })
+        } else {
+          this.socket.send(JSON.stringify(outMessage))
+
+          if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.close()
+          }
+        }
         this.$router.push({ path: '/' })
       })
     },
@@ -284,8 +361,12 @@ export default {
           this.roomInfo = response.data
           this.roomMemberList = response.data.roomMemberList
           if (
-            this.roomMemberList.filter((roomMember) => roomMember.memberNo == this.loginMemberNo)
-              .length == 0
+            this.roomMemberList.filter((roomMember) => {
+              if (roomMember.memberNo == this.loginMemberNo) {
+                this.isRoomManager = roomMember.hostStatus == 0 ? true : false
+              }
+              return roomMember.memberNo == this.loginMemberNo
+            }).length == 0
           ) {
             let addMemberUrl
             if (this.roomInfo.roomPwd) {
@@ -293,29 +374,36 @@ export default {
             } else {
               addMemberUrl = `${this.backURL}/room-member`
             }
+
             apiClient
-              .post(
-                addMemberUrl,
-                {
-                  memberNo: this.loginMemberNo,
-                  roomNo: this.roomInfo.roomNo,
-                  hostStatus: 1
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                }
-              )
-              .then(() => {
-                apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
-                  this.roomInfo = response.data
-                  this.roomMemberList = response.data.roomMemberList
-                  this.connect()
-                })
-              })
-              .catch((error) => {
-                SweetAlert.error(error.response.data.errors[0])
+              .get(`${this.backURL}/room-member/isHost/${this.loginMemberNo}`)
+              .then((response) => {
+                this.isRoomManager = response.data
+
+                apiClient
+                  .post(
+                    addMemberUrl,
+                    {
+                      memberNo: this.loginMemberNo,
+                      roomNo: this.roomInfo.roomNo,
+                      hostStatus: this.isRoomManager ? 0 : 1
+                    },
+                    {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                    }
+                  )
+                  .then(() => {
+                    apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
+                      this.roomInfo = response.data
+                      this.roomMemberList = response.data.roomMemberList
+                      this.connect()
+                    })
+                  })
+                  .catch((error) => {
+                    SweetAlert.error(error.response.data.errors[0])
+                  })
               })
           } else {
             this.connect()
@@ -328,9 +416,6 @@ export default {
           }
         })
     })
-    apiClient.get(`${this.backURL}/room-member`).then((response) => {
-      this.isRoomManager = response.data
-    })
     window.addEventListener('beforeunload', this.unLoadEvent)
   },
   beforeUnmount() {
@@ -339,11 +424,25 @@ export default {
       roomNo: this.roomNo,
       sender: this.loginMemberName
     }
-    this.socket.send(JSON.stringify(outMessage))
-
-    apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-      this.disconnect()
-      this.$router.push({ path: '/' })
+    apiClient.get(`${this.backURL}/room-member/${this.loginMemberNo}`).then((res) => {
+      if (res.data) {
+        if (this.isRoomManager || this.roomMemberList.length == 1) {
+          let deleteCount = this.roomMemberList.length
+          this.roomMemberList.forEach((roomMember) => {
+            apiClient.delete(`${this.backURL}/room-member/${roomMember.memberNo}`).then(() => {
+              this.socket.send(JSON.stringify(outMessage))
+              deleteCount -= 1
+              if (deleteCount == 0) {
+                apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
+                  this.isRoomManager = false
+                  await SweetAlert.warning('방이 삭제되었습니다.')
+                })
+                this.$router.push({ path: '/' })
+              }
+            })
+          })
+        }
+      }
     })
   }
 }
@@ -546,6 +645,9 @@ pre {
   &:hover {
     background-color: var(--main4-hover-color);
   }
+}
+#game-start-button:disabled {
+  background-color: var(--main4-hover-color);
 }
 
 .room-info-code-open {
