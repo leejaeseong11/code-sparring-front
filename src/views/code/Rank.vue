@@ -1,6 +1,13 @@
 <template lang="">
 
     <div id="code-layout" class="row">
+        <div v-if="this.gameEnd" id="back-off" @click="backOff"></div>
+        <GameEnd 
+            id="end-popup" 
+            v-if="this.gameEnd" 
+            @close-popup="backOff"
+            :resultMemberNo = "this.resultMemberNo"
+        />
         <body class="flex-container">
     
             <div id="code-side-layout">
@@ -41,6 +48,7 @@
                 <Monaco 
                 @monacoSubmitEvent="setSubmitValue"
                 @monacoRunEvent="setRunValue"
+                @monacoWinMemberNo="setWinMember"
                 :parentButtonValue="this.parentButtonValue"
                 v-bind:childQuizNoValue="quizNo"
                 />
@@ -80,9 +88,10 @@
 import Monaco from '../../components/code/RankMonaco.vue'
 import { apiClient } from '@/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
+import GameEnd from '../../components/game/GameEnd.vue'
 export default {
     name: 'rank',
-    components: { Monaco },
+    components: { Monaco, GameEnd },
     data() {
         return {
             rankNo: '',
@@ -311,7 +320,7 @@ export default {
                 alert('문제 정보 조회에 실패하였습니다')
             })
             //memberNo
-            const url4 = `${this.backURL}/mycode/memberNo`
+            const url4 = `${this.backURL}/member/memberNo`
             apiClient
             .get(url4, {
                 headers: {
