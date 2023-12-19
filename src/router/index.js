@@ -6,14 +6,13 @@ import AddQuiz from '@/views/quiz/AddQuiz.vue'
 import Signup from '@/views/member/Signup.vue'
 import Login from '@/views/member/Login.vue'
 
-import AdminPage from '@/views/admin/AdminPage.vue'
+import AdminPage from '@/views/admin/adminPage.vue'
 import QuizView from '@/views/quiz/QuizView.vue'
 
 import CodeView from '@/views/code/CodeView.vue'
 import Rank from '@/views/code/Rank.vue'
 
 import MyPage from '@/views/member/MyPage.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +38,7 @@ const router = createRouter({
       name: 'Signup',
       component: Signup
     },
-    
+
     {
       path: '/login',
       name: 'Login',
