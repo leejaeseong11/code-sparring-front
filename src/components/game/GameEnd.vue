@@ -2,13 +2,13 @@
   <main>
     <div id="popup-area">
         <div id="header">
-      <img src="/../../../public/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
       WINNER
-      <img src="/../../../public/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
     </div>
     <div id="winner-img">
       <img
-        :src="'/../../../public/images/icon/' + this.winNo + '.png'"
+        :src="'/images/icon/' + this.winNo + '.png'"
         id="win-profile-img"
         alt="win-member"
       />

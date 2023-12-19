@@ -147,7 +147,6 @@ export default {
             memberName: '',
             parentButtonValue: '',
             count: 0,
-            // gameResult: '',
             winMemberNo: '6',
             resultMemberNo: '7',
             gameEnd: false,

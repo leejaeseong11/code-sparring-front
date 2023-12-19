@@ -115,6 +115,9 @@ export default {
             memberName: '',
             parentButtonValue: '',
             count: 0,
+            winMemberNo: '6',
+            resultMemberNo: '7',
+            gameEnd: false,
 
         }
     },
@@ -132,6 +135,22 @@ export default {
         setSubmitValue(dataFromChild){
             this.buttonValue = dataFromChild
             this.sendMessage()
+        },
+        backOff() {
+            this.gameEnd=false
+            document.body.style.overflow = 'auto'
+
+        },
+        setWinMember(dataFromChild){
+            this.winMemberNo = dataFromChild;
+            console.log(this.winMemberNo)
+            var winMember = {
+                type: 'CODE_STATUS',
+                codeRoomNo: this.roomNo,
+                codeSender: this.memberName,
+                codeStatus: this.winMemberNo + ',win'
+            }
+            this.socket.send(JSON.stringify(winMember))
         },
         connect(){
             this.socket = new WebSocket(this.socketURL)
@@ -166,6 +185,11 @@ export default {
                         else if(this.member2Name === msgMemberName){
                             this.buttonValuePlayer2 = msgMemberButtonValue
                         }
+                    }
+                    const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    if(colonIndex2 !== -1){
+                        this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
+                        this.gameEnd=true
                     }
                     this.parentButtonValue = this.count + e.data;
                     this.count++;

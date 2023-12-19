@@ -47,7 +47,6 @@ export default defineComponent({
       default() {
         return {
           minimap: { enabled: false, },
-          // paste: { enabled: false, showPasteSelector: 'never'}
         }
       },
     },
@@ -111,10 +110,10 @@ export default defineComponent({
     this.initMonaco()
 
     // 붙여넣기 막기
-    this.editor.getDomNode().addEventListener('paste', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    }, true);
+    // this.editor.getDomNode().addEventListener('paste', (event) => {
+    //   event.stopPropagation();
+    //   event.preventDefault();
+    // }, true);
   },
   beforeUnmount() {
     this.editor && this.editor.dispose()
@@ -242,6 +241,11 @@ export default defineComponent({
         .then(response => {
           this.output = response.data.result
           this.gameResult = response.data.gameResult
+
+          this.gameResult = '1'
+          if(this.gameResult == '1'){
+            this.$emit('monacoWinMemberNo', this.memberNo);
+          }
 
           //게임 결과 update
           // const data = {

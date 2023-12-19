@@ -16,11 +16,9 @@
 import { apiClient } from '@/axios-interceptor'
 import { defineComponent, computed, toRefs } from 'vue'
 import * as monaco from 'monaco-editor'
-import GameEnd from '../../components/game/GameEnd.vue'
 
 export default defineComponent({
   name: 'MonacoEditor',
-  components: {GameEnd},
   data() {
     return {
       value: 'import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n      \n    }\n}',
@@ -30,7 +28,6 @@ export default defineComponent({
       gameResult: '',
       buttonValue: '',
       isButtonDisabled: false,
-      gameEnd: false,
     };
   },
   props: {
@@ -247,8 +244,6 @@ export default defineComponent({
           this.gameResult = '1'
           if(this.gameResult == '1'){
             this.$emit('monacoWinMemberNo', this.memberNo);
-
-            // this.gameEnd=true
           }
         })
         //네트워크에 의한 요청 실패일 경우
