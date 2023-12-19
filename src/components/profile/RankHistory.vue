@@ -20,6 +20,7 @@
 
     <div id="rank-content" ref="scrollContainer" @scroll="handleScroll">
       <div v-for="rank in rankList" :key="rank" :class="'rank-obj-' + rank.gameResult">
+        <div v-if="rankList.length==1 && rank.gameResult==null">전적이 존재하지 않습니다.</div>
         <span class="opposing-name">대결 상대 : {{ rank.opposingName }}</span>
         <span class="game-result">{{ rank.gameResult }}</span>
       </div>
