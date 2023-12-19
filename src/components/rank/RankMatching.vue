@@ -68,7 +68,8 @@ export default {
         roomNo: 0,
         member2No: 0,
         quizNo: 0,
-        readyCnt: 0
+        readyCnt: 0,
+        rankNo: 0
       },
       tierImg: '',
       score: '',
@@ -98,52 +99,60 @@ export default {
       }
     },
     setQuiz() {
-      apiClient.put(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`).then((res) => {
-        this.rankRoom = res.data
-      }).catch(()=>{
-        location.href = '/'
-      })
+      apiClient
+        .put(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`)
+        .then(() => {})
+        .catch(() => {
+          location.href = '/'
+        })
     },
     whileMatching1() {
       if (this.minutes == 5) {
         alert('대기시간이 지연되어 매칭을 종료합니다')
         this.stopMatching()
-        location.href='/'
+        location.href = '/'
       }
-      apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
-        this.rankRoom = res.data
-        if (
-          this.rankRoom.member2No != 0 &&
-          this.rankRoom.member2No != null &&
-          this.rankRoom.member2No != ''
-        ) {
-          this.stopMatching()
-          alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
-          this.setQuiz()
+      apiClient
+        .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
+        .then((res) => {
+          this.rankRoom = res.data
+          if (
+            this.rankRoom.member2No != 0 &&
+            this.rankRoom.member2No != null &&
+            this.rankRoom.member2No != ''
+          ) {
+            this.stopMatching()
+            alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
+            this.setQuiz()
 
-          // rank room
-          location.href = '/quiz/add'
-        }
-      }).catch(()=>{
-        location.href='/'
-      })
+            apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
+              this.rankRoom.rankNo = res.data.rankNo
+            })
+            alert(this.rankRoom.rankNo)
+            location.href = '/rank/' + this.rankRoom.rankNo
+          }
+        })
+        .catch(() => {
+          location.href = '/'
+        })
     },
     whileMatching2() {
-      apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
-        this.rankRoom = res.data
-        if (
-          this.rankRoom.quizNo != 0 &&
-          this.rankRoom.quizNo != null &&
-          this.rankRoom.quizNo != ''
-        ) {
-          this.stopMatching()
-
-          // rank room
-          location.href = '/quiz/add'
-        }
-      }).catch(()=>{
-        location.href = '/'
-      })
+      apiClient
+        .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
+        .then((res) => {
+          this.rankRoom = res.data
+          if (
+            this.rankRoom.quizNo != 0 &&
+            this.rankRoom.quizNo != null &&
+            this.rankRoom.quizNo != ''
+          ) {
+            this.stopMatching()
+            location.href = '/rank/' + this.rankRoom.rankNo
+          }
+        })
+        .catch(() => {
+          location.href = '/'
+        })
     },
     startMatching1() {
       this.intervalId = setInterval(this.whileMatching1, 1000)
@@ -153,17 +162,25 @@ export default {
     },
     stopMatching() {
       clearInterval(this.intervalId)
-      if(this.rankRoom.readyCnt==0 || this.rankRoom.readyCnt=='' || this.rankRoom.readyCnt==null) {
-        apiClient.delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`).then(() => {
-        location.href = '/'
-      }).catch(()=>{
-        location.href = '/'
-      })
+      if (
+        this.rankRoom.readyCnt == 0 ||
+        this.rankRoom.readyCnt == '' ||
+        this.rankRoom.readyCnt == null
+      ) {
+        apiClient
+          .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
+          .then(() => {
+            // location.href = '/'
+          })
+          .catch(() => {
+            // location.href = '/'
+          })
       }
     }
   },
   created() {
     window.addEventListener('beforeunload', () => {
+      console.log('?')
       this.stopMatching()
     })
 
@@ -207,8 +224,9 @@ export default {
                     .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
                     .then(() => {
                       location.href = '/'
-                    }).catch(()=>{
-                        location.href = '/'
+                    })
+                    .catch(() => {
+                      location.href = '/'
                     })
                 }
               } else {
@@ -221,14 +239,22 @@ export default {
               location.href = '/'
             })
         }
-      }).catch(()=>{
+      })
+      .catch(() => {
         location.href = '/'
       })
   },
   beforeUnmount() {
-    if(this.rankRoom.readyCnt==0 || this.rankRoom.readyCnt=='' || this.rankRoom.readyCnt==null) {
-        apiClient.delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`).then(() => {}).catch(()=>{
-            location.href = '/'
+    if (
+      this.rankRoom.readyCnt == 0 ||
+      this.rankRoom.readyCnt == '' ||
+      this.rankRoom.readyCnt == null
+    ) {
+      apiClient
+        .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
+        .then(() => {})
+        .catch(() => {
+          location.href = '/'
         })
     }
     clearInterval(this.intervalId)
@@ -241,7 +267,7 @@ export default {
 }
 
 #header {
-  margin-top: 20px;
+  margin-top: 30px;
   text-align: center;
   padding-right: 10px;
 }
@@ -257,7 +283,7 @@ export default {
 }
 
 #content {
-  margin-top: 40px;
+  margin-top: 50px;
   display: flex;
   justify-content: space-between;
   text-align: center;

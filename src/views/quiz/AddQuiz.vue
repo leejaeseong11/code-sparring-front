@@ -123,7 +123,7 @@ export default {
             return
         }
 
-      const url = `${this.backURL}/quiz`
+      const url = `${this.backURL}/quiz/write`
       const inputValue = document.querySelectorAll('.input-obj')
       const outputValue = document.querySelectorAll('.output-obj')
 

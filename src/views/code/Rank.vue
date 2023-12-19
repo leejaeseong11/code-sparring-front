@@ -311,7 +311,7 @@ export default {
                 alert('문제 정보 조회에 실패하였습니다')
             })
             //memberNo
-            const url4 = `${this.backURL}/mycode/memberNo`
+            const url4 = `${this.backURL}/member/memberNo`
             apiClient
             .get(url4, {
                 headers: {
