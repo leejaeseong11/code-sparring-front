@@ -8,7 +8,6 @@
     <button :disabled="isButtonDisabled" @click="execution()" class="button">코드 실행하기</button>
     <button :disabled="isButtonDisabled" @click="submit()" class="button" id="submit">코드 제출하기</button>
     <div style="display: inline;"> 🚨주의! Main클래스를 변경하지 마세요! </div>
-
     <br>
   </div>
 </template>
@@ -17,9 +16,11 @@
 import { apiClient } from '@/axios-interceptor'
 import { defineComponent, computed, toRefs } from 'vue'
 import * as monaco from 'monaco-editor'
+import GameEnd from '../../components/game/GameEnd.vue'
 
 export default defineComponent({
   name: 'MonacoEditor',
+  components: {GameEnd},
   data() {
     return {
       value: 'import java.io.*;\nimport java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n      \n    }\n}',
@@ -29,6 +30,7 @@ export default defineComponent({
       gameResult: '',
       buttonValue: '',
       isButtonDisabled: false,
+      gameEnd: false,
     };
   },
   props: {
@@ -94,7 +96,7 @@ export default defineComponent({
       })
 
     //memberNo
-    const url2 = `${this.backURL}/mycode/memberNo`
+    const url2 = `${this.backURL}/member/memberNo`
     apiClient
       .get(url2, {
           headers: {
@@ -111,10 +113,10 @@ export default defineComponent({
     this.initMonaco()
 
     // 붙여넣기 막기
-    this.editor.getDomNode().addEventListener('paste', (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    }, true);
+    // this.editor.getDomNode().addEventListener('paste', (event) => {
+    //   event.stopPropagation();
+    //   event.preventDefault();
+    // }, true);
   },
   beforeUnmount() {
     this.editor && this.editor.dispose()
@@ -241,6 +243,13 @@ export default defineComponent({
         .then(response => {
           this.output = response.data.result
           this.gameResult = response.data.gameResult
+
+          this.gameResult = '1'
+          if(this.gameResult == '1'){
+            this.$emit('monacoWinMemberNo', this.memberNo);
+
+            // this.gameEnd=true
+          }
         })
         //네트워크에 의한 요청 실패일 경우
         .catch(error => {
