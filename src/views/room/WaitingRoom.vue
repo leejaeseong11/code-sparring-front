@@ -147,12 +147,14 @@ export default {
 
       this.socket.onclose = () => {}
 
-      this.socket.onerror = (err) => {
-        console.log(err)
+      this.socket.onerror = async (err) => {
+        const ok = await SweetAlert.warning(err)
+        if (ok) {
+          this.$router.push({ path: '/' })
+        }
       }
 
       this.socket.onmessage = async (e) => {
-        console.log(e.data)
         if (this.socket.readyState === WebSocket.OPEN) {
           if (e.data.includes('님이 강제 퇴장되었습니다.')) {
             const resignedMemberName = e.data.replace('님이 강제 퇴장되었습니다.', '')
@@ -192,16 +194,13 @@ export default {
       }
     },
     disconnect() {
-      console.log('dlele room okok2' + this.isRoomManager)
       const outMessage = {
         type: 'ROOM_QUIT',
         roomNo: this.roomNo,
         sender: this.loginMemberName
       }
       if (this.isRoomManager || this.roomMemberList.length == 1) {
-        console.log('i am manager')
         apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-          console.log('lests delete')
           this.isRoomManager = false
           const ok = await SweetAlert.warning('방이 삭제되었습니다.')
           if (ok) {
@@ -235,7 +234,6 @@ export default {
         this.scrollToBottom()
       } else {
         apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(async () => {
-          console.log('dlele room ok')
           if (
             this.socket.readyState === WebSocket.CLOSED ||
             this.socket.readyState === WebSocket.CLOSING
@@ -288,9 +286,7 @@ export default {
     },
 
     roomOutButtonClickHandler() {
-      console.log('dlele room')
       apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-        console.log('dlele room ok')
         this.disconnect()
       })
     },
@@ -340,8 +336,7 @@ export default {
         document.body.style.overflow = 'auto'
       }
     },
-    showProfileDetailClickHandler(memberNo, $event) {
-      console.log($event.target)
+    showProfileDetailClickHandler(memberNo) {
       this.memberProfilePopup = !this.memberProfilePopup
       if (this.memberProfilePopup) {
         apiClient.get(`${this.backURL}/member/${memberNo}`).then((response) => {
@@ -384,8 +379,6 @@ export default {
               .get(`${this.backURL}/room-member/isHost/${this.loginMemberNo}`)
               .then((response) => {
                 this.isRoomManager = response.data
-                console.log(this.loginMemberNo)
-                console.log(response.data)
 
                 apiClient
                   .post(
@@ -409,7 +402,6 @@ export default {
                     })
                   })
                   .catch((error) => {
-                    console.log(error)
                     SweetAlert.error(error.response.data.errors[0])
                   })
               })
