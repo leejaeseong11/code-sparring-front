@@ -1,7 +1,7 @@
 <template>
   <div id="layout">
     <div id="title-div">
-      <input id="title-input" placeholder="방 제목을 입력하세요" v-model="this.roomTitle" />
+      <input id="title-input" :placeholder="memberName + '의 방'" v-model="this.roomTitle" />
     </div>
 
     <div id="header-div">
@@ -15,13 +15,28 @@
     <div id="quiz-div">
       <div v-if="!this.quizSelect" id="tier-select-div">
         <button class="tierButton" id="ALL" @click="changeTier">ALL</button>
-        <button class="tierButton" id="UNRANKED" style="color: var(--main4-color)" @click="changeTier">
+        <button
+          class="tierButton"
+          id="UNRANKED"
+          style="color: var(--main4-color)"
+          @click="changeTier"
+        >
           UNRANKED
         </button>
-        <button class="tierButton" id="BRONZE" style="color: var(--bronze-color)" @click="changeTier">
+        <button
+          class="tierButton"
+          id="BRONZE"
+          style="color: var(--bronze-color)"
+          @click="changeTier"
+        >
           BRONZE
         </button>
-        <button class="tierButton" id="SILVER" style="color: var(--silver-color)" @click="changeTier">
+        <button
+          class="tierButton"
+          id="SILVER"
+          style="color: var(--silver-color)"
+          @click="changeTier"
+        >
           SILVER
         </button>
         <button class="tierButton" id="GOLD" style="color: var(--gold-color)" @click="changeTier">
@@ -38,11 +53,19 @@
           <span class="correctPercent">정답률</span>
         </div>
         <div id="quiz-list-box">
-          <div v-for="quiz in quizList" :key="quiz" class="quizObj" :id="''+quiz.quizNo" @click="clickQuiz">
-            <span class="quizTitle" :title="'' + quiz.quizTitle" :id="''+quiz.quizNo">{{ quiz.quizTitle }}</span>
-            <span :class="'tier-' + quiz.quizTier" :id="''+quiz.quizNo">{{ quiz.quizTier }}</span>
-            <span class="submitCnt" :id="''+quiz.quizNo">{{ quiz.quizSubmitCnt }}회</span>
-            <span class="correctPercent" :id="''+quiz.quizNo">{{
+          <div
+            v-for="quiz in quizList"
+            :key="quiz"
+            class="quizObj"
+            :id="'' + quiz.quizNo"
+            @click="clickQuiz"
+          >
+            <span class="quizTitle" :title="'' + quiz.quizTitle" :id="'' + quiz.quizNo">{{
+              quiz.quizTitle
+            }}</span>
+            <span :class="'tier-' + quiz.quizTier" :id="'' + quiz.quizNo">{{ quiz.quizTier }}</span>
+            <span class="submitCnt" :id="'' + quiz.quizNo">{{ quiz.quizSubmitCnt }}회</span>
+            <span class="correctPercent" :id="'' + quiz.quizNo">{{
               quiz.quizCorrectPercent == '-' ? '' : quiz.quizCorrectPercent
             }}</span>
           </div>
@@ -50,11 +73,15 @@
       </div>
 
       <div v-if="this.quizSelect" id="quiz-info-div">
-      <div id="quiz-title" :title="''+this.quiz.quizTitle">[문제 제목]&nbsp; {{ this.quiz.quizTitle }}</div>
-      <div>[출제자]&nbsp; {{ this.quiz.memberName }}</div>
-      <div>[문제 내용]<br>
-        <textarea id="quiz-content" :value="this.quiz.quizContent" readonly></textarea></div>
-      <button id="back-button" @click="backQuizSelect">닫기</button>
+        <div id="quiz-title" :title="'' + this.quiz.quizTitle">
+          [문제 제목]&nbsp; {{ this.quiz.quizTitle }}
+        </div>
+        <div>[출제자]&nbsp; {{ this.quiz.memberName }}</div>
+        <div>
+          [문제 내용]<br />
+          <textarea id="quiz-content" :value="this.quiz.quizContent" readonly></textarea>
+        </div>
+        <button id="back-button" @click="backQuizSelect">닫기</button>
       </div>
     </div>
 
@@ -80,16 +107,17 @@
 </template>
 <script>
 // import axios from 'axios'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/axios-interceptor'
 
 export default {
   name: 'AddRoom',
+  props: ['memberNo', 'memberName'],
   data() {
     return {
       quizSelect: false,
       tier: 'ALL',
       quizList: [],
-      roomTitle: '',
+      roomTitle: null,
       quizNo: '',
       quiz: [],
       codeShare: false,
@@ -112,7 +140,6 @@ export default {
           this.quizList = res.data
         })
       }
-
     },
     changeAsc() {
       if (this.tier == 'ALL') {
@@ -121,7 +148,7 @@ export default {
           this.quizList = res.data
         })
       } else {
-        const url = `${this.backURL}/quiz/tier/` + this.tier+`/asc`
+        const url = `${this.backURL}/quiz/tier/` + this.tier + `/asc`
         apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
@@ -134,45 +161,76 @@ export default {
           this.quizList = res.data
         })
       } else {
-        const url = `${this.backURL}/quiz/tier/` + this.tier+`/desc`
+        const url = `${this.backURL}/quiz/tier/` + this.tier + `/desc`
         apiClient.get(url).then((res) => {
           this.quizList = res.data
         })
       }
     },
     clickQuiz(e) {
-      this.quizNo=e.target.id
+      this.quizNo = e.target.id
       // const sortBt=document.querySelectorAll('.sort-obj')
-      
-      const url=`${this.backURL}/quiz/`+this.quizNo
-      apiClient.get(url)
-      .then(res=>{
-        this.quiz=res.data
+
+      const url = `${this.backURL}/quiz/` + this.quizNo
+      apiClient.get(url).then((res) => {
+        this.quiz = res.data
       })
-      this.quizSelect=true
+      this.quizSelect = true
     },
     backQuizSelect() {
-      this.quiz=[]
-      this.quizNo=''
-      this.quizSelect=false
+      this.quiz = []
+      this.quizNo = ''
+      this.quizSelect = false
     },
     clickAddRoom() {
-      if(this.roomTitle=='') {
-        alert('방 제목을 입력하세요')
-      } else if(this.secret==true & this.roomPwd=='') {
+      if ((this.secret == true) & (this.roomPwd == '')) {
         alert('방 비밀번호를 입력하세요')
-      } else if(this.quizNo=='') {
+      } else if (this.quizNo == '') {
         alert('문제를 선택하세요')
+      } else {
+        let data = {
+          quizNo: this.quizNo,
+          roomPwd: this.roomPwd,
+          codeShare: this.codeShare ? 1 : 0,
+          roomTitle: this.roomTitle,
+          roomDt: new Date().toJSON()
+        }
+        data = JSON.stringify(data)
+        apiClient
+          .post(`${this.backURL}/room`, data, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((res) => {
+            let roomMemberData = {
+              memberNo: this.memberNo,
+              roomNo: res.data,
+              hostStatus: 0
+            }
+            apiClient
+              .post(`${this.backURL}/room-member`, JSON.stringify(roomMemberData), {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+              .then(() => {
+                this.$router.push({ path: `/room/${res.data}` })
+              })
+          })
       }
     }
   },
   mounted() {
     const url = `${this.backURL}/quiz/list`
-    apiClient.get(url).then((res) => {
-      this.quizList = res.data
-    }).catch((e)=>{
-      alert('문제를 조회할 수 없습니다')
-    })
+    apiClient
+      .get(url)
+      .then((res) => {
+        this.quizList = res.data
+      })
+      .catch(() => {
+        alert('문제를 조회할 수 없습니다')
+      })
   }
 }
 </script>
@@ -313,19 +371,24 @@ textarea {
   white-space: nowrap;
 }
 
-.tier-UNRANKED, .tier-BRONZE, .tier-SILVER, .tier-GOLD, .tier-PLATINUM {
+.tier-UNRANKED,
+.tier-BRONZE,
+.tier-SILVER,
+.tier-GOLD,
+.tier-PLATINUM,
+.quizTier {
   width: 15%;
   margin-left: 10px;
 }
 
 .submitCnt {
   width: 15%;
-  margin-left: 30px;
+  /* margin-left: 30px; */
 }
 
 .correctPercent {
   width: 15%;
-  margin-left: 5px;
+  /* margin-left: 5px; */
 }
 
 .quizSort {
@@ -418,7 +481,12 @@ textarea {
   white-space: nowrap;
 }
 
-.tier-UNRANKED, .tier-BRONZE, .tier-SILVER, .tier-GOLD, .tier-PLATINUM {
+.tier-UNRANKED,
+.tier-BRONZE,
+.tier-SILVER,
+.tier-GOLD,
+.tier-PLATINUM,
+.quizTier {
   width: 15%;
   margin-left: 10px;
 }
