@@ -1,7 +1,12 @@
 <template>
   <div id="main-layout" class="row">
     <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
-    <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
+    <AddRoom
+      v-if="addRoomPopup"
+      id="addRoom-popup"
+      @close-popup="backOff"
+      :memberNo="loginMember.memberNo"
+    />
     <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
@@ -261,26 +266,6 @@ export default {
         })
     },
     createWaitingRoomclickHandler() {
-      // let data = {
-      //   quiz: {
-      //     quizNo: 1
-      //   },
-      //   // "roomPwd": "1234",
-      //   codeShare: 0,
-      //   roomTitle: '테스트방 in vue',
-      //   roomDt: new Date().toJSON()
-      // }
-      // data = JSON.stringify(data)
-      // axios
-      //   .post(`${this.backURL}/room`, data, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   .then((res) => {
-      //     console.log(res)
-      //     this.$router.push({ path: `/room/${res.data}` })
-      //   })
       document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
