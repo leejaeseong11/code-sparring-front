@@ -22,7 +22,7 @@
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (4~15자)" />
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디(영문 소문자,숫자 10자까지)" />
                         <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
                     </div>
                 </div>

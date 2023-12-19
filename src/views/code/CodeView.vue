@@ -1,8 +1,6 @@
 <template>
   <main>
     <div id="layout">
-      <div v-if="this.reportPopup" id="back-off" @click="offPopup"></div>
-
       <div id="title">
         <div id="quiz-title-div">{{ this.quizTitle }}</div>
       </div>
@@ -96,7 +94,10 @@
           <div id="button-area">
             <div></div>
             <div id="right-button">
-              <button id="rpt-button" @click="rptQuiz">문제 신고하기</button>&nbsp;
+              <div v-if="reportModal" id="back-off" @click="offReportModal"></div>
+                <AddReport v-if="reportModal" id="report-popup" @close-modal="offReportModal"
+                        :quizInfo="{quizNo, quizTitle}"></AddReport>
+              <button id="rpt-button" @click="reportButtonClickHandler">문제 신고하기</button>&nbsp;
               <button id="close-button" @click="closePage">닫기</button>
             </div>
           </div>
@@ -107,9 +108,11 @@
 </template>
 <script>
 import { apiClient } from '@/axios-interceptor'
-
+import AddReport from '../../components/report/AddReport.vue'
 export default {
   name: 'CodeView',
+  props: ['quizInfo'],
+  components: { AddReport},
   data() {
     return {
       quizNo: 0,
@@ -124,7 +127,7 @@ export default {
       outputInfo: '',
       reportList: [],
       rptOkCnt: 0,
-      reportPopup: false,
+      reportModal: false,
       memberNo: '',
       quizUrl: '',
       fileContent: '',
@@ -139,11 +142,11 @@ export default {
         return null
       }
     },
-    rptQuiz() {
-      this.reportPopup = true
+    reportButtonClickHandler() {
+      this.reportModal = true
     },
-    offPopup() {
-      this.reportPopup = false
+    offReportModal() {
+      this.reportModal = false
     },
     closePage() {
       const memberNo = this.$route.params.memberNo
@@ -432,5 +435,19 @@ textarea {
 
 #report-id {
   font-size: 14px;
+}
+
+#report-popup {
+    padding: 10px;
+    position: fixed;
+    background-color: var(--main1-color);
+    border: 8px solid var(--main5-color);
+    border-radius: 10px;
+    width: 700px;
+    height: 320px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
 }
 </style>
