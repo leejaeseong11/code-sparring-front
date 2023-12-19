@@ -95,7 +95,7 @@ export default defineComponent({
 
 
     //memberNo
-    const url2 = `${this.backURL}/mycode/memberNo`
+    const url2 = `${this.backURL}/member/memberNo`
     apiClient
       .get(url2, {
           headers: {

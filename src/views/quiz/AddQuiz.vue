@@ -123,7 +123,7 @@ export default {
             return
         }
 
-      const url = `${this.backURL}/quiz`
+      const url = `${this.backURL}/quiz/write`
       const inputValue = document.querySelectorAll('.input-obj')
       const outputValue = document.querySelectorAll('.output-obj')
 
@@ -149,6 +149,7 @@ export default {
         // memberNo: 1,
         testcaseDTOList: this.testcase
       }
+      
       apiClient
         .post(url, data, {
           withCredentials: true,
