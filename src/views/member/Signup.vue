@@ -22,7 +22,7 @@
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (4~10자)" />
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디 입력 (4~15자)" />
                         <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
                     </div>
                 </div>
@@ -104,9 +104,9 @@ export default {
         },
 
         btIdDupchkClickHandler() {
-            const idRegExp = /^[a-zA-Z0-9]{4,10}$/;
+            const idRegExp = /^[a-zA-Z0-9]{4,15}$/;
             if (!idRegExp.test(this.c.id)) {
-                sweetAlert.warning("4~10자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
+                sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
                 return;
             }
 
@@ -132,9 +132,9 @@ export default {
         },
 
         btNameDupchkClickHandler() {
-            const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
+            const nameRegExp = /^[a-zA-Z0-9]{4,15}$/;
             if (!nameRegExp.test(this.c.name)) {
-                sweetAlert.warning("3~10자의 한글, 숫자, 영어만 \n 사용 가능합니다", '', '닫기')
+                sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
                 return;
             }
 

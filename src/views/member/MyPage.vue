@@ -81,15 +81,13 @@ export default {
         .then((response) => {
           console.log('HTTP 응답:', response);
           this.loginMember = response.data
-
           this.memberNo = this.$route.params.memberNo;
 
           if (this.loginMember.authority == "ROLE_ADMIN") {
-            console.log(this.loginMember.authority == "ROLE_ADMIN")
             return;
           }
 
-          if (this.loginMember.memberNo !== this.memberNo) {
+          if (this.loginMember.memberNo != this.memberNo) {
             sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() => {
               window.history.back();
             });

@@ -105,7 +105,7 @@ export default {
             }
             const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/;
             if (!nameRegExp.test(this.editedMemberName)) {
-                sweetAlert.warning("3~10자의  한글, 숫자, 영어만 사용 가능합니다", '', '닫기')
+                sweetAlert.warning("3~10자의  한글, 숫자, 영어만 \n 사용 가능합니다", '', '닫기')
                 return;
             }
 
@@ -131,7 +131,6 @@ export default {
         },
         editInfo() {
             const data = {
-                // memberPwd: null,
                 memberPwd: this.editedMemberPwd === '' ? null : this.editedMemberPwd,
                 memberName: null,
                 memberInfo: null,
@@ -144,7 +143,7 @@ export default {
                 console.log("data.memberPwd1", data.memberPwd)
                 const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
                 if (!pwdRegExp.test(this.editedMemberPwd)) {
-                    sweetAlert.warning("비밀번호는 8~20자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다", '', '닫기')
+                    sweetAlert.warning("비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다", '', '닫기')
                     return;
                 }
                 if (this.editedMemberPwd != this.checkPwd) {
@@ -234,12 +233,14 @@ export default {
 
 .input-box {
     margin-right: 10px;
-    height: 30px;
+    height: 34px;
+    border-radius: 3px;
+    width: 310px;
 }
 
 #info-box {
     width: 370px;
-    height: 200px;
+    height: 140px;
 }
 
 .mini-title {
@@ -251,9 +252,11 @@ export default {
 }
 
 #dck-button {
+    position: absolute;
     border: 1px solid;
     border-radius: 10px;
-    height: 30px;
+    height: 32px;
+    font-size: 16px;
     width: 130px;
     color: var(--main1-color);
     background-color: var(--main4-color);
