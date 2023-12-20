@@ -83,7 +83,7 @@
 
 <script>
 import Monaco from '../../components/code/RankMonaco.vue'
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
 import GameEnd from '../../components/game/GameEnd.vue'
 export default {

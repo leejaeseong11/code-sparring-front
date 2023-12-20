@@ -107,7 +107,7 @@
 </template>
 <script>
 // import axios from 'axios'
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AddRoom',
