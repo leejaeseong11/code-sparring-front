@@ -107,7 +107,7 @@
 </template>
 <script>
 // import axios from 'axios'
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AddRoom',
@@ -221,7 +221,12 @@ export default {
                 }
               })
               .then(() => {
-                this.$router.push({ path: `/room/${res.data}` })
+                this.$router.push({
+                  path: `/room/${res.data}`,
+                  state: {
+                    rightAccess: true
+                  }
+                })
               })
               .catch((error) => {
                 SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')

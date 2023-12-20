@@ -64,7 +64,7 @@
   </div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import ShowQuizSimply from './ShowQuizSimply.vue'
 import SweetAlert from '../../util/modal.js'
 
@@ -106,7 +106,12 @@ export default {
           }
         )
         .then(() => {
-          this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
+          this.$router.push({
+            path: `/room/${this.roomInfo.roomNo}`,
+            state: {
+              rightAccess: true
+            }
+          })
         })
         .catch((error) => {
           SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')
