@@ -260,7 +260,7 @@ export default {
             })
           })
           .catch(() => {
-            SweetAlert.error('네트워크 오류가 발생했습니다', '', '확인')
+            SweetAlert.error('현재 게임에서\n사용중인 문제입니다', '다시 확인하세요', '확인')
           })
       })
     }

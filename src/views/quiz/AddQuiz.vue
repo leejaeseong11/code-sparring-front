@@ -131,8 +131,8 @@ export default {
       for (let i = 0; i < this.testcaseCnt; i++) {
         if(inputValue[i].value=='' || outputValue[i].value=='') continue
         this.testcase.push({
-          input: inputValue[i].value,
-          output: outputValue[i].value
+          testcaseInput: inputValue[i].value,
+          testcaseOutput: outputValue[i].value
         })
       }
 
