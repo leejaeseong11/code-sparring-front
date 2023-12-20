@@ -25,8 +25,7 @@ const router = createRouter({
     {
       path: '/room/:roomNo',
       name: 'WaitingRoom',
-      component: WaitingRoom,
-      meta: { canAccess: true }
+      component: WaitingRoom
     },
     {
       path: '/quiz/add',
@@ -59,8 +58,7 @@ const router = createRouter({
     {
       path: '/rank/:rankNo',
       name: 'Rank',
-      component: Rank,
-      meta: { canAccess: true }
+      component: Rank
     },
     {
       path: '/profile/:viewName/:memberNo',
@@ -73,18 +71,5 @@ const router = createRouter({
       component: CodeView
     }
   ]
-})
-router.beforeEach((to, from, next) => {
-  if (to.fullPath.includes('/room/') || to.fullPath.includes('/rank/')) {
-    if (to.meta.canAccess == true) {
-      console.log('ok')
-      next()
-    } else {
-      console.log('er')
-      return false
-    }
-  } else {
-    next()
-  }
 })
 export default router
