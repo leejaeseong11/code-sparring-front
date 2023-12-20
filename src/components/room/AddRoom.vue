@@ -208,8 +208,14 @@ export default {
               roomNo: res.data,
               hostStatus: 0
             }
+            let memberUrl
+            if (this.roomPwd) {
+              memberUrl = `${this.backURL}/room-member?roomPwd=${this.roomPwd}`
+            } else {
+              memberUrl = `${this.backURL}/room-member`
+            }
             apiClient
-              .post(`${this.backURL}/room-member`, JSON.stringify(roomMemberData), {
+              .post(memberUrl, JSON.stringify(roomMemberData), {
                 headers: {
                   'Content-Type': 'application/json'
                 }

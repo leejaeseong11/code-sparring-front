@@ -145,26 +145,25 @@ export default {
         this.socket.send(JSON.stringify(enterMessage))
       }
 
-      this.socket.onclose = (socketClose) => {
-        apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
-          this.roomMemberList = response.data.roomMemberList
-          if (this.roomMemberList.length == 1) {
-            if (socketClose.code != 1000) {
+      this.socket.onclose = async (socketClose) => {
+        console.log('socket closed')
+        if (socketClose.code != 1000) {
+          apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
+            this.roomMemberList = response.data.roomMemberList
+            if (this.roomMemberList.length == 1) {
               apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-                apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-                  const ok = await SweetAlert.error(
-                    '입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.'
-                  )
-                  if (ok) {
-                    this.$router.push({ path: '/' }).then(() => {
-                      this.$router.go()
-                    })
-                  }
-                })
+                apiClient.delete(`${this.backURL}/room/${this.roomNo}`)
               })
             }
-          }
-        })
+          })
+          SweetAlert.error('입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.').then(
+            (res) => {
+              if (res.isConfirmed) {
+                this.$router.push({ path: '/' })
+              }
+            }
+          )
+        }
       }
 
       this.socket.onerror = () => {}
@@ -174,26 +173,54 @@ export default {
           if (e.data.includes('님이 강제 퇴장되었습니다.')) {
             const resignedMemberName = e.data.replace('님이 강제 퇴장되었습니다.', '')
             if (resignedMemberName == this.loginMemberName) {
-              const ok = await SweetAlert.warning('방에서 강제 퇴장당했습니다.')
-              await this.disconnect()
-              if (ok) {
-                this.$router.push({ path: '/' }).then(() => {
-                  this.$router.go()
-                })
-              }
+              SweetAlert.warning('방에서 강제 퇴장당했습니다.').then((ok) => {
+                if (ok.isConfirmed) {
+                  apiClient
+                    .delete(`${this.backURL}/room-member/${this.loginMemberNo}`)
+                    .then(async () => {
+                      const outMessage = {
+                        type: 'ROOM_QUIT',
+                        roomNo: this.roomNo,
+                        sender: this.loginMemberName
+                      }
+                      if (this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify(outMessage))
+                        // this.socket.close()
+                      }
+                      await this.disconnect()
+                      this.$router.push({ path: '/' }).then(() => {
+                        this.$router.go()
+                      })
+                    })
+                }
+              })
             }
           } else {
             if (e.data.includes('님이 입장했습니다.') || e.data.includes('님이 퇴장했습니다.')) {
-              apiClient.get(`${this.backURL}/room/${this.roomNo}`).then(async (response) => {
-                this.roomMemberList = response.data.roomMemberList
-                if (this.roomMemberList.length == 0) {
-                  this.$router.push({ path: '/' })
-                  const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-                  if (ok) {
-                    this.$router.go()
+              apiClient
+                .get(`${this.backURL}/room/${this.roomNo}`)
+                .then(async (response) => {
+                  this.roomMemberList = response.data.roomMemberList
+                  if (this.roomMemberList.length == 0) {
+                    this.$router.push({ path: '/' })
+                    SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                      if (ok.isConfirmed) {
+                        this.$router.go()
+                      }
+                    })
                   }
-                }
-              })
+                })
+                .catch((err) => {
+                  console.log(err)
+                  if (err.response.data.message == 'ROOM_NOT_FOUND') {
+                    this.$router.push({ path: '/' })
+                    SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                      if (ok.isConfirmed) {
+                        this.$router.go()
+                      }
+                    })
+                  }
+                })
             }
             this.chatContentList.push(e.data)
             this.scrollToBottom()
@@ -218,15 +245,25 @@ export default {
                     apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((res) => {
                       if (res) {
                         apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-                          const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-                          if (ok) {
-                            if (this.socket.readyState === WebSocket.OPEN) {
-                              this.socket.close()
-                            }
-                            this.$router.push({ path: '/' }).then(() => {
-                              this.$router.go()
-                            })
+                          const outMessage = {
+                            type: 'ROOM_QUIT',
+                            roomNo: this.roomNo,
+                            sender: this.loginMemberName
                           }
+                          if (this.socket.readyState === WebSocket.OPEN) {
+                            this.socket.send(JSON.stringify(outMessage))
+                            // this.socket.close()
+                          }
+                          SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                            if (ok.isConfirmed) {
+                              if (this.socket.readyState === WebSocket.OPEN) {
+                                // this.socket.close()
+                              }
+                              this.$router.push({ path: '/' }).then(() => {
+                                this.$router.go()
+                              })
+                            }
+                          })
                         })
                       }
                     })
@@ -242,7 +279,7 @@ export default {
                 }
                 if (this.socket.readyState === WebSocket.OPEN) {
                   this.socket.send(JSON.stringify(outMessage))
-                  this.socket.close()
+                  // this.socket.close()
                 }
                 this.$router.push({ path: '/' }).then(() => {
                   this.$router.go()
@@ -417,12 +454,13 @@ export default {
           }
         })
         .catch(async (error) => {
-          const ok = await SweetAlert.error(error.response.data.errors[0])
-          if (ok) {
-            this.$router.push({ path: '/' }).then(() => {
-              this.$router.go()
-            })
-          }
+          SweetAlert.error(error.response.data.errors[0]).then((ok) => {
+            if (ok.isConfirmed) {
+              this.$router.push({ path: '/' }).then(() => {
+                this.$router.go()
+              })
+            }
+          })
         })
       if (this.socket == null) {
         this.connect()
