@@ -179,21 +179,21 @@ export default {
             this.disconnect();
             console.log(this.roomMemberList.length)
             console.log(this.resultMemberNo)
-            const url = ``
+            const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${this.roomMemberList.length}`
             if(this.resultMemberNo == this.memberNo){
                 // apiClient 보내기
-                // apiClient
-                // .put(url, {
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     }
-                // })
-                // .then((response) => {
-                //     this.quiz
-                // })
+                apiClient
+                .put(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    console.log(response.data);
+                })
             }
             this.$router.push({ path: `/` })
-
+            
         },
         setWinMember(dataFromChild){
             this.winMemberNo = dataFromChild;
@@ -592,6 +592,7 @@ body.flex-container {
 #relative-code-container {
     /* display: flex; */
     display: flex;
+    height: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -601,7 +602,7 @@ body.flex-container {
 
 #relative-code-content {
     width: 200px;
-    height: 18vh;
+    height: 20%;
     margin-bottom: 16px;
     border: 3px solid var(--main5-color);
     border-radius: 10px;
