@@ -34,9 +34,7 @@ export default {
       })
     },
     handleRouteChange(newPath) {
-      console.log(newPath)
       this.disableLogo = newPath.includes('/room/')
-      console.log(this.disableLogo)
     }
   }
 }
