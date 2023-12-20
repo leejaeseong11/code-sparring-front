@@ -273,8 +273,292 @@ export default {
         }
       }
     },
+<<<<<<< HEAD
     disconnect() {
       if (this.socket.readyState === WebSocket.OPEN) {
+=======
+    computed: {
+        formattedTime() {
+            return `${String(this.minutes).padStart(2, '0')}:${String(this.seconds).padStart(2, '0')}`;
+        },
+    },
+
+    methods: {
+        reportButtonClickHandler() {
+            this.reportModal = true
+        },
+        setRunValue(dataFromChild){
+            this.buttonValue = dataFromChild;
+            this.sendMessage()
+        },
+        setSubmitValue(dataFromChild){
+            this.buttonValue = dataFromChild
+            this.sendMessage()
+        },
+        backOff() {
+            this.gameEnd=false
+            document.body.style.overflow = 'auto'
+            //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
+
+            this.disconnect();
+            console.log(this.roomMemberList.length)
+            console.log(this.resultMemberNo)
+            const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${this.roomMemberList.length}`
+            if(this.resultMemberNo == this.memberNo){
+                // apiClient 보내기
+                apiClient
+                .put(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    console.log(response.data);
+                })
+            }
+            this.$router.push({ path: `/` })
+            
+        },
+        setWinMember(dataFromChild){
+            this.winMemberNo = dataFromChild;
+            console.log(this.winMemberNo)
+            var winMember = {
+                type: 'ROOM_TALK',
+                roomNo: this.roomNo,
+                sender: this.memberName,
+                message: this.winMemberNo + ',win'
+            }
+            this.socket.send(JSON.stringify(winMember))
+        },
+
+        connect(){
+            this.socket = new WebSocket(this.socketURL)
+
+            this.socket.onopen = () => {
+                const enterMessage = {
+                    type: 'ROOM_ENTER',
+                    roomNo: this.roomNo,
+                    sender: this.memberName
+                }
+                this.socket.send(JSON.stringify(enterMessage))
+            }
+
+            this.socket.onclose = () => { }
+            this.socket.onerror = () => { }
+
+            this.socket.onmessage = (e) => {
+                if(this.socket.readyState === WebSocket.OPEN){
+
+                    const rawData = e.data;
+                    const colonIndex = rawData.indexOf(':');
+                    
+                    var msgMemberName = ''
+                    var msgMemberButtonValue = ''
+                    //test1: run
+                    if (colonIndex !== -1) {
+                        msgMemberName = rawData.substring(0, colonIndex).trim();
+                        msgMemberButtonValue = rawData.substring(colonIndex + 1).trim();
+                        for(let i=0; i<this.roomMemberList.length; i++){
+                            if (this.roomMemberList[i].memberName === msgMemberName) {
+                                this[`buttonValuePlayer${i + 1}`] = msgMemberButtonValue;
+                            }
+                        }
+                    }
+                    const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    if(colonIndex2 !== -1){
+                        this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
+                        this.gameEnd=true
+                    }
+                    
+                    this.parentButtonValue = this.count + e.data;
+                    this.count++;
+                    this.buttonValue = e.data;
+                }else if(
+                    this.socket.readyState === WebSocket.CLOSING ||
+                    this.socket.readyState === WebSocket.CLOSED
+                ){
+                    this.connect()
+                }
+
+            }
+        },
+        disconnect(){
+            if(this.socket.readyState === WebSocket.OPEN) {
+                const outMessage = {
+                    type: 'ROOM_QUIT',
+                    roomNo: this.roomNo,
+                    sender: this.memberName
+                }
+                this.socket.send(JSON.stringify(outMessage))
+                this.socket.close()
+            }
+        },
+        sendMessage(){
+            if(this.buttonValue == '') return
+            var talkMessage = {
+                type: 'ROOM_TALK',
+                roomNo: this.roomNo,
+                sender: this.memberName,
+                message: this.buttonValue
+            }
+            this.socket.send(JSON.stringify(talkMessage))
+            for(let i=0; i<this.roomMemberList.length; i++){
+                if (this.roomMemberList[i].memberName === this.memberName) {
+                    this[`buttonValuePlayer${i + 1}`] = this.buttonValue;
+                }
+            }
+            this.buttonValue = ''
+        },
+        unLoadEvent: function (event) {
+            const outMessage = {
+                type: 'ROOM_QUIT',
+                roomNo: this.roomNo,
+                sender: this.memberName
+            }
+            this.socket.send(JSON.stringify(outMessage))
+
+            if (this.socket.readyState === WebSocket.OPEN) {
+                this.socket.close()
+            }
+            event.preventDefault()
+            event.returnValue = ''
+        },
+
+        offReportModal() {
+            this.reportModal = false
+        },
+        exitButtonClickHandler() {
+            this.disconnect();
+            this.$router.push({ path: `/` })
+        },
+        updateTimer() {
+            if (this.minutes === 0 && this.seconds === 0) {
+                this.timerRunning = false; // 타이머 종료
+                return;
+            }
+
+            if (this.seconds === 0) {
+                this.minutes--;
+                this.seconds = 59;
+            } else {
+                this.seconds--;
+            }
+
+            if (this.timerRunning) {
+                setTimeout(this.updateTimer, 1000); // 1초마다 업데이트
+
+            }
+            if (this.seconds === 0 && this.minutes === 0) {
+                if (confirm("시간이 초과되어 메인으로 이동합니다")) {
+                    this.$router.push({ path: `/` })
+
+                }
+            }
+        },
+        // /n을 <br> 태그로 대체하는 메서드
+        replaceNewlines(text) {
+            return text.replace(/\n/g, '<br>');
+        },
+        // beforeunload 이벤트 핸들러
+        beforeUnloadHandler(event) {
+            // 여기에 알림창을 띄우는 로직 추가
+            const confirmationMessage = '변경사항이 저장되지 않을 수 있습니다. 정말로 나가시겠습니까?';
+            event.returnValue = confirmationMessage; // Standard for most browsers
+            // 알림창에서 확인 버튼을 눌렀을 때 홈으로 이동
+            const shouldNavigateHome = window.confirm(confirmationMessage);
+            if (shouldNavigateHome) {
+                this.$router.push({ path: `/` });
+            }
+            return confirmationMessage; // For some older browsers
+        },
+
+
+    },
+    created() {
+        window.addEventListener('beforeunload', this.beforeUnloadHandler);
+        //타이머 시작
+        this.updateTimer();
+        this.roomNo = this.$router.currentRoute.value.params.roomNo
+        //quizNo, quizContent, quizTitle 가져오기
+        const url = `${this.backURL}/room/${this.roomNo}`
+        apiClient
+            .get(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                this.quizNo = response.data.quizNo
+                this.quizContent = response.data.quizContent
+                this.quizTitle = response.data.quizTitle
+
+                //testcaseList
+                const url2 = `${this.backURL}/submit/${this.quizNo}`
+                apiClient
+                    .get(url2, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.testcaseList = response.data
+                    })
+                    .catch(() => {
+                        alert('테스트케이스 조회에 실패하였습니다')
+                    })
+            })
+            .catch(() => {
+                alert('문제 정보 조회에 실패하였습니다')
+            })
+
+        //memberNo
+        const url3 = `${this.backURL}/member/memberNo`
+        apiClient
+        .get(url3, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.memberNo = response.data
+
+            //memberName
+            const url4 = `${this.backURL}/member/${this.memberNo}`
+            apiClient
+            .get(url4, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then((response) => {
+                this.memberName = response.data.memberName
+            })
+        })
+
+    },
+    mounted(){
+        apiClient
+        .get(`${this.backURL}/room/${this.$router.currentRoute.value.params.roomNo}`, {
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => {
+            this.roomInfo = response.data
+            this.roomMemberList = response.data.roomMemberList
+        })
+        .catch(async (error) => {
+            const ok = await SweetAlert.error(error.response.data.errors[0])
+            if (ok) {
+                this.$router.push({ path: '/' })
+            }
+        })
+        window.addEventListener('beforeunload', this.unLoadEvent)
+        this.roomNo = this.$router.currentRoute.value.params.roomNo
+        this.connect()
+    },
+    beforeUnmount() {
+>>>>>>> dev
         const outMessage = {
           type: 'ROOM_QUIT',
           roomNo: this.roomNo,
@@ -594,6 +878,7 @@ body.flex-container {
 }
 
 #relative-code-container {
+<<<<<<< HEAD
   /* display: flex; */
   display: flex;
   flex-direction: column;
@@ -607,6 +892,24 @@ body.flex-container {
   margin-bottom: 16px;
   border: 3px solid var(--main5-color);
   border-radius: 10px;
+=======
+    /* display: flex; */
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+#relative-code-content {
+    width: 200px;
+    height: 20%;
+    margin-bottom: 16px;
+    border: 3px solid var(--main5-color);
+    border-radius: 10px;
+>>>>>>> dev
 
   display: flex;
   justify-content: center;

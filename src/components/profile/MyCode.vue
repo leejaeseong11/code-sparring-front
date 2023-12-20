@@ -88,7 +88,7 @@ export default {
   },
   mounted() {
     this.memberNo = this.$route.params.memberNo
-
+    console.log(this.memberNo)
     const url = `${this.backURL}/mycode/${this.memberNo}`
     apiClient
       .get(url, {
