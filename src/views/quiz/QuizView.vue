@@ -125,7 +125,7 @@
           <div id="button-area">
             <div id="left-button">
               <button v-if="!modifyBt" id="tc-button" @click="addTc">테스트케이스 추가</button>
-              <button v-if="!modifyBt" id="code-button" @click="codeFile">정답코드 조회</button>
+              <!-- <button v-if="!modifyBt" id="code-button" @click="codeFile">정답코드 조회</button> -->
             </div>
             <div id="right-button">
               <button v-if="!modifyBt" id="modify-button" @click="modifyQuiz">수정</button>&nbsp;
