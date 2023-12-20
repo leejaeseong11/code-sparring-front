@@ -10,7 +10,7 @@
       <div class="action-buttons">
         <img src="/images/login/join.png" alt="join" class="join" @click="signUpForm()" />
       </div>
-      <form id="joinForm" class="action-buttons">
+      <form id="joinForm" class="action-buttons" @keyup.enter="loginFormSubmitHandler">
         <table>
           <tr>
             <td>
@@ -48,6 +48,7 @@
 
 <script>
 import axios from 'axios'
+import sweetAlert from '../../util/modal.js'
 export default {
   name: 'Login',
   data() {
@@ -56,6 +57,13 @@ export default {
       pwd: ''
     }
   },
+  mounted() {
+    const accessToken = sessionStorage.getItem('accessToken')
+    if (accessToken) {
+      this.$router.replace('/') // 메인 페이지의 경로로 수정
+    }
+  },
+
   methods: {
     signUpForm() {
       location.href = '/signup'
@@ -76,16 +84,13 @@ export default {
           withCredentials: true
         })
         .then((responseData) => {
-          console.log(responseData)
           // Access Token을 세션 스토리지에 저장
-          console.log(responseData.data.accessToken)
-          console.log(responseData.data.refreshToken)
           sessionStorage.setItem('accessToken', responseData.data.accessToken)
-          // localStorage.setItem("accessToken", responseData.data.accessToken);
           location.href = '/'
         })
         .catch((error) => {
           console.error('Error:', error)
+          sweetAlert.warning('로그인 정보를 다시 확인하세요', '', '확인')
         })
     }
   }
@@ -168,11 +173,11 @@ input {
 }
 
 .join:hover {
-  content: url('images/login/join.gif');
+  content: url('/images/login/join.gif');
 }
 
 .start:hover {
-  content: url('images/login/start.gif');
+  content: url('/images/login/start.gif');
 }
 
 span {

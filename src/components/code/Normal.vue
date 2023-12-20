@@ -1,5 +1,12 @@
 <template lang="">
     <div id="code-layout" class="row">
+        <div v-if="this.gameEnd" id="back-off" @click="backOff"></div>
+        <GameEnd 
+            id="end-popup" 
+            v-if="this.gameEnd" 
+            @close-popup="backOff"
+            :resultMemberNo = "this.resultMemberNo"
+        />
         <body class="flex-container">
             <div id="code-side-layout">
 
@@ -45,6 +52,7 @@
                 <Monaco 
                 @monacoSubmitEvent="setSubmitValue"
                 @monacoRunEvent="setRunValue"
+                @monacoWinMemberNo="setWinMember"
                 :parentButtonValue="this.parentButtonValue"
                 v-bind:childQuizNoValue="quizNo"
                 />
@@ -103,7 +111,6 @@
                 </div>
             </div>
         </body>
-
     </div>
 </template>
 
@@ -112,10 +119,11 @@ import Monaco from '../../components/code/NormalMonaco.vue'
 import AddReport from '../../components/report/AddReport.vue'
 import { apiClient } from '@/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
+import GameEnd from '../../components/game/GameEnd.vue'
 export default {
     name: 'normal',
     props: ['quizInfo'],
-    components: { Monaco, AddReport },
+    components: { Monaco, AddReport, GameEnd},
     data() {
         return {
             roomNo: '',
@@ -139,6 +147,9 @@ export default {
             memberName: '',
             parentButtonValue: '',
             count: 0,
+            winMemberNo: '6',
+            resultMemberNo: '7',
+            gameEnd: false,
             
         }
     },
@@ -159,6 +170,41 @@ export default {
         setSubmitValue(dataFromChild){
             this.buttonValue = dataFromChild
             this.sendMessage()
+        },
+        backOff() {
+            this.gameEnd=false
+            document.body.style.overflow = 'auto'
+            //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
+
+            this.disconnect();
+            console.log(this.roomMemberList.length)
+            console.log(this.resultMemberNo)
+            const url = ``
+            if(this.resultMemberNo == this.memberNo){
+                // apiClient 보내기
+                // apiClient
+                // .put(url, {
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // })
+                // .then((response) => {
+                //     this.quiz
+                // })
+            }
+            this.$router.push({ path: `/` })
+
+        },
+        setWinMember(dataFromChild){
+            this.winMemberNo = dataFromChild;
+            console.log(this.winMemberNo)
+            var winMember = {
+                type: 'ROOM_TALK',
+                roomNo: this.roomNo,
+                sender: this.memberName,
+                message: this.winMemberNo + ',win'
+            }
+            this.socket.send(JSON.stringify(winMember))
         },
 
         connect(){
@@ -181,6 +227,7 @@ export default {
 
                     const rawData = e.data;
                     const colonIndex = rawData.indexOf(':');
+                    
                     var msgMemberName = ''
                     var msgMemberButtonValue = ''
                     //test1: run
@@ -193,6 +240,12 @@ export default {
                             }
                         }
                     }
+                    const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    if(colonIndex2 !== -1){
+                        this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
+                        this.gameEnd=true
+                    }
+                    
                     this.parentButtonValue = this.count + e.data;
                     this.count++;
                     this.buttonValue = e.data;
@@ -251,6 +304,7 @@ export default {
             this.reportModal = false
         },
         exitButtonClickHandler() {
+            this.disconnect();
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -334,7 +388,7 @@ export default {
             })
 
         //memberNo
-        const url3 = `${this.backURL}/mycode/memberNo`
+        const url3 = `${this.backURL}/member/memberNo`
         apiClient
         .get(url3, {
             headers: {
@@ -610,4 +664,36 @@ body.flex-container {
     left: 0%;
     z-index: 1;
     background-color: rgba(0, 0, 0, 0.5);
-}</style>
+
+
+    
+}
+
+.backOff {
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.7);
+  top: 0%;
+  left: 0%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+#end-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main5-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 400px;
+  height: 540px;
+  margin-top: 250px;
+  margin-left: 10px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+
+</style>

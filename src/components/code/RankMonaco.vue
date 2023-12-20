@@ -47,7 +47,6 @@ export default defineComponent({
       default() {
         return {
           minimap: { enabled: false, },
-          // paste: { enabled: false, showPasteSelector: 'never'}
         }
       },
     },
@@ -95,7 +94,7 @@ export default defineComponent({
 
 
     //memberNo
-    const url2 = `${this.backURL}/mycode/memberNo`
+    const url2 = `${this.backURL}/member/memberNo`
     apiClient
       .get(url2, {
           headers: {
@@ -242,6 +241,11 @@ export default defineComponent({
         .then(response => {
           this.output = response.data.result
           this.gameResult = response.data.gameResult
+
+          this.gameResult = '1'
+          if(this.gameResult == '1'){
+            this.$emit('monacoWinMemberNo', this.memberNo);
+          }
 
           //게임 결과 update
           // const data = {

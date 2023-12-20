@@ -71,7 +71,7 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import TestcaseHelp from '../../components/quiz/TestcaseHelp.vue'
-
+import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AddQuiz',
   components: { TestcaseHelp },
@@ -116,14 +116,14 @@ export default {
     },
     saveQuiz() {
         if(this.title=='') {
-            alert('제목을 입력하세요')
+            SweetAlert.warning('제목을 입력하세요', '', '확인')
             return
         } else if(this.content=='') {
-            alert('내용을 입력하세요')
+            SweetAlert.warning('내용을 입력하세요', '', '확인')
             return
         }
 
-      const url = `${this.backURL}/quiz`
+      const url = `${this.backURL}/quiz/write`
       const inputValue = document.querySelectorAll('.input-obj')
       const outputValue = document.querySelectorAll('.output-obj')
 
@@ -131,13 +131,13 @@ export default {
       for (let i = 0; i < this.testcaseCnt; i++) {
         if(inputValue[i].value=='' || outputValue[i].value=='') continue
         this.testcase.push({
-          input: inputValue[i].value,
-          output: outputValue[i].value
+          testcaseInput: inputValue[i].value,
+          testcaseOutput: outputValue[i].value
         })
       }
 
       if(this.testcase.length<10) {
-        alert('테스트케이스를 10개 이상 작성하세요')
+        SweetAlert.warning('테스트케이스를\n 10개 이상 작성하세요', '', '확인')
         return
       }
 
@@ -149,6 +149,7 @@ export default {
         // memberNo: 1,
         testcaseDTOList: this.testcase
       }
+      
       apiClient
         .post(url, data, {
           withCredentials: true,
@@ -157,11 +158,14 @@ export default {
           }
         })
         .then(() => {
-          alert('문제가 추가되었습니다')
-          location.href = '/'
+          SweetAlert.success('문제가 추가되었습니다', '', '확인').then(()=>{
+            location.href = '/'
+          })
         })
         .catch(() => {
-          alert('문제 추가에 실패하였습니다')
+          SweetAlert.error('문제 추가에 실패하였습니다', '', '확인').then(()=>{
+            location.href = '/'
+          })
         })
     }
   }
@@ -389,9 +393,5 @@ button {
   margin-left: 230px;
   z-index: 2;
   overflow: auto;
-}
-
-::-webkit-scrollbar {
-  width: 0px;
 }
 </style>

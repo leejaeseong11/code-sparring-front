@@ -1,52 +1,50 @@
 import axios from "axios"
 import sweetAlert from './util/modal.js'
 
-var apiClient = null;
+var apiClient = null
     apiClient = axios.create({
         // baseURL: "//" + "192.168.1.116:8881/codesparring",
         baseURL: import.meta.env.VITE_BACK_URL,
         withCredentials: true
-    });
+    })
 
 apiClient.interceptors.request.use(
     function (config) {
     //   config.headers["Content-Type"] = "application/json";
     //   config.headers["Content-Type"] = "multipart/form-data";
-      config.headers["Authorization"] = `Bearer ${sessionStorage.getItem('accessToken')}`;
-      return config;
+      config.headers["Authorization"] = `Bearer ${sessionStorage.getItem('accessToken')}`
+      return config
     }
 )
 
 
 
 apiClient.interceptors.response.use(res => {
-        if (!(res.status === 200 || res.status === 201 || res.status === 204)) throw new Error();
-        if (res.data.errors) throw new Error(res.data.errors);
+        if (!(res.status === 200 || res.status === 201 || res.status === 204)) throw new Error()
+        if (res.data.errors) throw new Error(res.data.errors)
 
-        return res;
+        return res
     }
 
     ,async (error) => {
         if (error.response?.status === 401) {
             sweetAlert.warning("로그인이 필요합니다", '', '로그인창으로 가기').then(() =>{
-            window.location.href='/login';
+            window.location.href='/login'
             })
         }
         if (error.response?.status === 403) {
-            console.error("403 Forbidden 에러 발생 :", error.response);
+            console.error("403 Forbidden 에러 발생 :", error.response)
             sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() =>{
-            window.history.back();
+            window.history.back()
           })
         }
 
-        if (error.response?.status === 500) {
+        /*if (error.response?.status === 500) {
             console.error("500 Internal Server Error 발생 :", error.response)
-            sweetAlert.error("오류가 발생했습니다", '', '닫기').then(() =>{
-                // window.history.back();
+            sweetAlert.error(error.response.data.errors[0], '', '닫기').then(() =>{
             })
-
-        }
-        return Promise.reject(error);
+        }*/
+        return Promise.reject(error)
     }
 
 //     ,async (error) => {
@@ -94,4 +92,4 @@ apiClient.interceptors.response.use(res => {
 //    }
 );
 
-export {apiClient};
+export {apiClient}

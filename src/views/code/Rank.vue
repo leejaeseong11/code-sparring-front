@@ -1,6 +1,13 @@
 <template lang="">
 
     <div id="code-layout" class="row">
+        <div v-if="this.gameEnd" id="back-off" @click="backOff"></div>
+        <GameEnd 
+            id="end-popup" 
+            v-if="this.gameEnd" 
+            @close-popup="backOff"
+            :resultMemberNo = "this.resultMemberNo"
+        />
         <body class="flex-container">
     
             <div id="code-side-layout">
@@ -41,6 +48,7 @@
                 <Monaco 
                 @monacoSubmitEvent="setSubmitValue"
                 @monacoRunEvent="setRunValue"
+                @monacoWinMemberNo="setWinMember"
                 :parentButtonValue="this.parentButtonValue"
                 v-bind:childQuizNoValue="quizNo"
                 />
@@ -80,9 +88,10 @@
 import Monaco from '../../components/code/RankMonaco.vue'
 import { apiClient } from '@/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
+import GameEnd from '../../components/game/GameEnd.vue'
 export default {
     name: 'rank',
-    components: { Monaco },
+    components: { Monaco, GameEnd },
     data() {
         return {
             rankNo: '',
@@ -106,6 +115,9 @@ export default {
             memberName: '',
             parentButtonValue: '',
             count: 0,
+            winMemberNo: '6',
+            resultMemberNo: '7',
+            gameEnd: false,
 
         }
     },
@@ -123,6 +135,22 @@ export default {
         setSubmitValue(dataFromChild){
             this.buttonValue = dataFromChild
             this.sendMessage()
+        },
+        backOff() {
+            this.gameEnd=false
+            document.body.style.overflow = 'auto'
+            this.disconnect();
+        },
+        setWinMember(dataFromChild){
+            this.winMemberNo = dataFromChild;
+            console.log(this.winMemberNo)
+            var winMember = {
+                type: 'CODE_STATUS',
+                codeRoomNo: this.roomNo,
+                codeSender: this.memberName,
+                codeStatus: this.winMemberNo + ',win'
+            }
+            this.socket.send(JSON.stringify(winMember))
         },
         connect(){
             this.socket = new WebSocket(this.socketURL)
@@ -157,6 +185,11 @@ export default {
                         else if(this.member2Name === msgMemberName){
                             this.buttonValuePlayer2 = msgMemberButtonValue
                         }
+                    }
+                    const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    if(colonIndex2 !== -1){
+                        this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
+                        this.gameEnd=true
                     }
                     this.parentButtonValue = this.count + e.data;
                     this.count++;
@@ -214,6 +247,7 @@ export default {
             event.returnValue = ''
         },
         exitButtonClickHandler() {
+            this.disconnect();
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -311,7 +345,7 @@ export default {
                 alert('문제 정보 조회에 실패하였습니다')
             })
             //memberNo
-            const url4 = `${this.backURL}/mycode/memberNo`
+            const url4 = `${this.backURL}/member/memberNo`
             apiClient
             .get(url4, {
                 headers: {
@@ -403,6 +437,7 @@ export default {
     
     #code-side-layout {
       width: 260px;
+      height: 90%;
       padding: 10px;
       margin-top: 90px;
       margin-right: 10px;
@@ -461,6 +496,7 @@ export default {
     }
     .monaco {
         width: 760px;
+        height: 90%;
         margin-top: 90px;
          margin-right: 10px;
         /* margin-left: 10px;  */
@@ -496,6 +532,7 @@ export default {
     
     #relative-code-layout{
         width: 260px;
+        height: 90%;
         padding: 10px;
         margin-top: 90px;
         margin-right: 10px;
@@ -515,6 +552,7 @@ export default {
     }
     #relative-code-container{
         /* display: flex; */
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -563,6 +601,42 @@ export default {
 }
 ::-webkit-scrollbar {
   width: 0;
+}
+
+#back-off {
+    width: 100%;
+    height: 100%;
+    display: fixed;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.backOff {
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.7);
+  top: 0%;
+  left: 0%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+#end-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main5-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 400px;
+  height: 540px;
+  margin-top: 250px;
+  margin-left: 10px;
+  z-index: 2;
+  overflow: hidden;
 }
 
     </style>

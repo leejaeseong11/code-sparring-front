@@ -14,6 +14,7 @@
   </div>
 </template>
 <script>
+import SweetAlert from '../../util/modal.js'
 import {apiClient} from '@/axios-interceptor'
 
 export default {
@@ -39,10 +40,12 @@ export default {
             }
           })
           .then(() => {
-            alert('테스트케이스가 추가되었습니다')
-            window.history.go(0)
+            SweetAlert.success('테스트케이스가 추가되었습니다', '', '확인').then(()=>{
+              window.history.go(0)
+            })
+            
           }).catch(()=>{
-             alert('테스트케이스 추가에 실패하였습니다')
+            SweetAlert.error('테스트케이스 추가에 실패하였습니다', '', '확인')
           })
     }
   }

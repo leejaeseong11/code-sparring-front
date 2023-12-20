@@ -1,8 +1,19 @@
 <template>
   <div id="main-layout" class="row">
     <div v-if="addRoomPopup || rankMatching" id="back-off" @click="backOff"></div>
-    <AddRoom v-if="addRoomPopup" id="addRoom-popup" @close-popup="backOff"></AddRoom>
-    <RankMatching v-if="rankMatching" id="matching-popup" @close-popup="backOff"></RankMatching>
+    <AddRoom
+      v-if="addRoomPopup"
+      id="addRoom-popup"
+      @close-popup="backOff"
+      :memberNo="loginMember.memberNo"
+      :memberName="loginMember.memberName"
+    />
+    <RankMatching
+      v-if="rankMatching"
+      id="matching-popup"
+      :memberNo="loginMember.memberNo"
+      @close-popup="backOff"
+    />
     <div id="main-side-layout" class="col-2">
       <div id="main-profile-containers">
         <div id="my-profile-container">
@@ -122,8 +133,9 @@
             id="create-problem-button"
             class="btn-custom-primary main-menu-button"
             to="quiz/add"
-            >문제 만들기</router-link
           >
+            문제 만들기
+          </router-link>
         </div>
         <div id="main-navigation-right">
           <button
@@ -131,7 +143,7 @@
             class="btn-custom main-menu-button"
             @click="mypageButtonClickHandler"
           >
-            {{ memberAuthority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
+            {{ loginMember.authority == 'ROLE_ADMIN' ? '관리자페이지' : '마이페이지' }}
           </button>
           <button
             id="logout-button"
@@ -155,7 +167,6 @@
               id="room-number-search-input"
               type="text"
               placeholder="방 번호 검색"
-              v-model="inputRoomNo"
               @input="searchRoomInputChangeHandler($event)"
             />
             <font-awesome-icon id="room-number-search-icon" :icon="['fa', 'magnifying-glass']" />
@@ -205,7 +216,7 @@ import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'
 import RankMatching from '../../components/rank/RankMatching.vue'
-import sweetAlert from '../../util/modal.js'
+import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'MainHome',
@@ -238,12 +249,12 @@ export default {
         memberName: '',
         memberNo: 0,
         memberProfileImg: 0,
-        memberTier: ''
+        memberTier: '',
+        authority: ''
       },
       addRoomPopup: false,
       rankMatching: false,
-      memberProfilePopup: false,
-      socket: null
+      memberProfilePopup: false
     }
   },
   methods: {
@@ -261,32 +272,16 @@ export default {
         })
     },
     createWaitingRoomclickHandler() {
-      // let data = {
-      //   quiz: {
-      //     quizNo: 1
-      //   },
-      //   // "roomPwd": "1234",
-      //   codeShare: 0,
-      //   roomTitle: '테스트방 in vue',
-      //   roomDt: new Date().toJSON()
-      // }
-      // data = JSON.stringify(data)
-      // axios
-      //   .post(`${this.backURL}/room`, data, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   .then((res) => {
-      //     console.log(res)
-      //     this.$router.push({ path: `/room/${res.data}` })
-      //   })
       document.body.style.overflow = 'hidden'
       this.addRoomPopup = true
     },
     rankTierHelpHoverHandler() {},
     mypageButtonClickHandler() {
-      this.$router.push({ path: `/admin/quiz/all/1` })
+      if (this.loginMember.authority == 'ROLE_ADMIN') {
+        this.$router.push({ path: `/admin/quiz/all/1` })
+      } else {
+        this.$router.push({ path: `/profile/check/${this.loginMember.memberNo}` })
+      }
     },
     prevButtonClickHandler() {
       this.roomPage -= 1
@@ -323,16 +318,19 @@ export default {
       if (/^[0-9]+$/.test(char)) {
         return true
       } else {
-        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        SweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
         $event.preventDefault()
       }
     },
     searchRoomInputChangeHandler($event) {
       const inputValue = $event.target.value
-      if (inputValue == '') return
+      if (inputValue == '') {
+        this.inputRoomNo = ''
+        return
+      }
       if (!/^[0-9]+$/.test(inputValue)) {
         $event.target.value = this.inputRoomNo
-        sweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
+        SweetAlert.warning('숫자만 입력 가능합니다', '', '확인')
       } else {
         this.inputRoomNo = inputValue
         this.searchRoomByRoomNo()
@@ -365,7 +363,6 @@ export default {
     rankMatchingButtonClickHandler() {
       document.body.style.overflow = 'hidden'
       this.rankMatching = true
-      this.connect()
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
@@ -377,34 +374,6 @@ export default {
       } else {
         document.body.style.overflow = 'auto'
       }
-    },
-    connect() {
-      this.socket = new WebSocket(this.socketURL)
-
-      this.socket.onopen = () => {
-        // const enterMessage = {
-        //   type: 'RANK_ENTER',
-        //   memberNo: Math.floor(Math.random() * 2),
-        //   memberTier: 'Bronze'
-        // }
-        // this.socket.send(JSON.stringify(enterMessage))
-        this.sendMatching()
-        this.socket.onclose = () => {}
-        this.socket.onmessage = (e) => {
-          console.log(e.data)
-        }
-      }
-    },
-    disconnect() {
-      this.socket.close()
-    },
-    sendMatching() {
-      const sendMatching = {
-        type: 'RANK_MATCHING',
-        memberNo: Math.floor(Math.random() * 2),
-        memberTier: 'Bronze'
-      }
-      this.socket.send(JSON.stringify(sendMatching))
     },
     showProfileDetailClickHandler(memberNo) {
       this.memberProfilePopup = !this.memberProfilePopup

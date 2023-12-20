@@ -1,14 +1,15 @@
 <template>
-    <div class="report-object" @click="close - modal">
+    <div class="report-object" @click="close-modal">
         <div class="report-box">
-            <div class="report-title">문제번호</div>
-            <div class="report-title" id="report-content">{{ reportDetail.quizNo }}</div>
+            <div class="report-title" @click="redirectToQuizDetail">문제번호</div>
+            <div class="report-title" id="report-content" @click="redirectToQuizDetail">{{ reportDetail.quizNo }}</div>
             <div class="report-title">신고자</div>
             <div class="report-title" id="report-content">{{ reportDetail.memberName }}</div>
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고사유</div>
-            <select class="report-title" id="report-reason" :disabled="true" v-model="reportDetail.reportType" style="background-color: transparent;">
+            <select class="report-title" id="report-reason" :disabled="true" v-model="reportDetail.reportType"
+                style="background-color: transparent;">
                 <option value="1">테스트케이스 추가요청</option>
                 <option value="2">문제 오류</option>
                 <option value="3">기타</option>
@@ -16,7 +17,8 @@
         </div>
         <div class="report-box flex-container">
             <div class="report-title">신고내용</div>
-            <textarea v-model="reportDetail.reportContent" class="report-title" readonly style="background-color: transparent;"></textarea>
+            <textarea v-model="reportDetail.reportContent" class="report-title" readonly
+                style="background-color: transparent;"></textarea>
         </div>
         <div class="report-box flex-container">
             <div class="report-title">조치내역</div>
@@ -25,7 +27,7 @@
         </div>
         <div id="bt-area">
             <div></div>
-            <div>
+            <div class="button-container">
                 <button id="edit-bt" @click="editReport">수정</button>
                 <button id="delete-bt" @click="deleteReport">삭제</button>
                 <button id="cancle-bt" @click="$emit('close-modal')">취소</button>
@@ -55,11 +57,15 @@ export default {
         }
     },
     mounted() {
-        this.readReport();
+        this.readReport()
     },
     methods: {
+        redirectToQuizDetail() {
+            const quizNo = this.reportDetail.quizNo
+            location.href = '/quiz/' + quizNo
+        },
         closeModal() {
-            this.$emit('close-modal');
+            this.$emit('close-modal')
         },
         readReport() {
             apiClient
@@ -69,16 +75,16 @@ export default {
                     }
                 })
                 .then((response) => {
-                    console.log('Report Detail:', response.data);
+                    console.log('Report Detail:', response.data)
                     this.reportDetail = response.data
                     this.editedReportComment = this.reportDetail.reportComment
                 })
                 .catch((error) => {
-                    console.error('Error fetching report details:', error.message);
+                    console.error('Error fetching report details:', error.message)
                 })
         },
         editReport() {
-            const url = `${this.backURL}/admin/report/${this.reportNo}`;
+            const url = `${this.backURL}/admin/report/${this.reportNo}`
             const data = {
                 reportComment: this.editedReportComment
             }
@@ -90,7 +96,7 @@ export default {
                 })
                 .then(() => {
                     sweetAlert.success("신고조치가 완료되었습니다", "", "확인")
-                    this.$emit('close-modal');
+                    this.$emit('close-modal')
                 }).catch(() => {
                     sweetAlert.warning("신고조치가 실패하였습니다", "", "확인")
                 })
@@ -99,32 +105,28 @@ export default {
             sweetAlert.question("삭제 확인", "신고를 삭제하시겠습니까?", "네", "아니오")
                 .then((result) => {
                     if (result.isConfirmed) {
-                        const url = `${this.backURL}/admin/report/${this.reportNo}`;
+                        const url = `${this.backURL}/admin/report/${this.reportNo}`
                         return apiClient
                             .delete(url, {
                                 headers: {
                                     'Content-Type': 'application/json'
                                 }
-                            });
+                            })
                     } else {
-                        throw new Error("삭제가 취소되었습니다");
+                        throw new Error("삭제가 취소되었습니다")
                     }
                 })
                 .then(() => {
-                    sweetAlert.success("신고조치가 완료되었습니다", "", "확인");
-                    this.$emit('report-deleted');
-                    this.$emit('close-modal');
+                    sweetAlert.success("신고조치가 완료되었습니다", "", "확인")
+                    this.$emit('report-deleted')
+                    this.$emit('close-modal')
                 })
                 .catch((error) => {
                     if (error.message !== "삭제가 취소되었습니다") {
-                        sweetAlert.warning("신고조치가 실패하였습니다", "", "확인");
+                        sweetAlert.warning("신고조치가 실패하였습니다", "", "확인")
                     }
-                });
+                })
         }
-
-
-
-
     }
 }
 </script>
@@ -157,7 +159,7 @@ export default {
 
 #report-content {
     font-size: 1.2rem;
-    padding: 30px;
+    padding: 25px;
 }
 
 select.report-title,
@@ -183,9 +185,11 @@ textarea.report-title#report-answer {
     gap: 8px;
 }
 
-#bt-area {
+.button-container {
+    grid-area: button-container;
     display: flex;
     justify-content: center;
+    gap: 10px;
 }
 
 button {

@@ -210,12 +210,12 @@ export default {
   font-size: 1.0rem;
 
   color: var(--main1-color);
-  background-color: var(--main3-color);
+  background-color: var(--main2-color);
   border: none;
   border-radius: 6px;
 
   &:hover {
-    background-color: var(--main3-hover-color);
+    background-color: var(--main2-hover-color);
   }
 }
 

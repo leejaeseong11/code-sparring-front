@@ -21,7 +21,9 @@
             </div>
             <div v-else class="room-member-number">0/4</div>
             <button
-              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              :class="{
+                'button-disabled': roomInfo.roomStatus == 0 || roomInfo.roomStatus == null
+              }"
               class="btn-custom-primary see-quiz-button"
               v-bind:disabled="roomInfo.roomStatus == 0"
               @click="showQuizClickHandler"
@@ -45,7 +47,9 @@
               </div>
             </div>
             <button
-              :class="{ 'button-disabled': roomInfo.roomStatus == 0 }"
+              :class="{
+                'button-disabled': roomInfo.roomStatus == 0 || roomInfo.roomStatus == null
+              }"
               class="btn-custom-primary enter-button"
               v-bind:disabled="roomInfo.roomStatus == 0"
               @:click="enterButtonClickHandler"
@@ -105,7 +109,10 @@ export default {
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
         })
         .catch((error) => {
-          SweetAlert.error(error.response.data.errors[0])
+          SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')
+          apiClient.delete(`${this.backURL}/room-member/${this.memberNo}`).then((res) => {
+            console.log(res)
+          })
         })
     }
   },
