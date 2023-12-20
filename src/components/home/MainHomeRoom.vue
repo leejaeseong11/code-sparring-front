@@ -109,7 +109,10 @@ export default {
           this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
         })
         .catch((error) => {
-          SweetAlert.error(error.response.data.errors[0])
+          SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')
+          apiClient.delete(`${this.backURL}/room-member/${this.memberNo}`).then((res) => {
+            console.log(res)
+          })
         })
     }
   },
