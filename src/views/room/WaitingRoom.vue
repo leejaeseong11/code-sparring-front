@@ -214,11 +214,14 @@ export default {
                   console.log(err)
                   if (err.response.data.message == 'ROOM_NOT_FOUND') {
                     this.$router.push({ path: '/' })
-                    SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                      if (ok.isConfirmed) {
-                        this.$router.go()
-                      }
-                    })
+
+                    if (this.roomStatus == 1) {
+                      SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                        if (ok.isConfirmed) {
+                          this.$router.go()
+                        }
+                      })
+                    }
                   }
                 })
             }
@@ -254,16 +257,18 @@ export default {
                             this.socket.send(JSON.stringify(outMessage))
                             // this.socket.close()
                           }
-                          SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                            if (ok.isConfirmed) {
-                              if (this.socket.readyState === WebSocket.OPEN) {
-                                // this.socket.close()
+                          if (this.roomStatus == 1) {
+                            SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                              if (ok.isConfirmed) {
+                                if (this.socket.readyState === WebSocket.OPEN) {
+                                  // this.socket.close()
+                                }
+                                this.$router.push({ path: '/' }).then(() => {
+                                  this.$router.go()
+                                })
                               }
-                              this.$router.push({ path: '/' }).then(() => {
-                                this.$router.go()
-                              })
-                            }
-                          })
+                            })
+                          }
                         })
                       }
                     })
@@ -329,12 +334,11 @@ export default {
       this.socket.send(JSON.stringify(talkMessage))
       this.startButton = ''
       const url = `${this.backURL}/room/${this.roomNo}`
-      apiClient
-        .put(url, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
+      apiClient.put(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     },
 
     async roomOutButtonClickHandler() {
