@@ -21,13 +21,14 @@
     <div id="rank-content" ref="scrollContainer" @scroll="handleScroll">
       <div v-for="rank in rankList" :key="rank" :class="'rank-obj-' + rank.gameResult">
         <div v-if="rankList.length==1 && rank.gameResult==null">전적이 존재하지 않습니다.</div>
-        <span class="opposing-name">대결 상대 : {{ rank.opposingName }}</span>
-        <span class="game-result">{{ rank.gameResult }}</span>
+        <span v-if="rankList.length!=1 || rank.gameResult!=null" class="opposing-name">대결 상대 : {{ rank.opposingName }}</span>
+        <span v-if="rankList.length!=1 || rank.gameResult!=null" class="game-result">{{ rank.gameResult }}</span>
       </div>
     </div>
   </div>
 </template>
 <script>
+import SweetAlert from '../../util/modal.js'
 import { apiClient } from '@/axios-interceptor'
 export default {
   name: 'RankHistory',
@@ -89,6 +90,7 @@ export default {
       })
       .then((res) => {
         this.rankList = res.data.list
+        console.log(res.data)
         this.memberName = res.data.list[0].memberName
         this.memberTier = res.data.list[0].myTier
         this.memberPoint = res.data.list[0].myPoint
@@ -101,6 +103,10 @@ export default {
         else if (this.memberTier == 'SILVER') this.imgTier = 'silver.png'
         else if (this.memberTier == 'GOLD') this.imgTier = 'gold.png'
         else if (this.memberTier == 'PLATINUM') this.imgTier = 'platinum.png'
+      }).catch(()=>{
+        SweetAlert.error('랭크 전적이 존재하지 않습니다', '', '확인').then(()=>{
+          window.history.back()
+        })
       })
   }
 }

@@ -25,7 +25,7 @@
         <div v-for="q in quizList" :key="q.quizNo" class="quiz-object">
           <span class="quiz-no">{{ q.quizNo }}</span>
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
-          <span class="quiz-title">{{ q.quizTitle }}</span>
+          <span class="quiz-title" :title="''+q.quizTitle">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
           <button class="quiz-info-bt" :id="'' + q.quizNo" @click="quizView">조회</button>
         </div>
@@ -258,7 +258,8 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 5px;
   height: 9%;
   background-color: var(--white-color);
-  vertical-align: center;
+  display: flex;
+  align-items: center;
 }
 
 .quiz-no {
@@ -297,6 +298,9 @@ input[type='number']::-webkit-inner-spin-button {
 .quiz-title {
   width: 50%;
   display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quiz-correct {

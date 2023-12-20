@@ -71,11 +71,19 @@
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">입력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseInput == null ? '-' : tc.testcaseInput" readonly />
+                  <textarea
+                    class="readonlyTextareaTc"
+                    :value="tc.testcaseInput == null ? '-' : tc.testcaseInput"
+                    readonly
+                  />
                 </div>
                 <div class="testcase-div">
                   <div class="tc-text">출력값 :</div>
-                  <textarea class="readonlyTextareaTc" :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput" readonly />
+                  <textarea
+                    class="readonlyTextareaTc"
+                    :value="tc.testcaseOutput == null ? '-' : tc.testcaseOutput"
+                    readonly
+                  />
                 </div>
                 <br />
               </div>
@@ -85,15 +93,33 @@
 
         <div id="content">
           <div class="index-name">문제 내용</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-content" v-model="this.quizContent" readonly></textarea>
+          <textarea
+            v-if="!modifyBt"
+            class="readonlyTextarea"
+            id="quiz-content"
+            v-model="this.quizContent"
+            readonly
+          ></textarea>
           <textarea v-if="modifyBt" id="quiz-content" v-model="this.quizContent"></textarea>
 
           <div class="index-name">입력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-input" :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo" readonly></textarea>
+          <textarea
+            v-if="!modifyBt"
+            class="readonlyTextarea"
+            id="quiz-input"
+            :value="this.inputInfo == null ? '존재하지 않습니다' : this.inputInfo"
+            readonly
+          ></textarea>
           <textarea v-if="modifyBt" id="quiz-input" v-model="this.inputInfo"></textarea>
 
           <div class="index-name">출력값 설명</div>
-          <textarea v-if="!modifyBt" class="readonlyTextarea" id="quiz-output" :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo" readonly></textarea>
+          <textarea
+            v-if="!modifyBt"
+            class="readonlyTextarea"
+            id="quiz-output"
+            :value="this.outputInfo == null ? '존재하지 않습니다' : this.outputInfo"
+            readonly
+          ></textarea>
           <textarea v-if="modifyBt" id="quiz-output" v-model="this.outputInfo"></textarea>
 
           <div id="button-area">
@@ -116,6 +142,7 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import AddTestcase from '../../components/quiz/AddTestcase.vue'
+import SweetAlert from '../../util/modal.js'
 
 export default {
   name: 'QuizView',
@@ -166,13 +193,15 @@ export default {
             }
           })
           .then(() => {
-            alert('문제가 수정되었습니다')
-            this.modifyBt = false
-            window.history.go(0)
+            SweetAlert.success('문제가 수정되었습니다', '', '확인').then(() => {
+              this.modifyBt = false
+              window.history.go(0)
+            })
           })
           .catch(() => {
-            alert('문제 수정에 실패하였습니다')
-            window.history.go(0)
+            SweetAlert.error('문제 수정에 실패하였습니다', '', '확인').then(() => {
+              window.history.go(0)
+            })
           })
       }
     },
@@ -189,11 +218,36 @@ export default {
       this.testcaseBt = false
     },
     deleteTc(e) {
-      var result = confirm('테스트케이스를 삭제하시겠습니까?')
-
-      if (result) {
-        const tcNo = e.target.id
-        const url = `${this.backURL}/testcase/` + tcNo
+      SweetAlert.question('테스트케이스를 삭제하시겠습니까?', '', '확인', '취소').then((res) => {
+        if (res.isConfirmed) {
+          const tcNo = e.target.id
+          const url = `${this.backURL}/testcase/` + tcNo
+          apiClient
+            .delete(url, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(() => {
+              SweetAlert.success('테스트케이스가 삭제되었습니다', '', '확인').then(() => {
+                window.history.go(0)
+              })
+            })
+            .catch(() => {
+              SweetAlert.error('네트워크 오류가 발생했습니다', '', '확인')
+            })
+        }
+      })
+    },
+    deleteQuiz() {
+      SweetAlert.question(
+        '문제를 삭제하시겠습니까?',
+        '삭제 시 복구가 불가능합니다',
+        '확인',
+        '취소'
+      ).then((res) => {
+        if (res.isConfirmed === false) return
+        const url = `${this.backURL}/admin/quiz/` + this.quizNo
         apiClient
           .delete(url, {
             headers: {
@@ -201,31 +255,14 @@ export default {
             }
           })
           .then(() => {
-            alert('테스트케이스가 삭제되었습니다')
-            window.history.go(0)
+            SweetAlert.success('문제가 삭제되었습니다', '', '확인').then(() => {
+              location.href = '/admin/quiz/all/1'
+            })
           })
           .catch(() => {
-            alert('네트워크 오류가 발생했습니다')
+            SweetAlert.error('현재 게임에서\n사용중인 문제입니다', '다시 확인하세요', '확인')
           })
-      }
-    },
-    deleteQuiz() {
-      var result = confirm('문제를 삭제하시겠습니까?')
-      if (!result) return
-      const url = `${this.backURL}/admin/quiz/` + this.quizNo
-      apiClient
-        .delete(url, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(() => {
-          alert('문제가 삭제되었습니다')
-          location.href = '/admin/quiz/all/1'
-        })
-        .catch(() => {
-          alert('네트워크 오류가 발생했습니다')
-        })
+      })
     }
   },
   created() {
@@ -251,7 +288,9 @@ export default {
         this.testcaseCnt = this.testcaseList.length
       })
       .catch(() => {
-        alert('문제 조회에 실패하였습니다')
+        SweetAlert.error('문제 조회에 실패하였습니다', '', '확인').then(() => {
+          location.href = '/'
+        })
       })
   }
 }
