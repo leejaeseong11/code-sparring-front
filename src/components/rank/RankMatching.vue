@@ -42,12 +42,13 @@
     </div>
 
     <div id="footer">
-      <button id="cancle-button" @click="$emit('close-popup')">취소</button>
+      <button v-if="this.p1ready" id="cancle-button" @click="$emit('close-popup')">취소</button>
     </div>
   </div>
 </template>
 <script>
 import { apiClient } from '@/axios-interceptor'
+import SweetAlert from '../../util/modal.js'
 export default {
   name: 'RankMatching',
   props: ['memberNo'],
@@ -78,6 +79,7 @@ export default {
       minutes: 0,
       seconds: 0,
       match: false,
+      p1ready: false,
       intervalId: null
     }
   },
@@ -102,18 +104,16 @@ export default {
     setQuiz() {
       apiClient
         .get(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`)
-        .then(res => {
-            location.href = '/rank/' + res.data
-        })
-        .catch(() => {
-          location.href = '/'
+        .then((res) => {
+          location.href = '/rank/' + res.data
         })
     },
     whileMatching1() {
       if (this.minutes == 5) {
-        alert('대기시간이 지연되어 매칭을 종료합니다')
-        this.stopMatching()
-        location.href = '/'
+        SweetAlert.warning('대기시간이 지연되어 매칭을 종료합니다', '', '확인').then(() => {
+          this.stopMatching()
+          location.href = '/'
+        })
       }
       apiClient
         .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
@@ -125,12 +125,10 @@ export default {
             this.rankRoom.member2No != ''
           ) {
             this.stopMatching()
-            alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
-            this.setQuiz()
+            SweetAlert.success('매칭 성공!', '게임이 곧 시작됩니다', '확인').then(() => {
+              this.setQuiz()
+            })
           }
-        })
-        .catch(() => {
-          location.href = '/'
         })
     },
     whileMatching2() {
@@ -138,9 +136,10 @@ export default {
         .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
         .then((res) => {
           this.rankRoom = res.data
-          if(this.rankRoom.member2No!=this.memberNo) {
-            alert('상대와의 연결이 종료되었습니다. 메인으로 돌아갑니다.')
-            location.href='/'
+          if (this.rankRoom.member2No != this.memberNo) {
+            SweetAlert.warning('상대와의 연결이 종료되었습니다', '', '확인').then(() => {
+              location.href = '/'
+            })
           } else if (
             this.rankRoom.quizNo != 0 &&
             this.rankRoom.quizNo != null &&
@@ -180,7 +179,6 @@ export default {
   },
   created() {
     window.addEventListener('beforeunload', () => {
-      console.log('?')
       this.stopMatching()
     })
 
@@ -198,50 +196,63 @@ export default {
         else if (rank == 'GOLD') this.tierImg = 'gold'
         else if (rank == 'PLATINUM') this.tierImg = 'platinum'
 
-        var matching = confirm(
-          '매칭 성공 이후 퇴장 시 불이익이 발생할 수 있습니다. 랭크 매칭을 진행하시겠습니까?'
-        )
-        if (matching === false) {
-          location.href = '/'
-        } else {
-          this.match = true
+        SweetAlert.question(
+          '랭크 매칭을 진행하시겠습니까?',
+          '매칭 성공 이후 퇴장 시 랭크가 떨어질 수 있습니다',
+          '확인',
+          '취소'
+        ).then((res) => {
+          if (res.isConfirmed === false) {
+            location.href = '/'
+          } else {
+            this.match = true
 
-          apiClient
-            .get(`${this.backURL}/rankroom/match/${rank}`, {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .then((res) => {
-              this.rankRoom = res.data
-              if (this.rankRoom.member2No == null) {
-                var result = confirm('상대를 찾을 수 없습니다. 대기하시겠습니까?')
-                if (result === true) {
-                  this.updateTimer()
-                  this.startMatching1()
-                } else {
-                  apiClient
-                    .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
-                    .then(() => {
-                      location.href = '/'
-                    })
-                    .catch(() => {
-                      location.href = '/'
-                    })
+            apiClient
+              .get(`${this.backURL}/rankroom/match/${rank}`, {
+                headers: {
+                  'Content-Type': 'application/json'
                 }
-              } else {
-                alert('매칭 성공! 게임이 곧 시작됩니다. (퇴장 시 랭크가 떨어질 수 있습니다.)')
-                this.updateTimer()
-                this.startMatching2()
-              }
-            })
-            .catch(() => {
-              location.href = '/'
-            })
-        }
+              })
+              .then((res) => {
+                this.rankRoom = res.data
+                if (this.rankRoom.member2No == null) {
+                  SweetAlert.question(
+                    '상대를 찾을 수 없습니다',
+                    '대기하시겠습니까?',
+                    '확인',
+                    '취소'
+                  ).then((res) => {
+                    if (res.isConfirmed === true) {
+                      this.p1ready=true
+                      this.updateTimer()
+                      this.startMatching1()
+                    } else {
+                      apiClient
+                        .delete(`${this.backURL}/rankroom/out/${this.rankRoom.roomNo}`)
+                        .then(() => {
+                          location.href = '/'
+                        })
+                        .catch(() => {
+                          location.href = '/'
+                        })
+                    }
+                  })
+                } else {
+                  SweetAlert.success('매칭 성공!', '게임이 곧 시작됩니다', '확인').then(() => {
+                    this.updateTimer()
+                    this.startMatching2()
+                  })
+                }
+              })
+              .catch(() => {
+                this.stopMatching()
+                location.href = '/'
+              })
+          }
+        })
       })
       .catch(() => {
-        location.href = '/'
+        this.stopMatching()
       })
   },
   beforeUnmount() {

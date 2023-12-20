@@ -71,7 +71,7 @@
 <script>
 import { apiClient } from '@/axios-interceptor'
 import TestcaseHelp from '../../components/quiz/TestcaseHelp.vue'
-
+import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AddQuiz',
   components: { TestcaseHelp },
@@ -116,10 +116,10 @@ export default {
     },
     saveQuiz() {
         if(this.title=='') {
-            alert('제목을 입력하세요')
+            SweetAlert.warning('제목을 입력하세요', '', '확인')
             return
         } else if(this.content=='') {
-            alert('내용을 입력하세요')
+            SweetAlert.warning('내용을 입력하세요', '', '확인')
             return
         }
 
@@ -137,7 +137,7 @@ export default {
       }
 
       if(this.testcase.length<10) {
-        alert('테스트케이스를 10개 이상 작성하세요')
+        SweetAlert.warning('테스트케이스를\n 10개 이상 작성하세요', '', '확인')
         return
       }
 
@@ -158,11 +158,14 @@ export default {
           }
         })
         .then(() => {
-          alert('문제가 추가되었습니다')
-          location.href = '/'
+          SweetAlert.success('문제가 추가되었습니다', '', '확인').then(()=>{
+            location.href = '/'
+          })
         })
         .catch(() => {
-          alert('문제 추가에 실패하였습니다')
+          SweetAlert.error('문제 추가에 실패하였습니다', '', '확인').then(()=>{
+            location.href = '/'
+          })
         })
     }
   }
