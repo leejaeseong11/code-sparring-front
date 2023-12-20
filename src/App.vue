@@ -13,7 +13,9 @@ export default {
   components: { FooterBar },
   methods: {
     goHome() {
-      this.$router.push({ path: `/` })
+      this.$router.push({ path: `/` }).then(() => {
+        this.$router.go()
+      })
     }
   }
 }
