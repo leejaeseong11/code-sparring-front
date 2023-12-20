@@ -140,17 +140,87 @@ export default {
             this.gameEnd=false
             document.body.style.overflow = 'auto'
             this.disconnect();
+
+
+            console.log(this.winMemberNo)
+            if(this.memberNo == this.member1No && this.winMemberNo == this.memberNo){
+                if(this.resultMemberNo == this.memberNo){
+                //   게임 결과 update
+                const data = {
+                    gameResult: '1'
+                }
+                const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+                apiClient
+                    .put(url2, JSON.stringify(data), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    })
+                    .catch(error => {
+                    console.log('Server Error:', error);
+                        alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
+                    });
+                }
+            }else if(this.memberNo == this.member2No && this.winMemberNo == this.memberNo){
+                if(this.resultMemberNo == this.memberNo){
+                //   게임 결과 update
+                const data = {
+                    gameResult: '2'
+                }
+                const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+                apiClient
+                    .put(url2, JSON.stringify(data), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    })
+                    .catch(error => {
+                    console.log('Server Error:', error);
+                        alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
+                    });
+                }
+
+            }else{
+                if(this.resultMemberNo == this.memberNo){
+                //   게임 결과 update
+                const data = {
+                    gameResult: '0'
+                }
+                const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+                apiClient
+                    .put(url2, JSON.stringify(data), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    })
+                    .catch(error => {
+                    console.log('Server Error:', error);
+                        alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
+                    });
+                }
+            }
+            this.$router.push({ path: `/` })
+            
+            
         },
         setWinMember(dataFromChild){
             this.winMemberNo = dataFromChild;
             console.log(this.winMemberNo)
             var winMember = {
                 type: 'CODE_STATUS',
-                codeRoomNo: this.roomNo,
+                codeRoomNo: this.rankNo,
                 codeSender: this.memberName,
                 codeStatus: this.winMemberNo + ',win'
             }
             this.socket.send(JSON.stringify(winMember))
+
+            // var talkMessage = {
+            //     type: 'CODE_STATUS',
+            //     codeRoomNo: this.rankNo,
+            //     codeSender: this.memberName,
+            //     codeStatus: this.buttonValue
+            // }
+            // this.socket.send(JSON.stringify(talkMessage))
         },
         connect(){
             this.socket = new WebSocket(this.socketURL)
@@ -168,10 +238,12 @@ export default {
             this.socket.onerror = () => { }
 
             this.socket.onmessage = (e) => {
+                console.log(e.data)
                 if(this.socket.readyState === WebSocket.OPEN){
-
+                    console.log(e.data);
                     const rawData = e.data;
                     const colonIndex = rawData.indexOf(':');
+                    console.log(rawData)
                     var msgMemberName = ''
                     var msgMemberButtonValue = ''
                     //test1: run
@@ -186,7 +258,9 @@ export default {
                             this.buttonValuePlayer2 = msgMemberButtonValue
                         }
                     }
+                    console.log(msgMemberButtonValue)
                     const colonIndex2 = msgMemberButtonValue.indexOf(',');
+                    console.log(colonIndex2)
                     if(colonIndex2 !== -1){
                         this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim();
                         this.gameEnd=true
@@ -198,6 +272,7 @@ export default {
                     this.socket.readyState === WebSocket.CLOSING ||
                     this.socket.readyState === WebSocket.CLOSED
                 ){
+                    console.log("?")
                     this.connect()
                 }
 

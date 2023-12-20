@@ -245,6 +245,7 @@ export default defineComponent({
           this.gameResult = '1'
           if(this.gameResult == '1'){
             this.$emit('monacoWinMemberNo', this.memberNo);
+            // this.$emit('monacoGameResult', this.gameResult);
           }
 
           //게임 결과 update
