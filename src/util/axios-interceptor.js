@@ -1,5 +1,5 @@
 import axios from "axios"
-import sweetAlert from './util/modal.js'
+import sweetAlert from './modal.js'
 
 var apiClient = null
     apiClient = axios.create({
