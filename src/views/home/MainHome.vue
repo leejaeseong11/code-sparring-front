@@ -133,8 +133,9 @@
             id="create-problem-button"
             class="btn-custom-primary main-menu-button"
             to="quiz/add"
-            >문제 만들기</router-link
           >
+            문제 만들기
+          </router-link>
         </div>
         <div id="main-navigation-right">
           <button
@@ -253,8 +254,7 @@ export default {
       },
       addRoomPopup: false,
       rankMatching: false,
-      memberProfilePopup: false,
-      socket: null
+      memberProfilePopup: false
     }
   },
   methods: {
@@ -363,7 +363,6 @@ export default {
     rankMatchingButtonClickHandler() {
       document.body.style.overflow = 'hidden'
       this.rankMatching = true
-      //this.connect()
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
@@ -375,34 +374,6 @@ export default {
       } else {
         document.body.style.overflow = 'auto'
       }
-    },
-    connect() {
-      this.socket = new WebSocket(this.socketURL)
-
-      this.socket.onopen = () => {
-        // const enterMessage = {
-        //   type: 'RANK_ENTER',
-        //   memberNo: Math.floor(Math.random() * 2),
-        //   memberTier: 'Bronze'
-        // }
-        // this.socket.send(JSON.stringify(enterMessage))
-        this.sendMatching()
-        this.socket.onclose = () => {}
-        this.socket.onmessage = (e) => {
-          console.log(e.data)
-        }
-      }
-    },
-    disconnect() {
-      this.socket.close()
-    },
-    sendMatching() {
-      const sendMatching = {
-        type: 'RANK_MATCHING',
-        memberNo: Math.floor(Math.random() * 2),
-        memberTier: 'Bronze'
-      }
-      this.socket.send(JSON.stringify(sendMatching))
     },
     showProfileDetailClickHandler(memberNo) {
       this.memberProfilePopup = !this.memberProfilePopup
