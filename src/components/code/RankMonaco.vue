@@ -110,10 +110,10 @@ export default defineComponent({
     this.initMonaco()
 
     // 붙여넣기 막기
-    // this.editor.getDomNode().addEventListener('paste', (event) => {
-    //   event.stopPropagation();
-    //   event.preventDefault();
-    // }, true);
+    this.editor.getDomNode().addEventListener('paste', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+    }, true);
   },
   beforeUnmount() {
     this.editor && this.editor.dispose()

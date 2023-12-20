@@ -176,13 +176,23 @@ export default {
             document.body.style.overflow = 'auto'
             //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
 
+            this.disconnect();
             console.log(this.roomMemberList.length)
             console.log(this.resultMemberNo)
-            console.log(this.memberNo)
+            const url = ``
             if(this.resultMemberNo == this.memberNo){
                 // apiClient 보내기
+                // apiClient
+                // .put(url, {
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     }
+                // })
+                // .then((response) => {
+                //     this.quiz
+                // })
             }
-            // this.$router.push({ path: `/` })
+            this.$router.push({ path: `/` })
 
         },
         setWinMember(dataFromChild){
@@ -294,6 +304,7 @@ export default {
             this.reportModal = false
         },
         exitButtonClickHandler() {
+            this.disconnect();
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -653,6 +664,9 @@ body.flex-container {
     left: 0%;
     z-index: 1;
     background-color: rgba(0, 0, 0, 0.5);
+
+
+    
 }
 
 .backOff {
@@ -679,19 +693,6 @@ body.flex-container {
   margin-left: 10px;
   z-index: 2;
   overflow: hidden;
-}
-
-#back-off {
-  width: 100%;
-  height: 100%;
-
-  display: fixed;
-  position: fixed;
-  top: 0%;
-  left: 0%;
-  z-index: 1;
-
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 

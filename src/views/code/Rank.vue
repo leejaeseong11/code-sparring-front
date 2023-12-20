@@ -139,7 +139,7 @@ export default {
         backOff() {
             this.gameEnd=false
             document.body.style.overflow = 'auto'
-
+            this.disconnect();
         },
         setWinMember(dataFromChild){
             this.winMemberNo = dataFromChild;
@@ -247,6 +247,7 @@ export default {
             event.returnValue = ''
         },
         exitButtonClickHandler() {
+            this.disconnect();
             this.$router.push({ path: `/` })
         },
         updateTimer() {
@@ -436,6 +437,7 @@ export default {
     
     #code-side-layout {
       width: 260px;
+      height: 90%;
       padding: 10px;
       margin-top: 90px;
       margin-right: 10px;
@@ -494,6 +496,7 @@ export default {
     }
     .monaco {
         width: 760px;
+        height: 90%;
         margin-top: 90px;
          margin-right: 10px;
         /* margin-left: 10px;  */
@@ -529,6 +532,7 @@ export default {
     
     #relative-code-layout{
         width: 260px;
+        height: 90%;
         padding: 10px;
         margin-top: 90px;
         margin-right: 10px;
@@ -548,6 +552,7 @@ export default {
     }
     #relative-code-container{
         /* display: flex; */
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -596,6 +601,42 @@ export default {
 }
 ::-webkit-scrollbar {
   width: 0;
+}
+
+#back-off {
+    width: 100%;
+    height: 100%;
+    display: fixed;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.backOff {
+  width: 100%;
+  height: 100%;
+  display: fixed;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.7);
+  top: 0%;
+  left: 0%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+#end-popup {
+  padding: 10px;
+  position: absolute;
+  background-color: var(--main5-color);
+  border: 8px solid var(--main5-color);
+  border-radius: 10px;
+  width: 400px;
+  height: 540px;
+  margin-top: 250px;
+  margin-left: 10px;
+  z-index: 2;
+  overflow: hidden;
 }
 
     </style>
