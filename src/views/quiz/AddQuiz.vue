@@ -394,8 +394,4 @@ button {
   z-index: 2;
   overflow: auto;
 }
-
-::-webkit-scrollbar {
-  width: 0px;
-}
 </style>
