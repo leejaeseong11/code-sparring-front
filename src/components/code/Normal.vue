@@ -136,7 +136,7 @@
 <script>
 import Monaco from '../../components/code/NormalMonaco.vue'
 import AddReport from '../../components/report/AddReport.vue'
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
 import GameEnd from '../../components/game/GameEnd.vue'
 export default {
