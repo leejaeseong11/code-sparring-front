@@ -106,7 +106,12 @@ export default {
           }
         )
         .then(() => {
-          this.$router.push({ path: `/room/${this.roomInfo.roomNo}` })
+          this.$router.push({
+            path: `/room/${this.roomInfo.roomNo}`,
+            state: {
+              rightAccess: true
+            }
+          })
         })
         .catch((error) => {
           SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')

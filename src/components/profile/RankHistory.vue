@@ -4,25 +4,30 @@
       <div>
         현재 <span id="member-name">{{ this.memberName }}</span> 님의 티어 :&nbsp;
         <span :id="'tier-' + this.memberTier">{{ this.memberTier }}</span>
-        <img :src="'../../../public/images/rank/' + this.imgTier" class="tier-img" />&nbsp;
+        <img :src="'/images/rank/' + this.imgTier" class="tier-img" />&nbsp;
         <span id="tier-point">({{ this.memberPoint }}pt)</span>
         <div id="point">🔥 다음 티어까지 남은 포인트! {{ this.nextPoint }}pt 🔥</div>
       </div>
       <div>
         <div id="rank-cnt">총 랭크 게임 {{ this.win + this.lose + this.draw }}회</div>
         <div id="rank-result">
-          <span style="color: var(--main4-color)">{{ this.win }}</span>승
-          <span style="color: var(--red-color)">{{ this.lose }}</span>패
-          <span style="color: var(--green-color);">{{ this.draw }}</span>무
+          <span style="color: var(--main4-color)">{{ this.win }}</span
+          >승 <span style="color: var(--red-color)">{{ this.lose }}</span
+          >패 <span style="color: var(--green-color)">{{ this.draw }}</span
+          >무
         </div>
       </div>
     </div>
 
     <div id="rank-content" ref="scrollContainer" @scroll="handleScroll">
       <div v-for="rank in rankList" :key="rank" :class="'rank-obj-' + rank.gameResult">
-        <div v-if="rankList.length==1 && rank.gameResult==null">전적이 존재하지 않습니다.</div>
-        <span v-if="rankList.length!=1 || rank.gameResult!=null" class="opposing-name">대결 상대 : {{ rank.opposingName }}</span>
-        <span v-if="rankList.length!=1 || rank.gameResult!=null" class="game-result">{{ rank.gameResult }}</span>
+        <div v-if="rankList.length == 1 && rank.gameResult == null">전적이 존재하지 않습니다.</div>
+        <span v-if="rankList.length != 1 || rank.gameResult != null" class="opposing-name"
+          >대결 상대 : {{ rank.opposingName }}</span
+        >
+        <span v-if="rankList.length != 1 || rank.gameResult != null" class="game-result">{{
+          rank.gameResult
+        }}</span>
       </div>
     </div>
   </div>
@@ -103,8 +108,9 @@ export default {
         else if (this.memberTier == 'SILVER') this.imgTier = 'silver.png'
         else if (this.memberTier == 'GOLD') this.imgTier = 'gold.png'
         else if (this.memberTier == 'PLATINUM') this.imgTier = 'platinum.png'
-      }).catch(()=>{
-        SweetAlert.error('랭크 전적이 존재하지 않습니다', '', '확인').then(()=>{
+      })
+      .catch(() => {
+        SweetAlert.error('랭크 전적이 존재하지 않습니다', '', '확인').then(() => {
           window.history.back()
         })
       })
@@ -164,56 +170,62 @@ export default {
 
 .rank-obj-WIN {
   border: 5px double var(--main1-color);
-  background: linear-gradient(40deg,
-      var(--main4-hover-color) 5%,
-      var(--main4-color) 5%,
-      var(--main4-color) 20%,
-      var(--main4-hover-color) 20%,
-      var(--main4-hover-color) 40%,
-      var(--main4-color) 40%,
-      var(--main4-color) 60%,
-      var(--main4-hover-color) 60%,
-      var(--main4-hover-color) 80%,
-      var(--main4-hover-color) 80%,
-      var(--main4-color) 80%,
-      var(--main4-color) 95%,
-      var(--main4-hover-color) 95%);
+  background: linear-gradient(
+    40deg,
+    var(--main4-hover-color) 5%,
+    var(--main4-color) 5%,
+    var(--main4-color) 20%,
+    var(--main4-hover-color) 20%,
+    var(--main4-hover-color) 40%,
+    var(--main4-color) 40%,
+    var(--main4-color) 60%,
+    var(--main4-hover-color) 60%,
+    var(--main4-hover-color) 80%,
+    var(--main4-hover-color) 80%,
+    var(--main4-color) 80%,
+    var(--main4-color) 95%,
+    var(--main4-hover-color) 95%
+  );
 }
 
 .rank-obj-LOSE {
   border: 5px double var(--main1-color);
-  background: linear-gradient(40deg,
-      var(--red-hover-color) 5%,
-      var(--red-color) 5%,
-      var(--red-color) 20%,
-      var(--red-hover-color) 20%,
-      var(--red-hover-color) 40%,
-      var(--red-color) 40%,
-      var(--red-color) 60%,
-      var(--red-hover-color) 60%,
-      var(--red-hover-color) 80%,
-      var(--red-hover-color) 80%,
-      var(--red-color) 80%,
-      var(--red-color) 95%,
-      var(--red-hover-color) 95%);
+  background: linear-gradient(
+    40deg,
+    var(--red-hover-color) 5%,
+    var(--red-color) 5%,
+    var(--red-color) 20%,
+    var(--red-hover-color) 20%,
+    var(--red-hover-color) 40%,
+    var(--red-color) 40%,
+    var(--red-color) 60%,
+    var(--red-hover-color) 60%,
+    var(--red-hover-color) 80%,
+    var(--red-hover-color) 80%,
+    var(--red-color) 80%,
+    var(--red-color) 95%,
+    var(--red-hover-color) 95%
+  );
 }
 
 .rank-obj-DRAW {
   border: 5px double var(--main1-color);
-  background: linear-gradient(40deg,
-      var(--green-hover-color) 5%,
-      var(--green-color) 5%,
-      var(--green-color) 20%,
-      var(--green-hover-color) 20%,
-      var(--green-hover-color) 40%,
-      var(--green-color) 40%,
-      var(--green-color) 60%,
-      var(--green-hover-color) 60%,
-      var(--green-hover-color) 80%,
-      var(--green-hover-color) 80%,
-      var(--green-color) 80%,
-      var(--green-color) 95%,
-      var(--green-hover-color) 95%);
+  background: linear-gradient(
+    40deg,
+    var(--green-hover-color) 5%,
+    var(--green-color) 5%,
+    var(--green-color) 20%,
+    var(--green-hover-color) 20%,
+    var(--green-hover-color) 40%,
+    var(--green-color) 40%,
+    var(--green-color) 60%,
+    var(--green-hover-color) 60%,
+    var(--green-hover-color) 80%,
+    var(--green-hover-color) 80%,
+    var(--green-color) 80%,
+    var(--green-color) 95%,
+    var(--green-hover-color) 95%
+  );
 }
 
 .opposing-name {
