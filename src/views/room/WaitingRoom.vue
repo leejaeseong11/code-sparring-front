@@ -298,10 +298,6 @@ export default {
             'Content-Type': 'application/json'
           }
         })
-        .catch((error) => {
-          console.log(error)
-          alert('서버 에러 발생')
-        })
     },
 
     async roomOutButtonClickHandler() {
