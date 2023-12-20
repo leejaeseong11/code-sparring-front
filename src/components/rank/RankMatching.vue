@@ -4,11 +4,7 @@
       <div style="color: var(--red-hover-color)">
         ※ 강제종료 혹은 네트워크 오류 시 랭크에 불이익이 발생할 수 있습니다 ※
       </div>
-      <img
-        src="../../../public/images/rank/matching.gif"
-        id="matching-icon"
-        alt="rank-matching"
-      />&nbsp;
+      <img src="/images/rank/matching.gif" id="matching-icon" alt="rank-matching" />&nbsp;
       <span id="timer-content" class="title" :class="{ 'timer-expired': timerRunning }">{{
         formattedTime
       }}</span>
@@ -16,7 +12,7 @@
 
     <div id="content">
       <img
-        :src="'../../../public/images/icon/' + this.rankMember.memberProfileImg + '.png'"
+        :src="'/images/icon/' + this.rankMember.memberProfileImg + '.png'"
         id="member-profile-img"
         alt="my-profile-img"
       />
@@ -28,11 +24,7 @@
           <span id="point">{{ this.rankMember.tierPoint }}pt</span>
         </div>
         <div id="tier-icon-div">
-          <img
-            :src="'../../../public/images/rank/' + this.tierImg + '.png'"
-            id="tier-icon"
-            alt="my-tier-icon"
-          />
+          <img :src="'/images/rank/' + this.tierImg + '.png'" id="tier-icon" alt="my-tier-icon" />
         </div>
         <div id="member-score">
           {{ this.rankMember.winCnt }}승 {{ this.rankMember.loseCnt }}패
@@ -102,11 +94,14 @@ export default {
       }
     },
     setQuiz() {
-      apiClient
-        .get(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`)
-        .then((res) => {
-          location.href = '/rank/' + res.data
+      apiClient.get(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`).then((res) => {
+        this.$router.push({
+          path: '/rank/' + res.data,
+          state: {
+            rightAccess: true
+          }
         })
+      })
     },
     whileMatching1() {
       if (this.minutes == 5) {
@@ -115,21 +110,19 @@ export default {
           location.href = '/'
         })
       }
-      apiClient
-        .get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`)
-        .then((res) => {
-          this.rankRoom = res.data
-          if (
-            this.rankRoom.member2No != 0 &&
-            this.rankRoom.member2No != null &&
-            this.rankRoom.member2No != ''
-          ) {
-            this.stopMatching()
-            SweetAlert.success('매칭 성공!', '게임이 곧 시작됩니다', '확인').then(() => {
-              this.setQuiz()
-            })
-          }
-        })
+      apiClient.get(`${this.backURL}/rankroom/check/${this.rankRoom.roomNo}`).then((res) => {
+        this.rankRoom = res.data
+        if (
+          this.rankRoom.member2No != 0 &&
+          this.rankRoom.member2No != null &&
+          this.rankRoom.member2No != ''
+        ) {
+          this.stopMatching()
+          SweetAlert.success('매칭 성공!', '게임이 곧 시작됩니다', '확인').then(() => {
+            this.setQuiz()
+          })
+        }
+      })
     },
     whileMatching2() {
       apiClient
@@ -146,7 +139,12 @@ export default {
             this.rankRoom.quizNo != ''
           ) {
             this.stopMatching()
-            location.href = '/rank/' + this.rankRoom.rankNo
+            this.$router.push({
+              path: '/rank/' + this.rankRoom.rankNo,
+              state: {
+                rightAccess: true
+              }
+            })
           }
         })
         .catch(() => {
@@ -223,7 +221,7 @@ export default {
                     '취소'
                   ).then((res) => {
                     if (res.isConfirmed === true) {
-                      this.p1ready=true
+                      this.p1ready = true
                       this.updateTimer()
                       this.startMatching1()
                     } else {
