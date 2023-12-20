@@ -108,7 +108,7 @@
 <script>
 // import axios from 'axios'
 import { apiClient } from '@/axios-interceptor'
-
+import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AddRoom',
   props: ['memberNo', 'memberName'],
@@ -184,9 +184,9 @@ export default {
     },
     clickAddRoom() {
       if ((this.secret == true) & (this.roomPwd == '')) {
-        alert('방 비밀번호를 입력하세요')
+        SweetAlert.warning('방 비밀번호를 입력하세요', '', '확인')
       } else if (this.quizNo == '') {
-        alert('문제를 선택하세요')
+        SweetAlert.warning('문제를 선택하세요', '', '확인')
       } else {
         let data = {
           quizNo: this.quizNo,
@@ -229,7 +229,7 @@ export default {
         this.quizList = res.data
       })
       .catch(() => {
-        alert('문제를 조회할 수 없습니다')
+        SweetAlert.error('문제를 조회할 수 없습니다', '', '확인')
       })
   }
 }
