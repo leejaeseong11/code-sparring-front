@@ -1,6 +1,14 @@
 <template>
   <main class="container">
-    <img id="main-logo" src="/images/logo.gif" alt="logo" @click="goHome" />
+    <img
+      :class="{
+        'button-disabled': disableLogo
+      }"
+      id="main-logo"
+      src="/images/logo.gif"
+      alt="logo"
+      @click="goHome"
+    />
     <router-view style="min-width: 1280px"></router-view>
     <FooterBar />
   </main>
@@ -11,11 +19,24 @@ import FooterBar from './components/footer/FooterBar.vue'
 export default {
   name: 'App',
   components: { FooterBar },
+  data() {
+    return {
+      disableLogo: false
+    }
+  },
+  watch: {
+    '$route.path': 'handleRouteChange'
+  },
   methods: {
     goHome() {
       this.$router.push({ path: `/` }).then(() => {
         this.$router.go()
       })
+    },
+    handleRouteChange(newPath) {
+      console.log(newPath)
+      this.disableLogo = newPath.includes('/room/')
+      console.log(this.disableLogo)
     }
   }
 }
@@ -28,5 +49,9 @@ export default {
   position: absolute;
   z-index: 1;
   cursor: pointer !important;
+}
+.button-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
 }
 </style>

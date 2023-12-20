@@ -217,6 +217,12 @@ export default {
               .then(() => {
                 this.$router.push({ path: `/room/${res.data}` })
               })
+              .catch((error) => {
+                SweetAlert.error(error.response.data.errors[0] + '\n다시 시도해보세요.')
+                apiClient.delete(`${this.backURL}/room-member/${this.memberNo}`).then((res) => {
+                  console.log(res)
+                })
+              })
           })
       }
     }

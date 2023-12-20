@@ -145,11 +145,26 @@ export default {
         this.socket.send(JSON.stringify(enterMessage))
       }
 
-      this.socket.onclose = () => {
-        setTimeout(() => {
-          console.log('재시도', this.socket)
-          this.connect()
-        }, 3000)
+      this.socket.onclose = (socketClose) => {
+        apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
+          this.roomMemberList = response.data.roomMemberList
+          if (this.roomMemberList.length == 1) {
+            if (socketClose.code != 1000) {
+              apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
+                apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
+                  const ok = await SweetAlert.error(
+                    '입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.'
+                  )
+                  if (ok) {
+                    this.$router.push({ path: '/' }).then(() => {
+                      this.$router.go()
+                    })
+                  }
+                })
+              })
+            }
+          }
+        })
       }
 
       this.socket.onerror = () => {}
@@ -189,11 +204,10 @@ export default {
         }
       }
     },
-    disconnect() {
+    async disconnect() {
       apiClient
         .get(`${this.backURL}/room-member/${this.loginMemberNo}`)
         .then((res) => {
-          alert('disconnect ok라고')
           if (res.data) {
             if (this.isRoomManager || this.roomMemberList.length == 1) {
               let deleteCount = this.roomMemberList.length
@@ -237,10 +251,7 @@ export default {
             }
           }
         })
-        .catch(() => {
-          alert('disconnect ok라고')
-        })
-      alert('disconnect ok')
+        .catch(() => {})
     },
     sendMessage() {
       if (this.chatMessage == '') return
@@ -256,22 +267,6 @@ export default {
         this.chatMessage = ''
         this.scrollToBottom()
       }
-      // else {
-      //   apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(async () => {
-      //     if (
-      //       this.socket.readyState === WebSocket.CLOSED ||
-      //       this.socket.readyState === WebSocket.CLOSING
-      //     ) {
-      //       const ok = await SweetAlert.error(
-      //         '입장한 방에 접속할 수 없습니다. 다른 방을 이용해주세요.'
-      //       )
-      //       if (ok) {
-      //         setTimeout(() => {}, 3000)
-      //         this.$router.push({ path: '/' })
-      //       }
-      //     }
-      //   })
-      // }
     },
     quitMember(memberName, memberNo) {
       apiClient.delete(`${this.backURL}/room-member/${memberNo}`).then(() => {
@@ -321,31 +316,7 @@ export default {
       })
     },
     async unLoadEvent() {
-      //   const outMessage = {
-      //     type: 'ROOM_QUIT',
-      //     roomNo: this.roomNo,
-      //     sender: this.loginMemberName
-      //   }
-      //   apiClient.delete(`${this.backURL}/room-member/${this.loginMemberNo}`).then(() => {
-      //     if (this.isRoomManager || this.roomMemberList.length == 1) {
-      //       apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-      //         this.socket.send(JSON.stringify(outMessage))
-      //         this.isRoomManager = false
-      //         const ok = await SweetAlert.warning('방이 삭제되었습니다.')
-      //         if (ok) {
-      //           if (this.socket.readyState === WebSocket.OPEN) {
-      //             this.socket.close()
-      //           }
-      //         }
-      //       })
-      //     } else {
-      //       this.socket.send(JSON.stringify(outMessage))
-      //       if (this.socket.readyState === WebSocket.OPEN) {
-      //         this.socket.close()
-      //       }
-      //     }
-      //     this.$router.push({ path: '/' })
-      //   })
+      this.disconnect()
     },
     showMemberClickHandler() {
       this.memberProfilePopup = !this.memberProfilePopup
@@ -375,21 +346,6 @@ export default {
     apiClient.get(`${this.backURL}/member/my`).then((response) => {
       this.loginMemberName = response.data.memberName
       this.loginMemberNo = response.data.memberNo
-
-      // const enterRoomNo = localStorage.getItem('enterRoomNo')
-      // if (this.roomNo == enterRoomNo) {
-      //   apiClient
-      //     .delete(`${this.backURL}/room-member/${this.loginMemberNo}`)
-      //     .then(() => {
-      //       this.$router.push({ path: '/' })
-      //     })
-      //     .catch(() => {
-      //       this.$router.push({ path: '/' })
-      //     })
-      //   localStorage.removeItem('enterRoomNo')
-      // } else {
-      //   localStorage.setItem('enterRoomNo', this.roomNo)
-      // }
 
       apiClient
         .get(`${this.backURL}/room/${this.roomNo}`)
@@ -435,7 +391,14 @@ export default {
                     apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
                       this.roomInfo = response.data
                       this.roomMemberList = response.data.roomMemberList
-                      this.connect()
+                      if (this.socket == null) {
+                        this.connect()
+                      } else if (
+                        this.socket.readyState === WebSocket.CLOSED ||
+                        this.socket.readyState === WebSocket.CLOSING
+                      ) {
+                        this.connect()
+                      }
                     })
                   })
                   .catch((error) => {
@@ -443,7 +406,14 @@ export default {
                   })
               })
           } else {
-            this.connect()
+            if (this.socket == null) {
+              this.connect()
+            } else if (
+              this.socket.readyState === WebSocket.CLOSED ||
+              this.socket.readyState === WebSocket.CLOSING
+            ) {
+              this.connect()
+            }
           }
         })
         .catch(async (error) => {
@@ -454,38 +424,20 @@ export default {
             })
           }
         })
+      if (this.socket == null) {
+        this.connect()
+      } else if (
+        this.socket.readyState === WebSocket.CLOSED ||
+        this.socket.readyState === WebSocket.CLOSING
+      ) {
+        this.connect()
+      }
     })
     window.addEventListener('beforeunload', this.unLoadEvent)
   },
   beforeUnmount() {
-    // console.log('?')
     this.disconnect()
-    alert('?')
-    //   const outMessage = {
-    //     type: 'ROOM_QUIT',
-    //     roomNo: this.roomNo,
-    //     sender: this.loginMemberName
-    //   }
-    //   apiClient.get(`${this.backURL}/room-member/${this.loginMemberNo}`).then((res) => {
-    //     if (res.data) {
-    //       if (this.isRoomManager || this.roomMemberList.length == 1) {
-    //         let deleteCount = this.roomMemberList.length
-    //         this.roomMemberList.forEach((roomMember) => {
-    //           apiClient.delete(`${this.backURL}/room-member/${roomMember.memberNo}`).then(() => {
-    //             this.socket.send(JSON.stringify(outMessage))
-    //             deleteCount -= 1
-    //             if (deleteCount == 0) {
-    //               apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-    //                 this.isRoomManager = false
-    //                 await SweetAlert.warning('방이 삭제되었습니다.')
-    //               })
-    //               this.$router.push({ path: '/' })
-    //             }
-    //           })
-    //         })
-    //       }
-    //     }
-    //   })
+    window.addEventListener('beforeunload', this.unLoadEvent)
   }
 }
 </script>
@@ -546,6 +498,7 @@ pre {
   border-radius: 6px;
   color: var(--white-color);
   background-color: var(--black-color);
+  opacity: 80%;
 }
 
 .custom-tooltip:hover .custom-tooltiptext {
