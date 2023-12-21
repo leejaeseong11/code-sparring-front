@@ -197,7 +197,9 @@ export default {
       this.disconnect()
       console.log(this.roomMemberList.length)
       console.log(this.resultMemberNo)
-      const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${this.roomMemberList.length}`
+      var roomMemberSize = this.roomMemberList.length * 5
+      console.log('roomMemberSize: ' + roomMemberSize)
+      const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${roomMemberSize}`
       if (this.resultMemberNo == this.memberNo) {
         // apiClient 보내기
         apiClient
@@ -319,6 +321,13 @@ export default {
       this.reportModal = false
     },
     exitButtonClickHandler() {
+      var talkMessage = {
+        type: 'ROOM_TALK',
+        roomNo: this.roomNo,
+        sender: this.memberName,
+        message: this.memberNo
+      }
+      this.socket.send(JSON.stringify(talkMessage))
       this.disconnect()
       this.$router.push({ path: `/` })
     },
@@ -688,7 +697,7 @@ body.flex-container {
   border-radius: 10px;
   width: 400px;
   height: 540px;
-  margin-top: 250px;
+  margin-top: 100px;
   margin-left: 10px;
   z-index: 2;
   overflow: hidden;

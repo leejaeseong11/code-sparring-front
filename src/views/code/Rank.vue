@@ -663,7 +663,7 @@ body.flex-container {
   border-radius: 10px;
   width: 400px;
   height: 540px;
-  margin-top: 250px;
+  margin-top: 100px;
   margin-left: 10px;
   z-index: 2;
   overflow: hidden;
