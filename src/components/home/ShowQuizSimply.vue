@@ -2,7 +2,7 @@
   <div id="quiz-info-container">
     <div class="row">
       <div class="col-3">티어</div>
-      <div class="col-5">제목</div>
+      <div class="col-4">제목</div>
       <div class="col-2">정답률</div>
       <div class="col-2">출제자</div>
     </div>
@@ -30,7 +30,7 @@
       <div class="col-3" v-else>
         {{ quizInfo.quizTier }}
       </div>
-      <div class="col-5">{{ quizInfo.quizTitle }}</div>
+      <div class="col-4" id="simple-quiz-title">{{ quizInfo.quizTitle }}</div>
       <div class="col-2">
         {{
           quizInfo.quizSubmitCnt == 0
@@ -90,5 +90,10 @@ export default {
   word-wrap: break-word;
   font-size: 1.125rem;
   line-height: 1.5rem;
+}
+#simple-quiz-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
