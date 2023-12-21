@@ -25,9 +25,12 @@ apiClient.interceptors.response.use(
 
   async (error) => {
     if (error.response?.status === 401) {
-      sweetAlert.warning('로그인이 필요합니다', '', '로그인창으로 가기').then(() => {
-        window.location.href = '/login'
-      })
+      sweetAlert.warning('로그인이 필요합니다', '', '로그인창으로 가기')
+      .then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login';
+        }
+      });
     }
     if (error.response?.status === 403) {
       console.error('403 Forbidden 에러 발생 :', error.response)
