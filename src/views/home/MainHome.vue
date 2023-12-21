@@ -29,14 +29,14 @@
                   >티어는 랭크 모드 결과를 통해 정해집니다. <br />
                   티어의 종류는 다음과 같습니다.<br />
                   <img class="rank-tier-icon" src="/images/rank/bronze.png" alt="my-tier" />
-                  <span>브론즈</span>
+                  <span>브론즈 0pt</span>
                   <br />
                   <img class="rank-tier-icon" src="/images/rank/silver.png" alt="my-tier" />
-                  <span>실버</span><br />
+                  <span>실버 1000pt</span><br />
                   <img class="rank-tier-icon" src="/images/rank/gold.png" alt="my-tier" />
-                  <span>골드</span><br />
+                  <span>골드 5000pt</span><br />
                   <img class="rank-tier-icon" src="/images/rank/platinum.png" alt="my-tier" />
-                  <span>플래티넘</span>
+                  <span>플래티넘 15000pt</span>
                   <br />
                 </span>
               </div>
