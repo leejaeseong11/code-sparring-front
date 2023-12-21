@@ -136,8 +136,8 @@ export default {
         })
       }
 
-      if (this.testcase.length < 10) {
-        SweetAlert.warning('테스트케이스를\n 10개 이상 작성하세요', '', '확인')
+      if (this.testcase.length < 5) {
+        SweetAlert.warning('테스트케이스를\n 5개 이상 작성하세요', '', '확인')
         return
       }
 
