@@ -14,11 +14,7 @@
     <div v-if="this.popup" class="testcasePopup" @click="offWarning">
       <div class="popupBt">
         <div id="outTestcase">
-          <img
-            src="../../../public/images/quiz/addTestcaseOut.png"
-            @click="offPopup"
-            class="outTestcase"
-          />
+          <img src="/images/quiz/addTestcaseOut.png" @click="offPopup" class="outTestcase" />
         </div>
         <div>
           <button class="testcaseWarn" @mouseover="warning" @mouseleave="warning">!</button>
@@ -77,7 +73,8 @@
           <span style="color: var(--red-color); background-color: var(--main1-color)"
             >ex. 리턴 타입이 String인 경우, "de"<br /><br
           /></span>
-          테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 잘못된 입력은 오류가 발생할 수 있으니 주의하세요.
+          테스트케이스 10개 미만은 문제 제출이 불가합니다. (10개 고정!)<br />또한 잘못된 입력은
+          오류가 발생할 수 있으니 주의하세요.
         </div>
       </div>
     </div>
@@ -165,7 +162,7 @@ import GameEnd from '../../components/game/GameEnd.vue'
 
 export default {
   name: 'addQuiz',
-  components: {GameEnd},
+  components: { GameEnd },
   data() {
     return {
       title: '',
@@ -407,8 +404,7 @@ export default {
       this.consoleCode = html
     },
     addQuizBtClick() {
-
-      this.gameEnd=true
+      this.gameEnd = true
     },
     onTcHelp() {
       if (this.testcaseWarning) {
@@ -471,9 +467,9 @@ export default {
       this.testcaseWarning = false
     },
     backOff() {
-      this.gameEnd=false
+      this.gameEnd = false
       document.body.style.overflow = 'auto'
-    },
+    }
   }
 }
 </script>
@@ -488,7 +484,7 @@ export default {
   position: relative;
 }
 
-div{
+div {
   cursor: default;
 }
 

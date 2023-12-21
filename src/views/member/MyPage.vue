@@ -10,7 +10,7 @@
         <div class="index" id="code-page" @click="movePage">제출한 코드</div>
         <div class="index" id="rank-history" @click="movePage">랭크 전적</div>
         <div id="etc-bt">
-          <img src="../../../public/images/admin/home.png" class="home-bt" alt="home" @click="movePage" />
+          <img src="/images/admin/home.png" class="home-bt" alt="home" @click="movePage" />
           <button id="unregister" @click="onRemoveModal">회원 탈퇴</button>
         </div>
       </div>
@@ -33,7 +33,7 @@ import MyCode from '../../components/profile/MyCode.vue'
 import RankHistory from '../../components/profile/RankHistory.vue'
 import ProfileRemove from '../../components/profile/ProfileRemove.vue'
 
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import sweetAlert from '../../util/modal.js'
 
 export default {
@@ -49,9 +49,8 @@ export default {
       removeModal: false,
       loginMember: {
         memberNo: 0,
-        authority: '',
+        authority: ''
       }
-
     }
   },
   methods: {
@@ -82,12 +81,12 @@ export default {
           this.loginMember = response.data
           this.memberNo = this.$route.params.memberNo
 
-          if (this.loginMember.authority == "ROLE_ADMIN") {
+          if (this.loginMember.authority == 'ROLE_ADMIN') {
             return
           }
 
           if (this.loginMember.memberNo != this.memberNo) {
-            sweetAlert.error("권한이 없습니다", '', '뒤로 가기').then(() => {
+            sweetAlert.error('권한이 없습니다', '', '뒤로 가기').then(() => {
               window.history.back()
             })
           }

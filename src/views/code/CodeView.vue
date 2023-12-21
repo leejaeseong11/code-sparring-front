@@ -73,11 +73,11 @@
                 <span class="report-span" id="report-id">
                   {{ report.reportComment == null ? '' : '-' + report.memberName + '님 신고' }}
                 </span>
-                <br>
+                <br />
               </div>
             </div>
           </div>
-          <div v-if="this.rptOkCnt!=0"><hr></div>
+          <div v-if="this.rptOkCnt != 0"><hr /></div>
           <textarea
             class="readonlyTextarea"
             id="quiz-content"
@@ -88,8 +88,9 @@
 
         <div id="code-area">
           <div class="index-name">제출한 코드</div>
-          <textarea class="readonlyTextarea" id="quiz-code"
-          readonly>{{this.fileContent}}</textarea>
+          <textarea class="readonlyTextarea" id="quiz-code" readonly>{{
+            this.fileContent
+          }}</textarea>
 
           <div id="button-area">
             <div></div>
@@ -107,8 +108,10 @@
   </main>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+
+import { apiClient } from '@/util/axios-interceptor'
 import AddReport from '../../components/report/AddReport.vue'
+
 export default {
   name: 'CodeView',
   props: ['quizInfo'],
@@ -130,7 +133,7 @@ export default {
       reportModal: false,
       memberNo: '',
       quizUrl: '',
-      fileContent: '',
+      fileContent: ''
     }
   },
   methods: {
@@ -152,9 +155,7 @@ export default {
       const memberNo = this.$route.params.memberNo
       location.href = '/profile/code/' + memberNo
     },
-    objectUrlGet() {
-
-    }
+    objectUrlGet() {}
   },
   created() {
     this.quizNo = this.$route.params.quizNo
@@ -180,9 +181,9 @@ export default {
       .catch(() => {
         alert('문제 조회에 실패하였습니다')
       })
-      this.memberNo = this.$route.params.memberNo
-      const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
-      apiClient
+    this.memberNo = this.$route.params.memberNo
+    const url2 = `${this.backURL}/mycode/${this.memberNo}/${this.quizNo}`
+    apiClient
       .get(url2, {
         headers: {
           'Content-Type': 'application/json'
@@ -192,19 +193,19 @@ export default {
         this.quizUrl = res.data
 
         // S3 객체의 URL 사용
-        const s3ObjectUrl = this.quizUrl;
+        const s3ObjectUrl = this.quizUrl
         // 파일 내용을 가져오기
         fetch(s3ObjectUrl)
-        .then(response => response.text())
-        .then(data => {
-          // 파일 내용을 화면에 출력
-          this.fileContent = data;
-        })
-        .catch(error => {
-          console.error('Error fetching file from S3:', error);
-        });
+          .then((response) => response.text())
+          .then((data) => {
+            // 파일 내용을 화면에 출력
+            this.fileContent = data
+          })
+          .catch((error) => {
+            console.error('Error fetching file from S3:', error)
+          })
       })
-  },
+  }
 }
 </script>
 <style scoped>

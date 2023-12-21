@@ -91,7 +91,7 @@
   </div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import RoomMember from '../../components/room/RoomMember.vue'
@@ -377,101 +377,110 @@ export default {
     }
   },
   mounted() {
-    this.$emit('updateLogoDisabled(true)')
-    this.roomNo = this.$router.currentRoute.value.params.roomNo
+    if (!history.state.rightAccess) {
+      console.log('history.state: ', history.state.rightAccess)
+      SweetAlert.error('잘못된 접근입니다.').then((ok) => {
+        if (ok.isConfirmed) {
+          this.$router.go(-1)
+        }
+      })
+    } else {
+      this.$emit('updateLogoDisabled(true)')
+      this.roomNo = this.$router.currentRoute.value.params.roomNo
 
-    apiClient.get(`${this.backURL}/member/my`).then((response) => {
-      this.loginMemberName = response.data.memberName
-      this.loginMemberNo = response.data.memberNo
+      apiClient.get(`${this.backURL}/member/my`).then((response) => {
+        this.loginMemberName = response.data.memberName
+        this.loginMemberNo = response.data.memberNo
 
-      apiClient
-        .get(`${this.backURL}/room/${this.roomNo}`)
-        .then((response) => {
-          this.roomInfo = response.data
-          this.roomMemberList = response.data.roomMemberList
-          if (
-            this.roomMemberList.filter((roomMember) => {
-              if (roomMember.memberNo == this.loginMemberNo) {
-                this.isRoomManager = roomMember.hostStatus == 0 ? true : false
-              }
-              return roomMember.memberNo == this.loginMemberNo
-            }).length == 0
-          ) {
-            let addMemberUrl
-            if (this.roomInfo.roomPwd) {
-              addMemberUrl = `${this.backURL}/room-member?roomPwd=${this.roomInfo.roomPwd}`
-            } else {
-              addMemberUrl = `${this.backURL}/room-member`
-            }
-
-            apiClient
-              .get(`${this.backURL}/room-member/isHost/${this.loginMemberNo}`)
-              .then((response) => {
-                console.log(response)
-                this.isRoomManager = response.data
-
-                apiClient
-                  .post(
-                    addMemberUrl,
-                    {
-                      memberNo: this.loginMemberNo,
-                      roomNo: this.roomInfo.roomNo,
-                      hostStatus: this.isRoomManager ? 0 : 1
-                    },
-                    {
-                      headers: {
-                        'Content-Type': 'application/json'
-                      }
-                    }
-                  )
-                  .then(() => {
-                    apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
-                      this.roomInfo = response.data
-                      this.roomMemberList = response.data.roomMemberList
-                      if (this.socket == null) {
-                        this.connect()
-                      } else if (
-                        this.socket.readyState === WebSocket.CLOSED ||
-                        this.socket.readyState === WebSocket.CLOSING
-                      ) {
-                        this.connect()
-                      }
-                    })
-                  })
-                  .catch((error) => {
-                    SweetAlert.error(error.response.data.errors[0])
-                  })
-              })
-          } else {
-            if (this.socket == null) {
-              this.connect()
-            } else if (
-              this.socket.readyState === WebSocket.CLOSED ||
-              this.socket.readyState === WebSocket.CLOSING
+        apiClient
+          .get(`${this.backURL}/room/${this.roomNo}`)
+          .then((response) => {
+            this.roomInfo = response.data
+            this.roomMemberList = response.data.roomMemberList
+            if (
+              this.roomMemberList.filter((roomMember) => {
+                if (roomMember.memberNo == this.loginMemberNo) {
+                  this.isRoomManager = roomMember.hostStatus == 0 ? true : false
+                }
+                return roomMember.memberNo == this.loginMemberNo
+              }).length == 0
             ) {
-              this.connect()
-            }
-          }
-        })
-        .catch(async (error) => {
-          SweetAlert.error(error.response.data.errors[0]).then((ok) => {
-            if (ok.isConfirmed) {
-              this.$router.push({ path: '/' }).then(() => {
-                this.$router.go()
-              })
+              let addMemberUrl
+              if (this.roomInfo.roomPwd) {
+                addMemberUrl = `${this.backURL}/room-member?roomPwd=${this.roomInfo.roomPwd}`
+              } else {
+                addMemberUrl = `${this.backURL}/room-member`
+              }
+
+              apiClient
+                .get(`${this.backURL}/room-member/isHost/${this.loginMemberNo}`)
+                .then((response) => {
+                  console.log(response)
+                  this.isRoomManager = response.data
+
+                  apiClient
+                    .post(
+                      addMemberUrl,
+                      {
+                        memberNo: this.loginMemberNo,
+                        roomNo: this.roomInfo.roomNo,
+                        hostStatus: this.isRoomManager ? 0 : 1
+                      },
+                      {
+                        headers: {
+                          'Content-Type': 'application/json'
+                        }
+                      }
+                    )
+                    .then(() => {
+                      apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((response) => {
+                        this.roomInfo = response.data
+                        this.roomMemberList = response.data.roomMemberList
+                        if (this.socket == null) {
+                          this.connect()
+                        } else if (
+                          this.socket.readyState === WebSocket.CLOSED ||
+                          this.socket.readyState === WebSocket.CLOSING
+                        ) {
+                          this.connect()
+                        }
+                      })
+                    })
+                    .catch((error) => {
+                      SweetAlert.error(error.response.data.errors[0])
+                    })
+                })
+            } else {
+              if (this.socket == null) {
+                this.connect()
+              } else if (
+                this.socket.readyState === WebSocket.CLOSED ||
+                this.socket.readyState === WebSocket.CLOSING
+              ) {
+                this.connect()
+              }
             }
           })
-        })
-      if (this.socket == null) {
-        this.connect()
-      } else if (
-        this.socket.readyState === WebSocket.CLOSED ||
-        this.socket.readyState === WebSocket.CLOSING
-      ) {
-        this.connect()
-      }
-    })
-    window.addEventListener('beforeunload', this.unLoadEvent)
+          .catch(async (error) => {
+            SweetAlert.error(error.response.data.errors[0]).then((ok) => {
+              if (ok.isConfirmed) {
+                this.$router.push({ path: '/' }).then(() => {
+                  this.$router.go()
+                })
+              }
+            })
+          })
+        if (this.socket == null) {
+          this.connect()
+        } else if (
+          this.socket.readyState === WebSocket.CLOSED ||
+          this.socket.readyState === WebSocket.CLOSING
+        ) {
+          this.connect()
+        }
+      })
+      window.addEventListener('beforeunload', this.unLoadEvent)
+    }
   },
   beforeUnmount() {
     this.disconnect()
