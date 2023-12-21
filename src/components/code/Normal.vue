@@ -460,10 +460,6 @@ export default {
     }
     this.socket.send(JSON.stringify(outMessage))
     this.disconnect()
-  },
-  beforeDestroy() {
-    // 컴포넌트가 파괴되기전 이벤트 리스너 제거
-    window.removeEventListener('beforeunload', this.beforeUnloadHandler)
   }
 }
 </script>
