@@ -9,7 +9,7 @@
         :id="'code.' + code.quizNo"
       >
         <span class="opposing-name">{{ code.quizCorrect === 1 ? '성공' : '실패' }}</span>
-        <span class="opposing-name">{{ code.quizTitle }}</span>
+        <span class="opposing-name" :title="''+code.quizTitle">{{ code.quizTitle }}</span>
         <span class="opposing-name">{{ code.quizDt }}</span>
         <button id="codeInfo" :data-quizno="code.quizNo" @click="codeClickHandler($event)">
           조회

@@ -173,12 +173,13 @@ export default {
       if (e.target.id == 'modify-button') {
         this.modifyBt = true
       } else if (e.target.id == 'cancle-button') {
-        var result = confirm('문제 수정을 취소하시겠습니까?')
-        if (result) window.history.go(0)
+        SweetAlert.question('문제 수정을 취소하시겠습니까?', '', '확인', '취소').then((res)=>{
+          if(res.isConfirmed) window.history.go(0)
+        })
       } else if (e.target.id == 'save-button') {
-        result = confirm('문제를 저장하시겠습니까?')
-        if (!result) return
-        const data = {
+        SweetAlert.question('문제를 저장하시겠습니까?', '', '확인', '취소').then((res)=>{
+          if(!res.isConfirmed) return
+          const data = {
           quizTitle: this.quizTitle,
           quizContent: this.quizContent,
           quizInput: this.inputInfo,
@@ -203,6 +204,7 @@ export default {
               window.history.go(0)
             })
           })
+        })
       }
     },
     codeFile() {

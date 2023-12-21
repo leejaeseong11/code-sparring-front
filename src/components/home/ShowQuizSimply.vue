@@ -2,7 +2,7 @@
   <div id="quiz-info-container">
     <div class="row">
       <div class="col-3">티어</div>
-      <div class="col-5">제목</div>
+      <div class="col-4">제목</div>
       <div class="col-2">정답률</div>
       <div class="col-2">출제자</div>
     </div>
@@ -17,7 +17,7 @@
       >
         {{ quizInfo.quizTier }}
       </div>
-      <div class="col-3" v-else-if="quizInfo.quizTier == 'GOLD'" style="color: var(--silver-color)">
+      <div class="col-3" v-else-if="quizInfo.quizTier == 'GOLD'" style="color: var(--gold-color)">
         {{ quizInfo.quizTier }}
       </div>
       <div
@@ -30,7 +30,7 @@
       <div class="col-3" v-else>
         {{ quizInfo.quizTier }}
       </div>
-      <div class="col-5">{{ quizInfo.quizTitle }}</div>
+      <div class="col-4" id="simple-quiz-title">{{ quizInfo.quizTitle }}</div>
       <div class="col-2">
         {{
           quizInfo.quizSubmitCnt == 0
@@ -45,7 +45,7 @@
   </div>
   <div id="quiz-content-title">문제 설명</div>
   <div id="quiz-content-container">
-    <pre id="quiz-content">{{ quizInfo.quizContent }}</pre>
+    <div id="quiz-content">{{ quizInfo.quizContent }}</div>
   </div>
 </template>
 <script>
@@ -70,7 +70,7 @@ export default {
   height: 454px;
 
   white-space: wrap;
-  overflow: scroll;
+  overflow: auto;
 
   border: 3px dashed var(--main5-color);
 }
@@ -83,10 +83,17 @@ export default {
 #quiz-content {
   padding: 8px;
 
+  white-space: pre-wrap;
+  overflow: auto;
   font-family: 'DNFBitBitv2';
 
   word-wrap: break-word;
   font-size: 1.125rem;
   line-height: 1.5rem;
+}
+#simple-quiz-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
