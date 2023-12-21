@@ -245,26 +245,9 @@ export default defineComponent({
           this.output = response.data.result
           this.gameResult = response.data.gameResult
 
-          this.gameResult = '1'
           if (this.gameResult == '1') {
             this.$emit('monacoWinMemberNo', this.memberNo)
           }
-
-          //게임 결과 update
-          // const data = {
-          //   gameResult: this.gameResult
-          // }
-          // const url2 = `${this.backURL}/rankgame/${this.rankNo}`
-          // apiClient
-          //   .put(url2, JSON.stringify(data), {
-          //     headers: {
-          //       'Content-Type': 'application/json'
-          //     }
-          //   })
-          //   .catch(error => {
-          //     console.log('Server Error:', error);
-          //       alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.');
-          //   });
         })
         //네트워크에 의한 요청 실패일 경우
         .catch((error) => {

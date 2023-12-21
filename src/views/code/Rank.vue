@@ -138,7 +138,6 @@ export default {
       document.body.style.overflow = 'auto'
       this.disconnect()
 
-      console.log(this.winMemberNo)
       if (this.memberNo == this.member1No && this.winMemberNo == this.memberNo) {
         if (this.resultMemberNo == this.memberNo) {
           //   게임 결과 update
@@ -198,7 +197,6 @@ export default {
     },
     setWinMember(dataFromChild) {
       this.winMemberNo = dataFromChild
-      console.log(this.winMemberNo)
       var winMember = {
         type: 'CODE_STATUS',
         codeRoomNo: this.rankNo,
@@ -206,14 +204,6 @@ export default {
         codeStatus: this.winMemberNo + ',win'
       }
       this.socket.send(JSON.stringify(winMember))
-
-      // var talkMessage = {
-      //     type: 'CODE_STATUS',
-      //     codeRoomNo: this.rankNo,
-      //     codeSender: this.memberName,
-      //     codeStatus: this.buttonValue
-      // }
-      // this.socket.send(JSON.stringify(talkMessage))
     },
     connect() {
       this.socket = new WebSocket(this.socketURL)
@@ -231,12 +221,9 @@ export default {
       this.socket.onerror = () => {}
 
       this.socket.onmessage = (e) => {
-        console.log(e.data)
         if (this.socket.readyState === WebSocket.OPEN) {
-          console.log(e.data)
           const rawData = e.data
           const colonIndex = rawData.indexOf(':')
-          console.log(rawData)
           var msgMemberName = ''
           var msgMemberButtonValue = ''
           //test1: run
@@ -250,9 +237,8 @@ export default {
               this.buttonValuePlayer2 = msgMemberButtonValue
             }
           }
-          console.log(msgMemberButtonValue)
+
           const colonIndex2 = msgMemberButtonValue.indexOf(',')
-          console.log(colonIndex2)
           if (colonIndex2 !== -1) {
             this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim()
             this.gameEnd = true
@@ -264,7 +250,7 @@ export default {
           this.socket.readyState === WebSocket.CLOSING ||
           this.socket.readyState === WebSocket.CLOSED
         ) {
-          console.log('?')
+
           this.connect()
         }
       }

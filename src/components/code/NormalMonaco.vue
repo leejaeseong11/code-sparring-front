@@ -244,7 +244,6 @@ export default defineComponent({
           this.output = response.data.result
           this.gameResult = response.data.gameResult
 
-          this.gameResult = '1'
           if (this.gameResult == '1') {
             this.$emit('monacoWinMemberNo', this.memberNo)
           }
