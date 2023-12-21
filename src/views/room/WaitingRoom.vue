@@ -204,7 +204,6 @@ export default {
                   if (this.roomMemberList.length == 0) {
                     this.$router.push({ path: '/' })
                     SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                      console.log(this.roomInfo.roomStatus)
                       if (ok.isConfirmed) {
                         this.$router.go()
                       }
@@ -218,7 +217,6 @@ export default {
 
                     if (this.roomInfo.roomStatus == 1) {
                       SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                        console.log(this.roomInfo.roomStatus)
                         if (ok.isConfirmed) {
                           this.$router.go()
                         }
@@ -260,10 +258,8 @@ export default {
                             this.socket.send(JSON.stringify(outMessage))
                             // this.socket.close()
                           }
-                          console.log(this.roomInfo.roomStatus)
                           if (this.roomInfo.roomStatus == 1) {
                             SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                              console.log(this.roomInfo.roomStatus)
                               if (ok.isConfirmed) {
                                 if (this.socket.readyState === WebSocket.OPEN) {
                                   // this.socket.close()
