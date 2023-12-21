@@ -70,7 +70,7 @@ export default {
   height: 454px;
 
   white-space: wrap;
-  overflow: scroll;
+  overflow: auto;
 
   border: 3px dashed var(--main5-color);
 }
@@ -84,7 +84,7 @@ export default {
   padding: 8px;
 
   white-space: pre-wrap;
-  overflow: scroll;
+  overflow: auto;
   font-family: 'DNFBitBitv2';
 
   word-wrap: break-word;
