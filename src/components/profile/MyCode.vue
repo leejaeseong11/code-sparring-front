@@ -42,11 +42,11 @@ export default {
   methods: {
     handleScroll() {
       if (this.isScrolling) return
+      this.isScrolling = true
       const container = this.$refs.scrollContainer
       const scrollPosition = container.scrollTop + container.clientHeight
       const totalHeight = container.scrollHeight
       if (scrollPosition >= totalHeight) {
-        this.isScrolling = true
         this.handleScrollEnd()
         // this.isScrolling = false
       }
