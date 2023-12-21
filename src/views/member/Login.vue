@@ -156,7 +156,7 @@ html {
 }
 
 input {
-  height: 20px;
+  height: 30px;
 }
 
 .join,
