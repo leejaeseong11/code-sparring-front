@@ -3,8 +3,7 @@
   <div class="logo">
     <img id="main-logo" src="/images/logo.gif" alt="logo" @click="gotoLogin" />
   </div>
-
-  <form class="signup" v-on:submit.prevent="signupFormSubmitHandler">
+<form class="signup" v-on:submit.prevent="signupFormSubmitHandler">
     <div class="content">
       <section>
         <div class="divImg"></div>
@@ -17,92 +16,53 @@
             />
             <button @click="onProfileModal" type="button">변경</button>
           </div>
-        </div>
-        <div v-if="profileModal" id="back-off" @click="offProfileModal"></div>
-        <ProfileImgPopup
-          v-if="profileModal"
-          @selected="handleSelectedProfileImage"
-          @close-modal="offProfileModal"
-        />
+                </div>
+                <div v-if="profileModal" id="back-off" @click="offProfileModal"></div>
+                <ProfileImgPopup v-if="profileModal" @selected="handleSelectedProfileImage"
+                    @close-modal="offProfileModal" />
 
-        <div class="info" id="info-id">
-          <div id="id-input">
-            <input
-              class="box"
-              type="text"
-              name="id"
-              id="i"
-              v-model="c.id"
-              placeholder="아이디 입력 (4~15자)"
-            />
-            <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
-          </div>
-        </div>
+                <div class="info" id="info-id">
+                    <div id="id-input">
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디(영문 소문자,숫자 15자까지)" />
+                        <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
+                    </div>
+                </div>
 
-        <div class="info" id="info-pwd">
-          <input
-            class="box"
-            type="password"
-            name="pwd"
-            id="p"
-            v-model="c.pwd"
-            placeholder="비밀번호 입력 (문자, 숫자, 특수문자 포함 8~20자)"
-          />
-        </div>
+                <div class="info" id="info-pwd">
+                    <input class="box" type="password" name="pwd" id="p" v-model="c.pwd"
+                        placeholder="비밀번호 입력(문자, 숫자, 특수문자 포함 8~20자)" />
+                </div>
 
-        <div class="info" id="info-pwdRe">
-          <input
-            class="box"
-            type="password"
-            id="pwdRe"
-            v-model="pwdRe"
-            placeholder="비밀번호 재입력"
-          />
-        </div>
+                <div class="info" id="info-pwdRe">
+                    <input class="box" type="password" id="pwdRe" v-model="pwdRe" placeholder="비밀번호 재입력">
+                </div>
 
-        <div class="info" id="info-id">
-          <div id="id-input">
-            <input
-              class="box"
-              type="text"
-              name="memberName"
-              id="n"
-              v-model="c.name"
-              placeholder="닉네임 입력 (추후 변경 가능)"
-            />
-            <button id="name-check" @click="btNameDupchkClickHandler" type="button">
-              중복확인
-            </button>
-          </div>
-        </div>
-        <div class="info" id="info-introduction">
-          <textarea
-            class="box"
-            type="text"
-            name="intro"
-            id="intro"
-            v-model="intro"
-            placeholder="소개(자신에 대해 알려주세요)"
-          ></textarea>
-        </div>
-      </section>
+                <div class="info" id="info-id">
+                    <div id="id-input">
+                        <input class="box" type="text" name="memberName" id="n" v-model="c.name"
+                            placeholder="닉네임 입력 (추후 변경 가능)" />
+                        <button id="name-check" @click="btNameDupchkClickHandler" type="button">중복확인</button>
+                    </div>
+                </div>
+                <div class="info" id="info-introduction">
+                    <textarea class="box" type="text" name="intro" id="intro" v-model="intro"
+                        placeholder="소개(자신에 대해 알려주세요)"></textarea>
+                </div>
+            </section>
 
-      <p for="privacy-checkbox" class="info" id="privacy-agreement">
-        ※ 개인정보 수집 및 이용 동의 ※<br />
-        코드스파링은 이용자 식별을 위해 아이디와 비밀번호를 수집하고 있으며, 게임 탈퇴 시까지
-        이용합니다.
-      </p>
-      <div id="info-agree">
-        <input type="checkbox" id="privacy-checkbox" v-model="agreeCheck" />
-        위의 내용에 동의합니다.
-      </div>
-      <button id="submit" :disabled="!agreeCheck" :class="{ 'disabled-btn': !agreeCheck }">
-        가입하기
-      </button>
-      <div class="exist">
-        <span>이미 회원이신가요?</span>
-        <router-link to="/login">로그인 하러가기</router-link>
-      </div>
+            <p for="privacy-checkbox" class="info" id="privacy-agreement">
+                ※ 개인정보 수집 및 이용 동의 ※<br>
+                코드스파링은 이용자 식별을 위해 아이디와 비밀번호를 수집하고 있으며, 게임 탈퇴 시까지 이용합니다.
+            </p>
+            <div id="info-agree">
+                <input type="checkbox" id="privacy-checkbox" v-model="agreeCheck">
+                위의 내용에 동의합니다.
+            </div>
+            <button id="submit" :disabled="!agreeCheck" :class="{ 'disabled-btn': !agreeCheck }">가입하기</button>
+            <div class="exist">
+                <span>이미 회원이신가요?</span>
+                <router-link to="/login">로그인 하러가기</router-link>
+            </div>
     </div>
   </form>
 </template>
@@ -113,136 +73,133 @@ import sweetAlert from '../../util/modal.js'
 import ProfileImgPopup from '../../components/profile/ProfileImgPopup.vue'
 
 export default {
-  name: 'Signup',
-  components: { ProfileImgPopup },
-  data() {
-    return {
-      pwdRe: null,
-      intro: '',
-      c: {
-        id: null,
-        pwd: null,
-        name: null
-      },
-      memberProfileImg: 0,
-      profileModal: false,
-      agreeCheck: false
+    name: "Signup",
+    components: { ProfileImgPopup },
+    data() {
+        return {
+            pwdRe: null,
+            intro: '',
+            c: {
+                id: null,
+                pwd: null,
+                name: null,
+            },
+            memberProfileImg: 0,
+            profileModal: false,
+            agreeCheck: false,
+        }
+    },
+    methods: {
+        offProfileModal() {
+            this.profileModal = false
+        },
+        onProfileModal() {
+            this.profileModal = true
+        },
+        handleSelectedProfileImage(index) {
+            this.memberProfileImg = index
+            this.onProfileModal()
+        },
+        gotoLogin() {
+            this.$router.push('/login')
+        },
+
+        btIdDupchkClickHandler() {
+            const idRegExp = /^[a-zA-Z0-9]{4,15}$/
+            if (!idRegExp.test(this.c.id)) {
+                sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
+                return
+            }
+
+            const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
+            apiClient
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    const isDuplicate = response.data
+                    if (!isDuplicate) {
+                        sweetAlert.success("사용 가능한 아이디입니다", '', '닫기')
+                    } else {
+                        sweetAlert.warning("이미 사용중인 아이디입니다", '', '닫기')
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                    sweetAlert.warning(error.response.data.errors[0], '', '닫기')
+                })
+        },
+
+        btNameDupchkClickHandler() {
+            const nameRegExp = /^[^\s]{1,8}$/;
+            if (!nameRegExp.test(this.c.name)) {
+                sweetAlert.warning("1~8자만 사용 가능합니다", '', '닫기')
+                return
+            }
+
+            const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.name}`
+            apiClient
+                .get(url, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => {
+                    const isDuplicate = response.data
+                    if (!isDuplicate) {
+                        sweetAlert.success("사용 가능한 닉네임입니다", '', '닫기')
+                    } else {
+                        sweetAlert.warning("이미 사용중인 닉네임입니다", '', '닫기')
+                    }
+                })
+                .catch(error => {
+                    console.error(error)
+                    sweetAlert.warning("서버 오류가 발생했습니다", '', '닫기')
+                })
+        },
+        signupFormSubmitHandler(e) {
+            if (this.c.id == null || this.c.id == ''
+                || this.c.name == null || this.c.name == '') {
+                sweetAlert.warning("누락된 항목이 있습니다", '', '닫기')
+                return
+            }
+
+            const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
+            if (!pwdRegExp.test(this.c.pwd)) {
+                sweetAlert.warning("비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다", '', '닫기')
+                return
+            }
+            if (this.c.pwd != this.pwdRe) {
+                sweetAlert.warning("비밀번호 확인을 다시 입력해주세요", '', '닫기')
+                return
+            }
+            const data = {
+                memberInfo: this.intro === '' ? null : this.intro,
+                memberId: this.c.id,
+                memberPwd: this.c.pwd,
+                memberName: this.c.name,
+                memberProfileImg: this.memberProfileImg
+            }
+            apiClient
+                .post(`${this.backURL}/auth/signup`, data, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log(response)
+                    sweetAlert.success("가입에 성공했습니다", '', '닫기').then(() => {
+                        location.href = '/login'
+                    })
+                })
+                .catch(error => {
+                    sweetAlert.warning(error.response.data.errors[0], '', '닫기')
+                    return
+                })
+        }
     }
-  },
-  methods: {
-    offProfileModal() {
-      this.profileModal = false
-    },
-    onProfileModal() {
-      this.profileModal = true
-    },
-    handleSelectedProfileImage(index) {
-      this.memberProfileImg = index
-      this.onProfileModal()
-    },
-    gotoLogin() {
-      this.$router.push('/login')
-    },
-
-    btIdDupchkClickHandler() {
-      const idRegExp = /^[a-zA-Z0-9]{4,15}$/
-      if (!idRegExp.test(this.c.id)) {
-        sweetAlert.warning('4~15자의 영문 소문자와 숫자만 사용 가능합니다', '', '닫기')
-        return
-      }
-
-      const url = `${this.backURL}/auth/chkDupId?memberId=${this.c.id}`
-      apiClient
-        .get(url, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((response) => {
-          const isDuplicate = response.data
-          if (!isDuplicate) {
-            sweetAlert.success('사용 가능한 아이디입니다', '', '닫기')
-          } else {
-            sweetAlert.warning('이미 사용중인 아이디입니다', '', '닫기')
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          sweetAlert.warning(error.response.data.errors[0], '', '닫기')
-        })
-    },
-
-    btNameDupchkClickHandler() {
-      const nameRegExp = /^[a-zA-Z0-9]{4,15}$/
-      if (!nameRegExp.test(this.c.name)) {
-        sweetAlert.warning('4~15자의 영문 소문자와 숫자만 사용 가능합니다', '', '닫기')
-        return
-      }
-
-      const url = `${this.backURL}/auth/chkDupName?memberName=${this.c.name}`
-      apiClient
-        .get(url, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((response) => {
-          const isDuplicate = response.data
-          if (!isDuplicate) {
-            sweetAlert.success('사용 가능한 닉네임입니다', '', '닫기')
-          } else {
-            sweetAlert.warning('이미 사용중인 닉네임입니다', '', '닫기')
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          sweetAlert.warning('서버 오류가 발생했습니다', '', '닫기')
-        })
-    },
-    signupFormSubmitHandler(e) {
-      if (this.c.id == null || this.c.id == '' || this.c.name == null || this.c.name == '') {
-        sweetAlert.warning('누락된 항목이 있습니다', '', '닫기')
-        return
-      }
-
-      const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
-      if (!pwdRegExp.test(this.c.pwd)) {
-        sweetAlert.warning(
-          '비밀번호는 8~20자의 영문 \n 대/소문자, 숫자, 특수문자를 \n 포함해야 합니다',
-          '',
-          '닫기'
-        )
-        return
-      }
-      if (this.c.pwd != this.pwdRe) {
-        sweetAlert.warning('비밀번호 확인을 다시 입력해주세요', '', '닫기')
-        return
-      }
-      const data = {
-        memberInfo: this.intro === '' ? null : this.intro,
-        memberId: this.c.id,
-        memberPwd: this.c.pwd,
-        memberName: this.c.name,
-        memberProfileImg: this.memberProfileImg
-      }
-      apiClient
-        .post(`${this.backURL}/auth/signup`, data, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((response) => {
-          console.log(response)
-          sweetAlert.success('가입에 성공했습니다', '', '닫기').then(() => {
-            location.href = '/login'
-          })
-        })
-        .catch((error) => {
-          sweetAlert.warning(error.response.data.errors[0], '', '닫기')
-          return
-        })
-    }
-  }
 }
 </script>
 
