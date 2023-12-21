@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import SweetAlert from '../../util/modal.js'
 export default {
   name: 'AdminQuizPopup',
@@ -46,11 +46,11 @@ export default {
         this.quizCorrect = res.data.quizCorrectPercent
         this.quizTier = res.data.quizTier
         this.status = true
-      }).catch(() => {
-        SweetAlert.error('존재하지 않는 번호입니다', '', '확인').then(()=>{
+      })
+      .catch(() => {
+        SweetAlert.error('존재하지 않는 번호입니다', '', '확인').then(() => {
           window.history.go(0)
         })
-        
       })
   }
 }

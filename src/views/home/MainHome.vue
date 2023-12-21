@@ -211,7 +211,7 @@
   </div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import MainHomeRoom from '../../components/home/MainHomeRoom.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import AddRoom from '../../components/room/AddRoom.vue'

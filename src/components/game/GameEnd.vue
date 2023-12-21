@@ -1,29 +1,25 @@
 <template>
   <main>
     <div id="popup-area">
-        <div id="header">
-      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
-      WINNER
-      <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
-    </div>
-    <div id="winner-img">
-      <img
-        :src="'/images/icon/' + this.winNo + '.png'"
-        id="win-profile-img"
-        alt="win-member"
-      />
-    </div>
-    <div id="win-content">
+      <div id="header">
+        <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+        WINNER
+        <img src="/images/rank/winner.gif" id="winner-icon" alt="win-icon" />
+      </div>
+      <div id="winner-img">
+        <img :src="'/images/icon/' + this.winNo + '.png'" id="win-profile-img" alt="win-member" />
+      </div>
+      <div id="win-content">
         <div id="winner-name">{{ this.winName }}</div>
+      </div>
+      <div id="button-div">
+        <button id="close-button" @click="$emit('close-popup')">닫기</button>
+      </div>
     </div>
-    <div id="button-div">
-      <button id="close-button" @click="$emit('close-popup')">닫기</button>
-    </div>
-    </div>
-</main>
+  </main>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 export default {
   name: 'GameEnd',
   data() {
@@ -35,31 +31,27 @@ export default {
   },
   props: {
     resultMemberNo: {
-        type: String,
-        default: ''
-    },
+      type: String,
+      default: ''
+    }
   },
   created() {
     const url = `${this.backURL}/member/${this.resultMemberNo}`
     apiClient
-    .get(url, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((response) => {
-      this.winNo = response.data.memberProfileImg
-      this.winName = response.data.memberName
-    })
-
+      .get(url, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        this.winNo = response.data.memberProfileImg
+        this.winName = response.data.memberName
+      })
   },
-  methods: {
-
-  }
+  methods: {}
 }
 </script>
 <style scoped>
-
 #header,
 #winner-name,
 #time {
@@ -67,8 +59,8 @@ export default {
 }
 
 #time {
-    color: var(--main1-color);
-    font-size: 18px;
+  color: var(--main1-color);
+  font-size: 18px;
 }
 
 #header {
@@ -93,34 +85,34 @@ export default {
 }
 
 #win-content {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 20px;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 20px;
 }
 
 #button-div {
-    text-align: center;
-    margin-top: 40px;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 #close-button {
-    width: 120px;
-    height: 50px;
-    font-size: 18px;
-    background-color: var(--main2-color);
-    color: var(--white-color);
-    border: 1px solid var(--main2-color);
-    border-radius: 10px;
+  width: 120px;
+  height: 50px;
+  font-size: 18px;
+  background-color: var(--main2-color);
+  color: var(--white-color);
+  border: 1px solid var(--main2-color);
+  border-radius: 10px;
 
-    &:hover {
-        background-color: var(--main2-hover-color);
-        border-color: var(--main2-hover-color);
-    }
+  &:hover {
+    background-color: var(--main2-hover-color);
+    border-color: var(--main2-hover-color);
+  }
 }
 
 #popup-area {
-    border: 10px dotted var(--white-color);
-    padding: 5px;
+  border: 10px dotted var(--white-color);
+  padding: 5px;
 }
 </style>

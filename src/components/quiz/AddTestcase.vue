@@ -15,7 +15,7 @@
 </template>
 <script>
 import SweetAlert from '../../util/modal.js'
-import {apiClient} from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 
 export default {
   name: 'AddTestcase',
@@ -27,26 +27,26 @@ export default {
   },
   methods: {
     addTestcase() {
-        const quizNo = this.$route.params.quizNo
-        const url=`${this.backURL}/testcase/`+quizNo
-        const data={
-            testcaseInput: this.inputValue,
-            testcaseOutput: this.outputValue
-        }
-        apiClient
-          .post(url, JSON.stringify(data), {
-            headers: {
-              'Content-Type': 'application/json'
-            }
+      const quizNo = this.$route.params.quizNo
+      const url = `${this.backURL}/testcase/` + quizNo
+      const data = {
+        testcaseInput: this.inputValue,
+        testcaseOutput: this.outputValue
+      }
+      apiClient
+        .post(url, JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(() => {
+          SweetAlert.success('테스트케이스가 추가되었습니다', '', '확인').then(() => {
+            window.history.go(0)
           })
-          .then(() => {
-            SweetAlert.success('테스트케이스가 추가되었습니다', '', '확인').then(()=>{
-              window.history.go(0)
-            })
-            
-          }).catch(()=>{
-            SweetAlert.error('테스트케이스 추가에 실패하였습니다', '', '확인')
-          })
+        })
+        .catch(() => {
+          SweetAlert.error('테스트케이스 추가에 실패하였습니다', '', '확인')
+        })
     }
   }
 }

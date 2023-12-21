@@ -33,7 +33,7 @@ import MyCode from '../../components/profile/MyCode.vue'
 import RankHistory from '../../components/profile/RankHistory.vue'
 import ProfileRemove from '../../components/profile/ProfileRemove.vue'
 
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import sweetAlert from '../../util/modal.js'
 
 export default {

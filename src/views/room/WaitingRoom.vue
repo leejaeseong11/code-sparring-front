@@ -91,7 +91,7 @@
   </div>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import ShowQuizSimply from '../../components/home/ShowQuizSimply.vue'
 import MemberProfile from '../../components/home/MemberProfile.vue'
 import RoomMember from '../../components/room/RoomMember.vue'

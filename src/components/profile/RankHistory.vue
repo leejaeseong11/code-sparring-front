@@ -34,7 +34,7 @@
 </template>
 <script>
 import SweetAlert from '../../util/modal.js'
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 export default {
   name: 'RankHistory',
   data() {

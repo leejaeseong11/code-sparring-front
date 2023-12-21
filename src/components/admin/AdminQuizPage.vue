@@ -25,30 +25,33 @@
         <div v-for="q in quizList" :key="q.quizNo" class="quiz-object">
           <span class="quiz-no">{{ q.quizNo }}</span>
           <span :class="'quiz-tier-' + q.quizTier">{{ q.quizTier }}</span>
-          <span class="quiz-title" :title="''+q.quizTitle">{{ q.quizTitle }}</span>
+          <span class="quiz-title" :title="'' + q.quizTitle">{{ q.quizTitle }}</span>
           <span class="quiz-correct">{{ q.quizCorrectPercent }}</span>
           <button class="quiz-info-bt" :id="'' + q.quizNo" @click="quizView">조회</button>
         </div>
       </div>
 
       <div v-if="!popup" id="quiz-page">
-        <button v-if="startPage!==1" class="page-bt" id="prev" @click="pgPrevClick">◀</button>&nbsp;
+        <button v-if="startPage !== 1" class="page-bt" id="prev" @click="pgPrevClick">◀</button
+        >&nbsp;
         <button
-          v-for="pg in endPage-startPage+1"
+          v-for="pg in endPage - startPage + 1"
           :key="pg"
           :class="['page-bt-num', { 'current-page': startPage + pg - 1 == currentPage }]"
-          :id="'pg'+(startPage+pg-1)"
+          :id="'pg' + (startPage + pg - 1)"
           @click="pgClick"
         >
-          {{ startPage+pg-1 }}</button
+          {{ startPage + pg - 1 }}</button
         >&nbsp;
-        <button v-if="endPage!=totalPage" class="page-bt" id="next" @click="pgNextClick">▶︎</button>
+        <button v-if="endPage != totalPage" class="page-bt" id="next" @click="pgNextClick">
+          ▶︎
+        </button>
       </div>
     </div>
   </main>
 </template>
 <script>
-import { apiClient } from '@/axios-interceptor'
+import { apiClient } from '@/util/axios-interceptor'
 import AdminQuizPopup from '../quiz/AdminQuizPopup.vue'
 
 export default {
@@ -88,18 +91,18 @@ export default {
       }
     },
     pgPrevClick() {
-      this.currentPage = Math.floor(((this.currentPage - 1) / 5)) * 5
+      this.currentPage = Math.floor((this.currentPage - 1) / 5) * 5
       const filter = this.$route.params.filter
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     pgNextClick() {
       if (this.currentPage == 1) this.currentPage = 2
-      this.currentPage = (Math.floor(((this.currentPage - 1) / 5)) + 1) * 5 + 1
+      this.currentPage = (Math.floor((this.currentPage - 1) / 5) + 1) * 5 + 1
       const filter = this.$route.params.filter
       location.href = '/admin/quiz/' + filter + '/' + this.currentPage
     },
     pgClick(e) {
-      const pg = parseInt(e.target.id.replace("pg", ""));
+      const pg = parseInt(e.target.id.replace('pg', ''))
       this.currentPage = pg
       const filter = this.$route.params.filter
 
@@ -139,7 +142,7 @@ export default {
         })
         .catch((error) => {
           // alert('관리자 페이지를 조회할 수 없습니다')
-          console.error('Error fetching reports:', error.message);
+          console.error('Error fetching reports:', error.message)
         })
     } else if (filter == 'UNRANKED') {
       const onBt = document.getElementById('quiz-urk')
