@@ -45,7 +45,7 @@
   </div>
   <div id="quiz-content-title">문제 설명</div>
   <div id="quiz-content-container">
-    <pre id="quiz-content">{{ quizInfo.quizContent }}</pre>
+    <div id="quiz-content">{{ quizInfo.quizContent }}</div>
   </div>
 </template>
 <script>
@@ -83,6 +83,8 @@ export default {
 #quiz-content {
   padding: 8px;
 
+  white-space: pre-wrap;
+  overflow: scroll;
   font-family: 'DNFBitBitv2';
 
   word-wrap: break-word;
