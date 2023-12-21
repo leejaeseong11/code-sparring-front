@@ -98,8 +98,8 @@ export default {
       quizContent: '',
       quizTitle: '',
       timerRunning: true,
-      minutes: 0,
-      seconds: 10,
+      minutes: 60,
+      seconds: 0,
       socket: null,
       buttonValue: '',
       buttonValuePlayer1: '',
@@ -138,7 +138,25 @@ export default {
       document.body.style.overflow = 'auto'
       this.disconnect()
 
-      console.log(this.winMemberNo)
+      //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
+      var roomMemberSize = 10
+      const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${roomMemberSize}`
+      console.log(this.resultMemberNo)
+      console.log(this.memberNo)
+      console.log(roomMemberSize)
+      if (this.resultMemberNo == this.memberNo) {
+        // apiClient 보내기
+        apiClient
+          .put(url, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            console.log(response.data);
+          })
+      }
+
       if (this.memberNo == this.member1No && this.winMemberNo == this.memberNo) {
         if (this.resultMemberNo == this.memberNo) {
           //   게임 결과 update
@@ -175,30 +193,11 @@ export default {
               alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
             })
         }
-      } else {
-        if (this.resultMemberNo == this.memberNo) {
-          //   게임 결과 update
-          const data = {
-            gameResult: '0'
-          }
-          const url2 = `${this.backURL}/rankgame/${this.rankNo}`
-          apiClient
-            .put(url2, JSON.stringify(data), {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .catch((error) => {
-              console.log('Server Error:', error)
-              alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
-            })
-        }
       }
       this.$router.push({ path: `/` })
     },
     setWinMember(dataFromChild) {
       this.winMemberNo = dataFromChild
-      console.log(this.winMemberNo)
       var winMember = {
         type: 'CODE_STATUS',
         codeRoomNo: this.rankNo,
@@ -206,14 +205,6 @@ export default {
         codeStatus: this.winMemberNo + ',win'
       }
       this.socket.send(JSON.stringify(winMember))
-
-      // var talkMessage = {
-      //     type: 'CODE_STATUS',
-      //     codeRoomNo: this.rankNo,
-      //     codeSender: this.memberName,
-      //     codeStatus: this.buttonValue
-      // }
-      // this.socket.send(JSON.stringify(talkMessage))
     },
     connect() {
       this.socket = new WebSocket(this.socketURL)
@@ -231,12 +222,9 @@ export default {
       this.socket.onerror = () => {}
 
       this.socket.onmessage = (e) => {
-        console.log(e.data)
         if (this.socket.readyState === WebSocket.OPEN) {
-          console.log(e.data)
           const rawData = e.data
           const colonIndex = rawData.indexOf(':')
-          console.log(rawData)
           var msgMemberName = ''
           var msgMemberButtonValue = ''
           //test1: run
@@ -250,9 +238,8 @@ export default {
               this.buttonValuePlayer2 = msgMemberButtonValue
             }
           }
-          console.log(msgMemberButtonValue)
+
           const colonIndex2 = msgMemberButtonValue.indexOf(',')
-          console.log(colonIndex2)
           if (colonIndex2 !== -1) {
             this.resultMemberNo = msgMemberButtonValue.substring(0, colonIndex2).trim()
             this.gameEnd = true
@@ -264,7 +251,7 @@ export default {
           this.socket.readyState === WebSocket.CLOSING ||
           this.socket.readyState === WebSocket.CLOSED
         ) {
-          console.log('?')
+
           this.connect()
         }
       }
@@ -312,6 +299,19 @@ export default {
       event.returnValue = ''
     },
     exitButtonClickHandler() {
+      if(this.memberNo == this.member1No){
+        this.resultMemberNo = this.member2No
+      }else{
+        this.resultMemberNo = this.member1No
+      }
+      // const enterMessage = {
+      //     type: 'CODE_QUIT',
+      //     codeRoomNo: this.rankNo,
+      //     codeSender: this.resultMemberNo
+      //   }
+      //   this.socket.send(JSON.stringify(enterMessage))
+      // }
+      // this.gameEnd = true
       this.disconnect()
       this.$router.push({ path: `/` })
     },
@@ -332,6 +332,25 @@ export default {
         setTimeout(this.updateTimer, 1000) // 1초마다 업데이트
       }
       if (this.seconds === 0 && this.minutes === 0) {
+        if (confirm('시간이 초과되어 메인으로 이동합니다')) {
+          //   게임 결과 update
+          const data = {
+            gameResult: '0'
+          }
+          const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+          apiClient
+            .put(url2, JSON.stringify(data), {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .catch((error) => {
+              console.log('Server Error:', error)
+              alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
+            })
+          
+          this.$router.push({ path: `/` })
+        }
         SweetAlert.warning('시간이 초과되어\n게임을 종료합니다', '랭크는 무승부처리로 인정됩니다', '확인').then(()=>{
             this.$router.push({ path: `/` })
         })
@@ -355,7 +374,20 @@ export default {
     }
   },
   created() {
-    window.addEventListener('beforeunload', this.beforeUnloadHandler)
+    console.log('history.state: ', history.state.rightAccess)
+
+    if (!history.state.rightAccess) {
+      SweetAlert.error('잘못된 접근입니다.').then((ok) => {
+        if (ok.isConfirmed) {
+          this.$router.replace({path: '/', state: {
+            rightAccess: false
+          }}).then(() => {
+            this.$router.go()
+          })
+        }
+      })
+    } else{
+      window.addEventListener('beforeunload', this.beforeUnloadHandler)
     //타이머 시작
     this.updateTimer()
     this.rankNo = this.$router.currentRoute.value.params.rankNo
@@ -383,9 +415,7 @@ export default {
             this.quizContent = response.data.quizContent
             this.quizTitle = response.data.quizTitle
           })
-          .catch(() => {
-            alert('문제 조회에 실패하였습니다')
-          })
+
 
         // testcaseList
         const url3 = `${this.backURL}/submit/${this.quizNo}`
@@ -398,13 +428,9 @@ export default {
           .then((response) => {
             this.testcaseList = response.data
           })
-          .catch(() => {
-            alert('테스트케이스 조회에 실패하였습니다')
-          })
+
       })
-      .catch(() => {
-        alert('문제 정보 조회에 실패하였습니다')
-      })
+
     //memberNo
     const url4 = `${this.backURL}/member/memberNo`
     apiClient
@@ -428,9 +454,13 @@ export default {
             this.memberName = response.data.memberName
           })
       })
+    }
   },
   mounted() {
-    const url = `${this.backURL}/rankgame/${this.rankNo}`
+      console.log(history.state.rightAccess)
+    if (!history.state.rightAccess) {
+    }else{
+      const url = `${this.backURL}/rankgame/${this.rankNo}`
     apiClient
       .get(url, {
         headers: {
@@ -450,8 +480,8 @@ export default {
         }
       })
     window.addEventListener('beforeunload', this.unLoadEvent)
-    this.rankNo = this.$router.currentRoute.value.params.rankNo
     this.connect()
+    }
   },
   beforeUnmount() {
     const outMessage = {
@@ -677,7 +707,7 @@ body.flex-container {
   border-radius: 10px;
   width: 400px;
   height: 540px;
-  margin-top: 250px;
+  margin-top: 100px;
   margin-left: 10px;
   z-index: 2;
   overflow: hidden;
