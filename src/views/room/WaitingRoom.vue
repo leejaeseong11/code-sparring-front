@@ -203,11 +203,17 @@ export default {
                   this.roomMemberList = response.data.roomMemberList
                   if (this.roomMemberList.length == 0) {
                     this.$router.push({ path: '/' })
-                    SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
-                      if (ok.isConfirmed) {
+                    if (this.roomStatus == 1) {
+                      SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
+                        if (ok.isConfirmed) {
+                          this.$router.go()
+                        }
+                      })
+                    } else {
+                      this.$router.push({ path: '/' }).then(() => {
                         this.$router.go()
-                      }
-                    })
+                      })
+                    }
                   }
                 })
                 .catch((err) => {
@@ -215,11 +221,15 @@ export default {
                   if (err.response.data.message == 'ROOM_NOT_FOUND') {
                     this.$router.push({ path: '/' })
 
-                    if (this.roomInfo.roomStatus == 1) {
+                    if (this.roomStatus == 1) {
                       SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
                         if (ok.isConfirmed) {
                           this.$router.go()
                         }
+                      })
+                    } else {
+                      this.$router.push({ path: '/' }).then(() => {
+                        this.$router.go()
                       })
                     }
                   }
@@ -248,7 +258,6 @@ export default {
                     apiClient.get(`${this.backURL}/room/${this.roomNo}`).then((res) => {
                       if (res) {
                         apiClient.delete(`${this.backURL}/room/${this.roomNo}`).then(async () => {
-                          console.log(res)
                           const outMessage = {
                             type: 'ROOM_QUIT',
                             roomNo: this.roomNo,
@@ -258,8 +267,7 @@ export default {
                             this.socket.send(JSON.stringify(outMessage))
                             // this.socket.close()
                           }
-                          console.log(this.roomInfo.roomStatus)
-                          if (this.roomInfo.roomStatus == 1) {
+                          if (this.roomStatus == 1) {
                             SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
                               if (ok.isConfirmed) {
                                 if (this.socket.readyState === WebSocket.OPEN) {
@@ -269,6 +277,10 @@ export default {
                                   this.$router.go()
                                 })
                               }
+                            })
+                          } else {
+                            this.$router.push({ path: '/' }).then(() => {
+                              this.$router.go()
                             })
                           }
                         })
@@ -638,8 +650,6 @@ pre {
 }
 
 #room-info-layout {
-  width: 50%;
-
   display: flex;
   flex-direction: column;
 }

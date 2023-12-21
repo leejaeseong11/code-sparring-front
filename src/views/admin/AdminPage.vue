@@ -150,6 +150,7 @@ export default {
 }
 
 .content-area {
+  width: 1000px;
   height: 650px;
 }
 

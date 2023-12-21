@@ -98,8 +98,8 @@ export default {
       quizContent: '',
       quizTitle: '',
       timerRunning: true,
-      minutes: 60,
-      seconds: 0,
+      minutes: 0,
+      seconds: 10,
       socket: null,
       buttonValue: '',
       buttonValuePlayer1: '',
@@ -319,6 +319,9 @@ export default {
           
           this.$router.push({ path: `/` })
         }
+        SweetAlert.warning('시간이 초과되어\n게임을 종료합니다', '랭크는 무승부처리로 인정됩니다', '확인').then(()=>{
+            this.$router.push({ path: `/` })
+        })
       }
     },
     // /n을 <br> 태그로 대체하는 메서드

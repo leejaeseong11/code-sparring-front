@@ -17,7 +17,7 @@
       >
         {{ quizInfo.quizTier }}
       </div>
-      <div class="col-3" v-else-if="quizInfo.quizTier == 'GOLD'" style="color: var(--silver-color)">
+      <div class="col-3" v-else-if="quizInfo.quizTier == 'GOLD'" style="color: var(--gold-color)">
         {{ quizInfo.quizTier }}
       </div>
       <div
