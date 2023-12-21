@@ -5,7 +5,7 @@
       <div v-for="code in codeList" :key="code" :class="'code-obj-' + code.quizCorrect" :id="'code.' + code.quizNo">
         <span class="opposing-name">{{ code.quizCorrect === 1 ? '성공' : '실패' }}</span>
         <span class="opposing-name">{{ code.quizTitle }}</span>
-        <span class="opposing-name">{{ code.quizDt }}</span>
+        <span class="regdate">{{ code.quizDt }}</span>
         <button id="codeInfo" :data-quizno="code.quizNo" @click="codeClickHandler($event)">조회</button>
       </div>
     </div>
@@ -186,7 +186,7 @@ export default {
       var(--red-hover-color) 95%);
 }
 
-.opposing-name {
+.opposing-name, .regdate {
   width: 20%;
   line-height: 45px;
   color: var(--main1-color);
@@ -195,6 +195,10 @@ export default {
   white-space: nowrap; /* 텍스트를 한 줄에 나타내기 위해 */
   overflow: hidden;    /* 넘치는 텍스트를 숨김 */
   text-overflow: ellipsis; /* 넘치는 텍스트에 "..." 추가 */
+}
+
+.regdate {
+  width: 40%;
 }
 
 .game-result {
