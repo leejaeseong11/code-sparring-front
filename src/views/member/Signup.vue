@@ -22,14 +22,14 @@
 
                 <div class="info" id="info-id">
                     <div id="id-input">
-                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디(영문 소문자,숫자 10자까지)" />
+                        <input class="box" type="text" name="id" id="i" v-model="c.id" placeholder="아이디(영문 소문자,숫자 15자까지)" />
                         <button id="id-check" @click="btIdDupchkClickHandler" type="button">중복확인</button>
                     </div>
                 </div>
 
                 <div class="info" id="info-pwd">
                     <input class="box" type="password" name="pwd" id="p" v-model="c.pwd"
-                        placeholder="비밀번호 입력 (문자, 숫자, 특수문자 포함 8~20자)" />
+                        placeholder="비밀번호 입력(문자, 숫자, 특수문자 포함 8~20자)" />
                 </div>
 
                 <div class="info" id="info-pwdRe">
@@ -132,9 +132,9 @@ export default {
         },
 
         btNameDupchkClickHandler() {
-            const nameRegExp = /^[a-zA-Z0-9]{4,15}$/
+            const nameRegExp = /^[^\s]{1,8}$/;
             if (!nameRegExp.test(this.c.name)) {
-                sweetAlert.warning("4~15자의 영문 소문자와 숫자만 사용 가능합니다", '', '닫기')
+                sweetAlert.warning("1~8자만 사용 가능합니다", '', '닫기')
                 return
             }
 
@@ -159,11 +159,11 @@ export default {
                 })
         },
         signupFormSubmitHandler(e) {
-            if(this.c.id == null || this.c.id ==''
+            if (this.c.id == null || this.c.id == ''
                 || this.c.name == null || this.c.name == '') {
-                    sweetAlert.warning("누락된 항목이 있습니다", '', '닫기')
-                    return
-                }
+                sweetAlert.warning("누락된 항목이 있습니다", '', '닫기')
+                return
+            }
 
             const pwdRegExp = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
             if (!pwdRegExp.test(this.c.pwd)) {
