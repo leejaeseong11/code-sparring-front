@@ -118,9 +118,9 @@ export default {
         sweetAlert.warning('변경할 닉네임을 입력해주세요', '', '닫기')
         return
       }
-      const nameRegExp = /^[a-zA-Z0-9가-힣]{3,10}$/
+      const nameRegExp = /^[^\s]{1,8}$/;
       if (!nameRegExp.test(this.editedMemberName)) {
-        sweetAlert.warning('3~10자의  한글, 숫자, 영어만 \n 사용 가능합니다', '', '닫기')
+        sweetAlert.warning("1~8자만 사용 가능합니다", '', '닫기')
         return
       }
 
