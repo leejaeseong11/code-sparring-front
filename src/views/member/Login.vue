@@ -1,5 +1,4 @@
 <template>
-  <div id="logoOff"></div>
   <div class="video-background">
     <video autoplay muted loop id="myVideo">
       <source src="/images/login/mainBackGround.mp4" type="video/mp4" />
@@ -97,14 +96,6 @@ export default {
 }
 </script>
 <style scoped>
-#logoOff {
-  width: 100%;
-  height: 100px;
-  z-index: 1;
-  position: absolute;
-  background-color: var(--main1-color);
-}
-
 .video-background {
   z-index: 2;
 }
@@ -114,12 +105,6 @@ export default {
   justify-content: space-around;
   margin-left: 10px;
   margin-right: 10px;
-}
-
-body,
-html {
-  height: 100%;
-  margin: 0;
 }
 
 .video-background {
@@ -136,7 +121,6 @@ html {
   bottom: 0;
   width: 100%;
   height: 100%;
-
   object-fit: cover;
 }
 
