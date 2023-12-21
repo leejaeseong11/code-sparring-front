@@ -267,7 +267,7 @@ export default {
                             this.socket.send(JSON.stringify(outMessage))
                             // this.socket.close()
                           }
-                          if (this.roomStatus == 1) {
+                          if (this.roomInfo.roomStatus == 1) {
                             SweetAlert.warning('방이 삭제되었습니다.').then((ok) => {
                               if (ok.isConfirmed) {
                                 if (this.socket.readyState === WebSocket.OPEN) {
@@ -348,11 +348,15 @@ export default {
       this.socket.send(JSON.stringify(talkMessage))
       this.startButton = ''
       const url = `${this.backURL}/room/${this.roomNo}`
-      apiClient.put(url, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      apiClient
+        .put(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(() => {
+          this.roomInfo.roomStatus = 0
+        })
     },
 
     async roomOutButtonClickHandler() {
