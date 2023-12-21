@@ -55,8 +55,8 @@
         ></textarea>
         <div id="etc-button">
           <label for="fileInput" style="display: flex; justify-content: space-between">
-            <button id="fileUpload" @click="openFile()">정답 코드 첨부</button>
-            <div id="fileName" title="">선택된 파일 없음</div>
+            <!-- <button id="fileUpload" @click="openFile()">정답 코드 첨부</button> -->
+            <!-- <div id="fileName" title="">선택된 파일 없음</div> -->
           </label>
           <input type="file" id="fileInput" accept=".java" @change="updateFileName" />
           <div id="right-button">

@@ -95,7 +95,7 @@ export default {
     },
     setQuiz() {
       apiClient.get(`${this.backURL}/rankroom/quiz/${this.rankRoom.roomNo}`).then((res) => {
-        this.$router.push({
+        this.$router.replace({
           path: '/rank/' + res.data,
           state: {
             rightAccess: true
@@ -139,7 +139,7 @@ export default {
             this.rankRoom.quizNo != ''
           ) {
             this.stopMatching()
-            this.$router.push({
+            this.$router.replace({
               path: '/rank/' + this.rankRoom.rankNo,
               state: {
                 rightAccess: true
