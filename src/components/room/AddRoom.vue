@@ -492,7 +492,7 @@ textarea {
 }
 
 .quizTitle {
-  width: 55%;
+  width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
