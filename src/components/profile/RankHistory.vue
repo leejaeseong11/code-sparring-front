@@ -69,7 +69,7 @@ export default {
     },
     handleScrollEnd() {
       this.currentPage++
-      const url = `${this.backURL}/rankgame/` + this.memberNo + `/` + this.currentPage
+      const url = `${this.backURL}/rankgame/page/` + this.currentPage
       apiClient
         .get(url, {
           headers: {
