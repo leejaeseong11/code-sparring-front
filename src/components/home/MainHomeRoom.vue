@@ -106,7 +106,7 @@ export default {
           }
         )
         .then(() => {
-          this.$router.push({
+          this.$router.replace({
             path: `/room/${this.roomInfo.roomNo}`,
             state: {
               rightAccess: true

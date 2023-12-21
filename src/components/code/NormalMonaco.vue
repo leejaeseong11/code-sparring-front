@@ -45,6 +45,7 @@ export default defineComponent({
     },
     language: { type: String, default: 'java' },
     theme: { type: String, default: 'vs-dark' }, //vs, vs-dark, hc-black
+    // fontSize: {defalut: 15px}
     options: {
       type: Object,
       default() {
@@ -70,7 +71,8 @@ export default defineComponent({
         height: fixedHeight,
         'text-align': 'left',
         'align-items': 'center',
-        'margin-left': '15px'
+        'margin-left': '15px',
+        'font-size' : '15px'
       }
     })
     return {

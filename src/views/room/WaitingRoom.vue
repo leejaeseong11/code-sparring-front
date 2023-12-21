@@ -395,11 +395,16 @@ export default {
     }
   },
   mounted() {
+    console.log('history.state: ', history.state.rightAccess)
+
     if (!history.state.rightAccess) {
-      console.log('history.state: ', history.state.rightAccess)
       SweetAlert.error('잘못된 접근입니다.').then((ok) => {
         if (ok.isConfirmed) {
-          this.$router.go(-1)
+          this.$router.replace({path: '/', state: {
+            rightAccess: false
+          }}).then(() => {
+            this.$router.go()
+          })
         }
       })
     } else {

@@ -98,8 +98,8 @@ export default {
       quizContent: '',
       quizTitle: '',
       timerRunning: true,
-      minutes: 0,
-      seconds: 10,
+      minutes: 60,
+      seconds: 0,
       socket: null,
       buttonValue: '',
       buttonValuePlayer1: '',
@@ -137,6 +137,25 @@ export default {
       this.gameEnd = false
       document.body.style.overflow = 'auto'
       this.disconnect()
+
+      //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
+      var roomMemberSize = 10
+      const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${roomMemberSize}`
+      console.log(this.resultMemberNo)
+      console.log(this.memberNo)
+      console.log(roomMemberSize)
+      if (this.resultMemberNo == this.memberNo) {
+        // apiClient 보내기
+        apiClient
+          .put(url, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            console.log(response.data);
+          })
+      }
 
       if (this.memberNo == this.member1No && this.winMemberNo == this.memberNo) {
         if (this.resultMemberNo == this.memberNo) {
@@ -280,6 +299,19 @@ export default {
       event.returnValue = ''
     },
     exitButtonClickHandler() {
+      if(this.memberNo == this.member1No){
+        this.resultMemberNo = this.member2No
+      }else{
+        this.resultMemberNo = this.member1No
+      }
+      // const enterMessage = {
+      //     type: 'CODE_QUIT',
+      //     codeRoomNo: this.rankNo,
+      //     codeSender: this.resultMemberNo
+      //   }
+      //   this.socket.send(JSON.stringify(enterMessage))
+      // }
+      // this.gameEnd = true
       this.disconnect()
       this.$router.push({ path: `/` })
     },
@@ -342,7 +374,20 @@ export default {
     }
   },
   created() {
-    window.addEventListener('beforeunload', this.beforeUnloadHandler)
+    console.log('history.state: ', history.state.rightAccess)
+
+    if (!history.state.rightAccess) {
+      SweetAlert.error('잘못된 접근입니다.').then((ok) => {
+        if (ok.isConfirmed) {
+          this.$router.replace({path: '/', state: {
+            rightAccess: false
+          }}).then(() => {
+            this.$router.go()
+          })
+        }
+      })
+    } else{
+      window.addEventListener('beforeunload', this.beforeUnloadHandler)
     //타이머 시작
     this.updateTimer()
     this.rankNo = this.$router.currentRoute.value.params.rankNo
@@ -370,9 +415,7 @@ export default {
             this.quizContent = response.data.quizContent
             this.quizTitle = response.data.quizTitle
           })
-          .catch(() => {
-            alert('문제 조회에 실패하였습니다')
-          })
+
 
         // testcaseList
         const url3 = `${this.backURL}/submit/${this.quizNo}`
@@ -385,13 +428,9 @@ export default {
           .then((response) => {
             this.testcaseList = response.data
           })
-          .catch(() => {
-            alert('테스트케이스 조회에 실패하였습니다')
-          })
+
       })
-      .catch(() => {
-        alert('문제 정보 조회에 실패하였습니다')
-      })
+
     //memberNo
     const url4 = `${this.backURL}/member/memberNo`
     apiClient
@@ -415,9 +454,13 @@ export default {
             this.memberName = response.data.memberName
           })
       })
+    }
   },
   mounted() {
-    const url = `${this.backURL}/rankgame/${this.rankNo}`
+      console.log(history.state.rightAccess)
+    if (!history.state.rightAccess) {
+    }else{
+      const url = `${this.backURL}/rankgame/${this.rankNo}`
     apiClient
       .get(url, {
         headers: {
@@ -437,8 +480,8 @@ export default {
         }
       })
     window.addEventListener('beforeunload', this.unLoadEvent)
-    this.rankNo = this.$router.currentRoute.value.params.rankNo
     this.connect()
+    }
   },
   beforeUnmount() {
     const outMessage = {

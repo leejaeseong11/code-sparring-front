@@ -192,13 +192,10 @@ export default {
     backOff() {
       this.gameEnd = false
       document.body.style.overflow = 'auto'
-      //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
-
       this.disconnect()
-      console.log(this.roomMemberList.length)
-      console.log(this.resultMemberNo)
+      
+      //우승한 memberNo, roomMemberList의 size 보내기(exp추가)
       var roomMemberSize = this.roomMemberList.length * 5
-      console.log('roomMemberSize: ' + roomMemberSize)
       const url = `${this.backURL}/member/exp?memberNo=${this.resultMemberNo}&roomSize=${roomMemberSize}`
       if (this.resultMemberNo == this.memberNo) {
         // apiClient 보내기
