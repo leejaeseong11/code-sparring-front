@@ -174,24 +174,6 @@ export default {
               alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
             })
         }
-      } else {
-        if (this.resultMemberNo == this.memberNo) {
-          //   게임 결과 update
-          const data = {
-            gameResult: '0'
-          }
-          const url2 = `${this.backURL}/rankgame/${this.rankNo}`
-          apiClient
-            .put(url2, JSON.stringify(data), {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .catch((error) => {
-              console.log('Server Error:', error)
-              alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
-            })
-        }
       }
       this.$router.push({ path: `/` })
     },
@@ -319,6 +301,22 @@ export default {
       }
       if (this.seconds === 0 && this.minutes === 0) {
         if (confirm('시간이 초과되어 메인으로 이동합니다')) {
+          //   게임 결과 update
+          const data = {
+            gameResult: '0'
+          }
+          const url2 = `${this.backURL}/rankgame/${this.rankNo}`
+          apiClient
+            .put(url2, JSON.stringify(data), {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .catch((error) => {
+              console.log('Server Error:', error)
+              alert('서버 에러 발생. 자세한 내용은 콘솔을 확인하세요.')
+            })
+          
           this.$router.push({ path: `/` })
         }
       }
